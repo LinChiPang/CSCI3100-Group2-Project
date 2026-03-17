@@ -7,4 +7,3 @@ RSpec.describe "Homepage", type: :request do
     expect(response.body).to include("Hello World")
   end
 end
-
