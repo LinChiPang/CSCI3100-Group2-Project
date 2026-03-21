@@ -12,11 +12,11 @@ RSpec.describe CommunityRule, type: :model do
   end
 
   it "normalizes allowed categories" do
-    community_rule.allowed_categories = [" Books ", "books", "Furniture"]
+    community_rule.allowed_categories = [ " Books ", "books", "Furniture" ]
 
     community_rule.validate
 
-    expect(community_rule.allowed_categories).to eq(%w[books furniture])
+    expect(community_rule.allowed_categories).to eq(%w[ books furniture ])
   end
 
   it "allows any category when the allowed list is empty" do
@@ -26,13 +26,13 @@ RSpec.describe CommunityRule, type: :model do
   end
 
   it "accepts an allowed category" do
-    community_rule.allowed_categories = %w[books electronics]
+    community_rule.allowed_categories = %w[ books electronics ]
 
     expect(community_rule.category_allowed?("Books")).to be(true)
   end
 
   it "rejects a disallowed category" do
-    community_rule.allowed_categories = %w[books electronics]
+    community_rule.allowed_categories = %w[ books electronics ]
 
     expect(community_rule.category_allowed?("furniture")).to be(false)
   end
