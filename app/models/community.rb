@@ -23,10 +23,11 @@ class Community < ApplicationRecord
 
   def normalize_name_and_slug
     self.name = name.to_s.strip
-    self.slug = if slug.present?
-                  slug.to_s.strip
-                else
-                  name.to_s.parameterize
-                end
+    self.slug =
+      if slug.present?
+        slug.to_s.strip
+      else
+        name.to_s.parameterize
+      end
   end
 end
