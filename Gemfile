@@ -40,6 +40,20 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# Authentication
+gem 'devise'
+gem 'devise-jwt'                  # if you want JWT token authentication for API
+# or simple token authentication with Devise's :token_authenticatable
+
+# Authorization (optional but recommended)
+gem 'pundit'
+
+# API serialization (to control JSON output)
+gem 'active_model_serializers'
+
+# For CORS (since frontend is separate)
+gem 'rack-cors'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
