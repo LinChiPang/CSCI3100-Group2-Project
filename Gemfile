@@ -82,3 +82,10 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+group :development, :test do
+  gem "factory_bot_rails", "~> 6.5"
+  gem "shoulda-matchers", "~> 7.0"
+  gem "simplecov", "~> 0.22.0"
+  gem "faker", "~> 3.6"
+end

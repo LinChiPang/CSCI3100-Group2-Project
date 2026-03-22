@@ -9,7 +9,6 @@
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
-
 ActiveRecord::Schema[8.1].define(version: 2026_03_21_083131) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
@@ -31,4 +30,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_083131) do
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  create_table "communities", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_communities_on_name", unique: true
+    t.index ["slug"], name: "index_communities_on_slug", unique: true
+  end
+
+  create_table "community_rules", force: :cascade do |t|
+    t.string "allowed_categories", default: [], null: false, array: true
+    t.bigint "community_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "max_active_listings", default: 5, null: false
+    t.decimal "max_price", precision: 10, scale: 2
+    t.boolean "posting_enabled", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_community_rules_on_community_id", unique: true
+  end
+
+  add_foreign_key "community_rules", "communities"
 end
