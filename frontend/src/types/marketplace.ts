@@ -2,9 +2,18 @@ export type Community = {
   id: number;
   slug: string;
   name: string;
+  community_rule?: CommunityRule;
 };
 
 export type ItemStatus = "available" | "reserved" | "sold";
+
+export type CommunityRule = {
+  community_id: number;
+  max_price: number | null;
+  max_active_listings: number;
+  posting_enabled: boolean;
+  allowed_categories: string[];
+};
 
 export type Item = {
   id: number;
