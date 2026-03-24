@@ -12,4 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "welcome#index"
+
+  get "notifications", to: "notifications#index"
+  post "notifications/broadcast", to: "notifications#broadcast"
 end

@@ -1,0 +1,21 @@
+<h2>Real-time Notifications</h2>
+
+<p>
+  Open this page in two browser tabs. Click the button in one tab and both tabs should receive the message instantly.
+</p>
+
+<%= form_with url: "/notifications/broadcast", method: :post, local: true, id: "notifications-form" do |f| %>
+  <div>
+    <%= f.label :message, "Message" %><br>
+    <%= f.text_field :message, value: "Payment succeeded for item #123" %>
+  </div>
+  <div style="margin-top: 10px;">
+    <%= f.submit "Send test notification" %>
+  </div>
+<% end %>
+
+<h3 style="margin-top: 20px;">Incoming messages</h3>
+<ul id="notifications-list">
+  <li>No notifications yet.</li>
+</ul>
+
