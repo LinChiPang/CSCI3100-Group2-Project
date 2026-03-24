@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {
   Community,
+  CommunityRule,
   FilterParams,
   Item,
   ListingsResponse,
@@ -27,6 +28,13 @@ export async function getCommunities(): Promise<Community[]> {
   await guardRealApi();
   const res = await client.get("/api/v1/communities");
   return res.data as Community[];
+}
+
+export async function getCommunityRule(communitySlug: string): Promise<CommunityRule | null> {
+  if (useMocks) return mockApi.getCommunityRule(communitySlug);
+  await guardRealApi();
+  const res = await client.get(`/api/v1/communities/${encodeURIComponent(communitySlug)}/rule`);
+  return res.data as CommunityRule;
 }
 
 export async function getListings(

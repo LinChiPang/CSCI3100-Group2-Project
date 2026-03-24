@@ -1,5 +1,6 @@
 import type {
   Community,
+  CommunityRule,
   FilterParams,
   Item,
   ItemStatus,
@@ -7,8 +8,30 @@ import type {
 } from "../types/marketplace";
 
 const communities: Community[] = [
-  { id: 1, slug: "cuhk-shatin", name: "CUHK Shatin" },
-  { id: 2, slug: "cuhk-kowloon", name: "CUHK Kowloon" },
+  {
+    id: 1,
+    slug: "cuhk-shatin",
+    name: "CUHK Shatin",
+    community_rule: {
+      community_id: 1,
+      max_price: 500,
+      max_active_listings: 5,
+      posting_enabled: true,
+      allowed_categories: ["electronics", "furniture", "textbook"],
+    },
+  },
+  {
+    id: 2,
+    slug: "cuhk-kowloon",
+    name: "CUHK Kowloon",
+    community_rule: {
+      community_id: 2,
+      max_price: 800,
+      max_active_listings: 8,
+      posting_enabled: true,
+      allowed_categories: ["electronics", "furniture", "textbook"],
+    },
+  },
 ];
 
 let items: Item[] = [
@@ -256,6 +279,12 @@ function applyFilters(communitySlug: string, filter: FilterParams): Item[] {
 export async function getCommunities(): Promise<Community[]> {
   await sleep(200);
   return communities;
+}
+
+export async function getCommunityRule(communitySlug: string): Promise<CommunityRule | null> {
+  await sleep(180);
+  const community = communities.find((c) => c.slug === communitySlug);
+  return community?.community_rule ?? null;
 }
 
 export async function getListings(
