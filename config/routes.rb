@@ -13,14 +13,19 @@ Rails.application.routes.draw do
   # root "posts#index"
   root "welcome#index"
 
-  # API routes – all under /api/v1
-  scope '/api/v1', as: 'api_v1' do
-    devise_for :users, controllers: {
-      sessions: 'api/v1/sessions',
-      registrations: 'api/v1/registrations'
-    }, path_names: {
-      sign_in: 'login',
-      sign_out: 'logout'
-    }
+  # API routes
+  devise_for :users, controllers: {
+    sessions: 'sessions',
+    registrations: 'registrations'
+  }, path_names: {
+    sign_in: 'login',
+    sign_out: 'logout'
+  }
+
+  resources :items do
+    member do
+      patch :reserve
+      patch :sell
+    end
   end
 end

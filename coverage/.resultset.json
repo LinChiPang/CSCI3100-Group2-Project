@@ -1,0 +1,345 @@
+{
+  "RSpec": {
+    "coverage": {
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/controllers/api/v1/items_controller.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/controllers/api/v1/registrations_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/controllers/api/v1/sessions_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/controllers/application_controller.rb": {
+        "lines": [
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/controllers/welcome_controller.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/helpers/api/v1/items_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/helpers/api/v1/registrations_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/helpers/api/v1/sessions_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/helpers/application_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/helpers/welcome_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/jobs/application_job.rb": {
+        "lines": [
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/mailers/application_mailer.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/models/application_record.rb": {
+        "lines": [
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/models/community.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/models/community_rule.rb": {
+        "lines": [
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/models/item.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/models/user.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "C:/Users/chky1/Desktop/Louis/CSCI3100/Project/CSCI3100-Group2-Project/app/serializers/user_serializer.rb": {
+        "lines": [
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      }
+    },
+    "timestamp": 1774453001
+  }
+}

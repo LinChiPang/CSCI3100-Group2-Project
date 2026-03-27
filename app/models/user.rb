@@ -9,4 +9,6 @@ class User < ApplicationRecord
   end
 
   validates :email, format: { with: /\A[\w+\-.]+@cuhk\.edu\.hk\z/i, message: "must be a CUHK email" }
+
+  has_many :items, dependent: :destroy
 end
