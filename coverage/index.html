@@ -13,7 +13,7 @@
       <img src="./assets/0.13.2/loading.gif" alt="loading"/>
     </div>
     <div id="wrapper" class="hide">
-      <div class="timestamp">Generated <abbr class="timeago" title="2026-03-30T19:56:01+08:00">2026-03-30T19:56:01+08:00</abbr></div>
+      <div class="timestamp">Generated <abbr class="timeago" title="2026-03-30T20:48:41+08:00">2026-03-30T20:48:41+08:00</abbr></div>
       <ul class="group_tabs"></ul>
 
       <div id="content">
@@ -22,14 +22,14 @@
     <span class="group_name">All Files</span>
     (<span class="covered_percent">
       <span class="yellow">
-  80.17%
+  82.09%
 </span>
 
      </span>
      covered at
      <span class="covered_strength">
        <span class="green">
-         4.24
+         4.18
        </span>
     </span> hits/line
     )
@@ -38,15 +38,15 @@
   <a name="AllFiles"></a>
 
   <div>
-    <b>20</b> files in total.
+    <b>21</b> files in total.
   </div>
 
   <div class="t-line-summary">
-    <b>242</b> relevant lines,
-    <span class="green"><b>194</b> lines covered</span> and
+    <b>268</b> relevant lines,
+    <span class="green"><b>220</b> lines covered</span> and
     <span class="red"><b>48</b> lines missed. </span>
     (<span class="yellow">
-  80.17%
+  82.09%
 </span>
 )
   </div>
@@ -219,7 +219,7 @@
             <td class="cell--number">15</td>
             <td class="cell--number">15</td>
             <td class="cell--number">0</td>
-            <td class="cell--number">16.13</td>
+            <td class="cell--number">18.80</td>
             
           </tr>
         
@@ -252,7 +252,18 @@
             <td class="cell--number">12</td>
             <td class="cell--number">11</td>
             <td class="cell--number">1</td>
-            <td class="cell--number">5.67</td>
+            <td class="cell--number">6.50</td>
+            
+          </tr>
+        
+          <tr class="t-file">
+            <td class="strong t-file__name"><a href="#a2a85d437746c028d22357bc87c9a3965696f551" class="src_link" title="app/policies/application_policy.rb">app/policies/application_policy.rb</a></td>
+            <td class="green strong cell--number t-file__coverage">100.00 %</td>
+            <td class="cell--number">49</td>
+            <td class="cell--number">26</td>
+            <td class="cell--number">26</td>
+            <td class="cell--number">0</td>
+            <td class="cell--number">1.69</td>
             
           </tr>
         
@@ -479,7 +490,7 @@
      covered at
      <span class="covered_strength">
        <span class="green">
-         7.98
+         8.58
        </span>
     </span> hits/line
     )
@@ -537,7 +548,7 @@
             <td class="cell--number">15</td>
             <td class="cell--number">15</td>
             <td class="cell--number">0</td>
-            <td class="cell--number">16.13</td>
+            <td class="cell--number">18.80</td>
             
           </tr>
         
@@ -570,7 +581,7 @@
             <td class="cell--number">12</td>
             <td class="cell--number">11</td>
             <td class="cell--number">1</td>
-            <td class="cell--number">5.67</td>
+            <td class="cell--number">6.50</td>
             
           </tr>
         
@@ -894,14 +905,14 @@
     <span class="group_name">Ungrouped</span>
     (<span class="covered_percent">
       <span class="red">
-  15.79%
+  50.0%
 </span>
 
      </span>
      covered at
      <span class="covered_strength">
        <span class="red">
-         0.16
+         0.78
        </span>
     </span> hits/line
     )
@@ -910,15 +921,15 @@
   <a name="Ungrouped"></a>
 
   <div>
-    <b>3</b> files in total.
+    <b>4</b> files in total.
   </div>
 
   <div class="t-line-summary">
-    <b>38</b> relevant lines,
-    <span class="green"><b>6</b> lines covered</span> and
+    <b>64</b> relevant lines,
+    <span class="green"><b>32</b> lines covered</span> and
     <span class="red"><b>32</b> lines missed. </span>
     (<span class="red">
-  15.79%
+  50.0%
 </span>
 )
   </div>
@@ -940,6 +951,17 @@
         </tr>
       </thead>
       <tbody>
+        
+          <tr class="t-file">
+            <td class="strong t-file__name"><a href="#a2a85d437746c028d22357bc87c9a3965696f551" class="src_link" title="app/policies/application_policy.rb">app/policies/application_policy.rb</a></td>
+            <td class="green strong cell--number t-file__coverage">100.00 %</td>
+            <td class="cell--number">49</td>
+            <td class="cell--number">26</td>
+            <td class="cell--number">26</td>
+            <td class="cell--number">0</td>
+            <td class="cell--number">1.69</td>
+            
+          </tr>
         
           <tr class="t-file">
             <td class="strong t-file__name"><a href="#7bd103490334fdbf9d1eb2b53cd0bb3582ba6f59" class="src_link" title="app/policies/item_policy.rb">app/policies/item_policy.rb</a></td>
@@ -1114,7 +1136,7 @@
 
             
 
-            <code class="ruby">    token = request.headers[&#39;Authorization&#39;].to_s.gsub(&#39;Bearer &#39;, &#39;&#39;)</code>
+            <code class="ruby">    token = request.headers[&quot;Authorization&quot;].to_s.gsub(&quot;Bearer &quot;, &quot;&quot;)</code>
           </li>
         </div>
       
@@ -1126,7 +1148,7 @@
 
             
 
-            <code class="ruby">    secret = ENV[&quot;JWT_SECRET&quot;] || Rails.application.credentials.jwt_secret || &#39;your_secret_key_here&#39;</code>
+            <code class="ruby">    secret = ENV[&quot;JWT_SECRET&quot;] || Rails.application.credentials.jwt_secret || &quot;your_secret_key_here&quot;</code>
           </li>
         </div>
       
@@ -1148,7 +1170,7 @@
 
             
 
-            <code class="ruby">      payload = JWT.decode(token, secret, true, algorithm: &#39;HS256&#39;)</code>
+            <code class="ruby">      payload = JWT.decode(token, secret, true, algorithm: &quot;HS256&quot;)</code>
           </li>
         </div>
       
@@ -1160,7 +1182,7 @@
 
             
 
-            <code class="ruby">      user_id = payload[0][&#39;sub&#39;]</code>
+            <code class="ruby">      user_id = payload[0][&quot;sub&quot;]</code>
           </li>
         </div>
       
@@ -1194,7 +1216,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Invalid token&#39; }, status: :unauthorized</code>
+            <code class="ruby">      render json: { error: &quot;Invalid token&quot; }, status: :unauthorized</code>
           </li>
         </div>
       
@@ -1291,7 +1313,7 @@
 
             
 
-            <code class="ruby">  before_action :set_item, only: [:show, :update, :destroy, :reserve, :sell]</code>
+            <code class="ruby">  before_action :set_item, only: [ :show, :update, :destroy, :reserve, :sell ]</code>
           </li>
         </div>
       
@@ -1303,7 +1325,7 @@
 
             
 
-            <code class="ruby">  before_action :verify_community, only: [:show, :update, :destroy, :reserve, :sell]</code>
+            <code class="ruby">  before_action :verify_community, only: [ :show, :update, :destroy, :reserve, :sell ]</code>
           </li>
         </div>
       
@@ -1639,7 +1661,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Not authorized&#39; }, status: :forbidden</code>
+            <code class="ruby">      render json: { error: &quot;Not authorized&quot; }, status: :forbidden</code>
           </li>
         </div>
       
@@ -1739,7 +1761,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Not authorized&#39; }, status: :forbidden</code>
+            <code class="ruby">      render json: { error: &quot;Not authorized&quot; }, status: :forbidden</code>
           </li>
         </div>
       
@@ -1869,7 +1891,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Cannot reserve this item&#39; }, status: :forbidden</code>
+            <code class="ruby">      render json: { error: &quot;Cannot reserve this item&quot; }, status: :forbidden</code>
           </li>
         </div>
       
@@ -1999,7 +2021,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Cannot sell this item&#39; }, status: :forbidden</code>
+            <code class="ruby">      render json: { error: &quot;Cannot sell this item&quot; }, status: :forbidden</code>
           </li>
         </div>
       
@@ -2097,7 +2119,7 @@
 
             
 
-            <code class="ruby">    render json: { error: &#39;Item not found&#39; }, status: :not_found</code>
+            <code class="ruby">    render json: { error: &quot;Item not found&quot; }, status: :not_found</code>
           </li>
         </div>
       
@@ -2163,7 +2185,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;Item not found&#39; }, status: :not_found</code>
+            <code class="ruby">      render json: { error: &quot;Item not found&quot; }, status: :not_found</code>
           </li>
         </div>
       
@@ -2285,7 +2307,7 @@
 
             
 
-            <code class="ruby">    items = items.where(&#39;price &gt;= ?&#39;, params[:min_price]) if params[:min_price].present?</code>
+            <code class="ruby">    items = items.where(&quot;price &gt;= ?&quot;, params[:min_price]) if params[:min_price].present?</code>
           </li>
         </div>
       
@@ -2297,7 +2319,7 @@
 
             
 
-            <code class="ruby">    items = items.where(&#39;price &lt;= ?&#39;, params[:max_price]) if params[:max_price].present?</code>
+            <code class="ruby">    items = items.where(&quot;price &lt;= ?&quot;, params[:max_price]) if params[:max_price].present?</code>
           </li>
         </div>
       
@@ -2321,7 +2343,7 @@
 
             
 
-            <code class="ruby">      items = items.where(&#39;title ILIKE ? OR description ILIKE ?&#39;, &quot;%#{params[:q]}%&quot;, &quot;%#{params[:q]}%&quot;)</code>
+            <code class="ruby">      items = items.where(&quot;title ILIKE ? OR description ILIKE ?&quot;, &quot;%#{params[:q]}%&quot;, &quot;%#{params[:q]}%&quot;)</code>
           </li>
         </div>
       
@@ -2450,7 +2472,7 @@
 
             
 
-            <code class="ruby">  before_action :ensure_not_authenticated, only: [:create]</code>
+            <code class="ruby">  before_action :ensure_not_authenticated, only: [ :create ]</code>
           </li>
         </div>
       
@@ -2582,7 +2604,7 @@
 
             
 
-            <code class="ruby">        secret = ENV[&quot;JWT_SECRET&quot;] || Rails.application.credentials.jwt_secret || &#39;your_secret_key_here&#39;</code>
+            <code class="ruby">        secret = ENV[&quot;JWT_SECRET&quot;] || Rails.application.credentials.jwt_secret || &quot;your_secret_key_here&quot;</code>
           </li>
         </div>
       
@@ -2642,7 +2664,7 @@
 
             
 
-            <code class="ruby">        token = JWT.encode(payload, secret, &#39;HS256&#39;)</code>
+            <code class="ruby">        token = JWT.encode(payload, secret, &quot;HS256&quot;)</code>
           </li>
         </div>
       
@@ -2704,7 +2726,7 @@
 
             
 
-            <code class="ruby">        render json: { message: &#39;User created successfully. Please confirm your email.&#39; }, status: :created</code>
+            <code class="ruby">        render json: { message: &quot;User created successfully. Please confirm your email.&quot; }, status: :created</code>
           </li>
         </div>
       
@@ -2848,7 +2870,7 @@
 
             
 
-            <code class="ruby">      render json: { error: &#39;You are already signed in.&#39; }, status: :forbidden</code>
+            <code class="ruby">      render json: { error: &quot;You are already signed in.&quot; }, status: :forbidden</code>
           </li>
         </div>
       
@@ -3131,7 +3153,7 @@
 
             
 
-            <code class="ruby">      secret = ENV[&#39;JWT_SECRET&#39;] || Rails.application.credentials.jwt_secret || &#39;your_secret_key_here&#39;</code>
+            <code class="ruby">      secret = ENV[&quot;JWT_SECRET&quot;] || Rails.application.credentials.jwt_secret || &quot;your_secret_key_here&quot;</code>
           </li>
         </div>
       
@@ -3195,7 +3217,7 @@
 
             
 
-            <code class="ruby">      token = JWT.encode(payload, secret, &#39;HS256&#39;)</code>
+            <code class="ruby">      token = JWT.encode(payload, secret, &quot;HS256&quot;)</code>
           </li>
         </div>
       
@@ -3325,7 +3347,7 @@
 
             
 
-            <code class="ruby">    render json: { message: &#39;Logged out successfully&#39; }, status: :ok</code>
+            <code class="ruby">    render json: { message: &quot;Logged out successfully&quot; }, status: :ok</code>
           </li>
         </div>
       
@@ -3420,7 +3442,7 @@
 
             
 
-            <code class="ruby">  end</code>
+            <code class="ruby">end</code>
           </li>
         </div>
       
@@ -4218,9 +4240,9 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="58" data-linenumber="25">
+          <li class="covered" data-hits="68" data-linenumber="25">
             
-              <span class="hits">58</span>
+              <span class="hits">68</span>
             
 
             
@@ -4230,9 +4252,9 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="58" data-linenumber="26">
+          <li class="covered" data-hits="68" data-linenumber="26">
             
-              <span class="hits">58</span>
+              <span class="hits">68</span>
             
 
             
@@ -4242,9 +4264,9 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="58" data-linenumber="27">
+          <li class="covered" data-hits="68" data-linenumber="27">
             
-              <span class="hits">58</span>
+              <span class="hits">68</span>
             
 
             
@@ -4254,9 +4276,9 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="56" data-linenumber="28">
+          <li class="covered" data-hits="66" data-linenumber="28">
             
-              <span class="hits">56</span>
+              <span class="hits">66</span>
             
 
             
@@ -5205,7 +5227,7 @@
 
             
 
-            <code class="ruby">    status == &#39;available&#39;</code>
+            <code class="ruby">    status == &quot;available&quot;</code>
           </li>
         </div>
       
@@ -5249,7 +5271,7 @@
 
             
 
-            <code class="ruby">    status == &#39;reserved&#39;</code>
+            <code class="ruby">    status == &quot;reserved&quot;</code>
           </li>
         </div>
       
@@ -5305,7 +5327,7 @@
 
             
 
-            <code class="ruby">      update!(status: &#39;reserved&#39;)</code>
+            <code class="ruby">      update!(status: &quot;reserved&quot;)</code>
           </li>
         </div>
       
@@ -5327,7 +5349,7 @@
 
             
 
-            <code class="ruby">      errors.add(:status, &#39;cannot be reserved when not available&#39;)</code>
+            <code class="ruby">      errors.add(:status, &quot;cannot be reserved when not available&quot;)</code>
           </li>
         </div>
       
@@ -5405,7 +5427,7 @@
 
             
 
-            <code class="ruby">      update!(status: &#39;sold&#39;)</code>
+            <code class="ruby">      update!(status: &quot;sold&quot;)</code>
           </li>
         </div>
       
@@ -5427,7 +5449,7 @@
 
             
 
-            <code class="ruby">      errors.add(:status, &#39;cannot be sold unless reserved&#39;)</code>
+            <code class="ruby">      errors.add(:status, &quot;cannot be sold unless reserved&quot;)</code>
           </li>
         </div>
       
@@ -5774,7 +5796,7 @@
 
             
 
-            <code class="ruby">  </code>
+            <code class="ruby"></code>
           </li>
         </div>
       
@@ -5801,9 +5823,9 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="58" data-linenumber="17">
+          <li class="covered" data-hits="68" data-linenumber="17">
             
-              <span class="hits">58</span>
+              <span class="hits">68</span>
             
 
             
@@ -5840,7 +5862,7 @@
 
             
 
-            <code class="ruby">  </code>
+            <code class="ruby"></code>
           </li>
         </div>
       
@@ -5880,6 +5902,579 @@
       
         <div>
           <li class="never" data-hits="" data-linenumber="24">
+            
+
+            
+
+            <code class="ruby">end</code>
+          </li>
+        </div>
+      
+    </ol>
+  </pre>
+</div>
+
+      
+        <div class="source_table" id="a2a85d437746c028d22357bc87c9a3965696f551">
+  <div class="header">
+    <h3>app/policies/application_policy.rb</h3>
+    <h4>
+      <span class="green">
+  100.0%
+</span>
+
+      lines covered
+    </h4>
+
+    
+
+    <div class="t-line-summary">
+      <b>26</b> relevant lines.
+      <span class="green"><b>26</b> lines covered</span> and
+      <span class="red"><b>0</b> lines missed.</span>
+    </div>
+
+    
+
+  </div>
+
+  <pre>
+    <ol>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="1">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">class ApplicationPolicy</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="2">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    attr_reader :user, :record</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="3">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="4">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def initialize(user, record)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="8" data-linenumber="5">
+            
+              <span class="hits">8</span>
+            
+
+            
+
+            <code class="ruby">      @user = user</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="8" data-linenumber="6">
+            
+              <span class="hits">8</span>
+            
+
+            
+
+            <code class="ruby">      @record = record</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="7">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="8">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="9">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def index?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="10">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      false</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="11">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="12">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="13">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def show?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="14">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      false</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="15">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="16">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="17">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def create?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="18">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">      false</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="19">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="20">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="21">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def new?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="22">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      create?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="23">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="24">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="25">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def update?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="26">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">      false</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="27">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="28">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="29">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def edit?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="30">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      update?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="31">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="32">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="33">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    def destroy?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="34">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      false</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="35">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="36">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="37">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    class Scope</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="38">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      attr_reader :user, :scope</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="39">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="40">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      def initialize(user, scope)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="41">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">        @user = user</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="42">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">        @scope = scope</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="43">
+            
+
+            
+
+            <code class="ruby">      end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="44">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="45">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      def resolve</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="46">
+            
+              <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">        scope.all</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="47">
+            
+
+            
+
+            <code class="ruby">      end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="48">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="49">
             
 
             

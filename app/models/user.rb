@@ -11,13 +11,13 @@ class User < ApplicationRecord
   end
 
   validates :community, presence: true
-  
+
 
   def community_exists
     errors.add(:community, "must exist") unless Community.exists?(community_id)
   end
   validate :community_exists
-  
+
   validates :email, format: { with: /\A[\w+\-.]+@cuhk\.edu\.hk\z/i, message: "must be a CUHK email" }
 
   has_many :items, dependent: :destroy

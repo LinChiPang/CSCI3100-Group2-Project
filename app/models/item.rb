@@ -21,27 +21,27 @@ class Item < ApplicationRecord
 
   # Convenience methods
   def available?
-    status == 'available'
+    status == "available"
   end
 
   def reserved?
-    status == 'reserved'
+    status == "reserved"
   end
 
   def reserve!
     if available?
-      update!(status: 'reserved')
+      update!(status: "reserved")
     else
-      errors.add(:status, 'cannot be reserved when not available')
+      errors.add(:status, "cannot be reserved when not available")
       raise ActiveRecord::RecordInvalid.new(self)
     end
   end
 
   def sell!
     if reserved?
-      update!(status: 'sold')
+      update!(status: "sold")
     else
-      errors.add(:status, 'cannot be sold unless reserved')
+      errors.add(:status, "cannot be sold unless reserved")
       raise ActiveRecord::RecordInvalid.new(self)
     end
   end

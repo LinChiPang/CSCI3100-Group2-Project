@@ -15,11 +15,11 @@ Rails.application.routes.draw do
 
   # API routes
   devise_for :users, controllers: {
-    sessions: 'sessions',
-    registrations: 'registrations'
+    sessions: "sessions",
+    registrations: "registrations"
   }, path_names: {
-    sign_in: 'login',
-    sign_out: 'logout'
+    sign_in: "login",
+    sign_out: "logout"
   }
 
   resources :items do

@@ -77,6 +77,6 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
 
-  # 
+  #
   config.action_controller.allow_forgery_protection = false
 end

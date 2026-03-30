@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authenticate_with_token!, except: []   # require auth for all actions
-  before_action :set_item, only: [:show, :update, :destroy, :reserve, :sell]
-  before_action :verify_community, only: [:show, :update, :destroy, :reserve, :sell]
+  before_action :set_item, only: [ :show, :update, :destroy, :reserve, :sell ]
+  before_action :verify_community, only: [ :show, :update, :destroy, :reserve, :sell ]
 
   def index
     items = @current_user.community.items.includes(:user, :community)
@@ -31,7 +31,7 @@ class ItemsController < ApplicationController
         render json: { errors: @item.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Not authorized' }, status: :forbidden
+      render json: { error: "Not authorized" }, status: :forbidden
     end
   end
 
@@ -40,7 +40,7 @@ class ItemsController < ApplicationController
       @item.destroy
       head :no_content
     else
-      render json: { error: 'Not authorized' }, status: :forbidden
+      render json: { error: "Not authorized" }, status: :forbidden
     end
   end
 
@@ -52,7 +52,7 @@ class ItemsController < ApplicationController
         render json: { errors: @item.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Cannot reserve this item' }, status: :forbidden
+      render json: { error: "Cannot reserve this item" }, status: :forbidden
     end
   end
 
@@ -64,7 +64,7 @@ class ItemsController < ApplicationController
         render json: { errors: @item.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Cannot sell this item' }, status: :forbidden
+      render json: { error: "Cannot sell this item" }, status: :forbidden
     end
   end
 
@@ -73,13 +73,13 @@ class ItemsController < ApplicationController
   def set_item
     @item = Item.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Item not found' }, status: :not_found
+    render json: { error: "Item not found" }, status: :not_found
   end
 
   def verify_community
     # Users can only access items that belong to their own community
     unless @item.community == @current_user.community
-      render json: { error: 'Item not found' }, status: :not_found
+      render json: { error: "Item not found" }, status: :not_found
     end
   end
 
@@ -90,10 +90,10 @@ class ItemsController < ApplicationController
   def apply_filters(items)
     items = items.where(community_id: params[:community_id]) if params[:community_id].present?
     items = items.where(status: params[:status]) if params[:status].present?
-    items = items.where('price >= ?', params[:min_price]) if params[:min_price].present?
-    items = items.where('price <= ?', params[:max_price]) if params[:max_price].present?
+    items = items.where("price >= ?", params[:min_price]) if params[:min_price].present?
+    items = items.where("price <= ?", params[:max_price]) if params[:max_price].present?
     if params[:q].present?
-      items = items.where('title ILIKE ? OR description ILIKE ?', "%#{params[:q]}%", "%#{params[:q]}%")
+      items = items.where("title ILIKE ? OR description ILIKE ?", "%#{params[:q]}%", "%#{params[:q]}%")
     end
     items
   end

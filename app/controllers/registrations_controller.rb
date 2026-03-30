@@ -2,7 +2,7 @@ class RegistrationsController < Devise::RegistrationsController
   # skip_before_action :verify_authenticity_token, only: [:create]
   respond_to :json
 
-  before_action :ensure_not_authenticated, only: [:create]
+  before_action :ensure_not_authenticated, only: [ :create ]
 
   def create
     build_resource(sign_up_params)
@@ -14,19 +14,19 @@ class RegistrationsController < Devise::RegistrationsController
       if resource.active_for_authentication?
         sign_up(resource_name, resource)
         # Generate token (same as before)
-        secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || 'your_secret_key_here'
+        secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
         payload = {
           sub: resource.id,
           jti: resource.jti,
           exp: 1.day.from_now.to_i
         }
-        token = JWT.encode(payload, secret, 'HS256')
+        token = JWT.encode(payload, secret, "HS256")
         render json: {
           user: UserSerializer.new(resource).serializable_hash,
           token: token
         }, status: :created
       else
-        render json: { message: 'User created successfully. Please confirm your email.' }, status: :created
+        render json: { message: "User created successfully. Please confirm your email." }, status: :created
       end
     else
       clean_up_passwords resource
@@ -39,7 +39,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   def ensure_not_authenticated
     if user_signed_in?
-      render json: { error: 'You are already signed in.' }, status: :forbidden
+      render json: { error: "You are already signed in." }, status: :forbidden
     end
   end
 

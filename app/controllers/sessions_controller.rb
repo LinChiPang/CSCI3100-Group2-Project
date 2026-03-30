@@ -8,13 +8,13 @@ class SessionsController < Devise::SessionsController
     self.resource = warden.authenticate(auth_options)
     if resource && resource.active_for_authentication?
       sign_in(resource_name, resource)
-      secret = ENV['JWT_SECRET'] || Rails.application.credentials.jwt_secret || 'your_secret_key_here'
+      secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
       payload = {
         sub: resource.id,
         jti: resource.jti,
         exp: 1.day.from_now.to_i
       }
-      token = JWT.encode(payload, secret, 'HS256')
+      token = JWT.encode(payload, secret, "HS256")
       render json: {
         user: UserSerializer.new(resource).serializable_hash,
         token: token
@@ -26,6 +26,6 @@ class SessionsController < Devise::SessionsController
 
   def destroy
     signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
-    render json: { message: 'Logged out successfully' }, status: :ok
+    render json: { message: "Logged out successfully" }, status: :ok
   end
 end
