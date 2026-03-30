@@ -12,4 +12,16 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "welcome#index"
+
+  get "notifications", to: "notifications#index"
+  post "notifications/broadcast", to: "notifications#broadcast"
+  get "payments", to: "payments#new"
+  post "payments/mock_checkout", to: "payments#mock_checkout"
+  get "search", to: "search#index"
+  get "search/suggestions", to: "search#suggestions"
+
+  namespace :admin do
+    get "analytics", to: "analytics#index"
+  end
+
 end

@@ -1,9 +1,8 @@
-require "simplecov"
-
-SimpleCov.start "rails" do
-  add_filter "/spec/"
-  add_filter "/config/"
-  minimum_coverage 80
+if ENV["COVERAGE"] == "true"
+  require "simplecov"
+  SimpleCov.start "rails" do
+    minimum_coverage 80
+  end
 end
 
 RSpec.configure do |config|

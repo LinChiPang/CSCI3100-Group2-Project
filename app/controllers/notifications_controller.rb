@@ -2,6 +2,7 @@ class NotificationsController < ApplicationController
   def index; end
 
   def broadcast
+    # Sanitize user-provided message before broadcasting to clients.
     message = sanitized_message
 
     ActionCable.server.broadcast(
