@@ -1,15 +1,14 @@
 class SessionsController < Devise::SessionsController
-  skip_before_action :verify_authenticity_token, only: [:create, :destroy]
+  # skip_before_action :verify_authenticity_token, only: [:create, :destroy]
   skip_before_action :verify_signed_out_user, only: :destroy
-  skip_before_action :require_no_authentication, only: [:create]
+  # skip_before_action :require_no_authentication, only: [:create]
   respond_to :json
 
   def create
-    self.resource = warden.authenticate!(auth_options)
-    if resource
+    self.resource = warden.authenticate(auth_options)
+    if resource && resource.active_for_authentication?
       sign_in(resource_name, resource)
-      # Generate JWT token manually
-      secret = 'your_secret_key_here'   # same as in devise.rb
+      secret = ENV['JWT_SECRET'] || Rails.application.credentials.jwt_secret || 'your_secret_key_here'
       payload = {
         sub: resource.id,
         jti: resource.jti,
@@ -21,7 +20,7 @@ class SessionsController < Devise::SessionsController
         token: token
       }, status: :ok
     else
-      render json: { error: 'Invalid email or password' }, status: :unauthorized
+      render json: { error: "Invalid email or password" }, status: :unauthorized
     end
   end
 

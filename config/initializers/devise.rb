@@ -315,7 +315,7 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = 'A_strong_secret_key'
+    jwt.secret = 'your_secret_key_here'
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/users/login$}]
     ]

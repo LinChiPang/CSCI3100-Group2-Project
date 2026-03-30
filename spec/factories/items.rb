@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :item do
-    title { "MyString" }
-    description { "MyText" }
-    price { "9.99" }
-    status { 1 }
-    user { nil }
-    community { nil }
+    title { "Test Item" }
+    description { "Test description" }
+    price { 100.00 }
+    status { "available" }
+    association :user
+    association :community
   end
 end

@@ -1,3 +1,4 @@
+=begin not using pundit so no need this file
 require 'rails_helper'
 
 RSpec.describe ItemPolicy, type: :policy do
@@ -25,3 +26,4 @@ RSpec.describe ItemPolicy, type: :policy do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 end
+=end

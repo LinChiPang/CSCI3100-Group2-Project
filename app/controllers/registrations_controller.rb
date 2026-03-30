@@ -1,5 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
-  skip_before_action :verify_authenticity_token, only: [:create]
+  # skip_before_action :verify_authenticity_token, only: [:create]
   respond_to :json
 
   before_action :ensure_not_authenticated, only: [:create]
@@ -14,7 +14,7 @@ class RegistrationsController < Devise::RegistrationsController
       if resource.active_for_authentication?
         sign_up(resource_name, resource)
         # Generate token (same as before)
-        secret = 'your_secret_key_here'
+        secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || 'your_secret_key_here'
         payload = {
           sub: resource.id,
           jti: resource.jti,
@@ -44,7 +44,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def sign_up_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :password, :password_confirmation, :community_id)
   end
 
   def after_sign_up_path_for(resource)

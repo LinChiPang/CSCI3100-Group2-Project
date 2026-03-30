@@ -28,23 +28,28 @@ class Item < ApplicationRecord
     status == 'reserved'
   end
 
-  def sold?
-    status == 'sold'
+  def reserve!
+    if available?
+      update!(status: 'reserved')
+    else
+      errors.add(:status, 'cannot be reserved when not available')
+      raise ActiveRecord::RecordInvalid.new(self)
+    end
+  end
+
+  def sell!
+    if reserved?
+      update!(status: 'sold')
+    else
+      errors.add(:status, 'cannot be sold unless reserved')
+      raise ActiveRecord::RecordInvalid.new(self)
+    end
   end
 
   # Scopes
   scope :available, -> { where(status: STATUSES[:available]) }
   scope :reserved,  -> { where(status: STATUSES[:reserved]) }
   scope :sold,      -> { where(status: STATUSES[:sold]) }
-
-  # Status transition methods
-  def reserve!
-    update!(status: 'reserved') if available?
-  end
-
-  def sell!
-    update!(status: 'sold') if reserved?
-  end
 
   private
 

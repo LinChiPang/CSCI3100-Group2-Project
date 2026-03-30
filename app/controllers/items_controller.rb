@@ -1,9 +1,10 @@
 class ItemsController < ApplicationController
-  before_action :authenticate_with_token!, except: [:index, :show]
+  before_action :authenticate_with_token!, except: []   # require auth for all actions
   before_action :set_item, only: [:show, :update, :destroy, :reserve, :sell]
+  before_action :verify_community, only: [:show, :update, :destroy, :reserve, :sell]
 
   def index
-    items = Item.all
+    items = @current_user.community.items.includes(:user, :community)
     items = apply_filters(items)
     render json: items, each_serializer: ItemSerializer, status: :ok
   end
@@ -13,7 +14,8 @@ class ItemsController < ApplicationController
   end
 
   def create
-    @item = @current_user.items.build(item_params)
+    @item = @current_user.items.build(item_params.except(:community_id))
+    @item.community = @current_user.community
     if @item.save
       render json: @item, status: :created
     else
@@ -70,10 +72,19 @@ class ItemsController < ApplicationController
 
   def set_item
     @item = Item.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Item not found' }, status: :not_found
+  end
+
+  def verify_community
+    # Users can only access items that belong to their own community
+    unless @item.community == @current_user.community
+      render json: { error: 'Item not found' }, status: :not_found
+    end
   end
 
   def item_params
-    params.require(:item).permit(:title, :description, :price, :community_id, :status)
+    params.require(:item).permit(:title, :description, :price, :status)
   end
 
   def apply_filters(items)
