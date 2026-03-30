@@ -2,7 +2,7 @@ class NotificationsController < ApplicationController
   def index; end
 
   def broadcast
-    message = params[:message].presence || "Test notification from ActionCable"
+    message = sanitized_message
 
     ActionCable.server.broadcast(
       "notifications",
@@ -13,5 +13,17 @@ class NotificationsController < ApplicationController
       format.html { redirect_to notifications_path, notice: "Notification broadcasted." }
       format.json { head :ok }
     end
+  end
+
+  private
+
+  def notification_params
+    params.permit(:message)
+  end
+
+  def sanitized_message
+    raw_message = notification_params[:message].to_s
+    cleaned = helpers.strip_tags(raw_message).squish
+    cleaned.presence || "Test notification from ActionCable"
   end
 end
