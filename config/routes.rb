@@ -15,4 +15,8 @@ Rails.application.routes.draw do
 
   get "payments", to: "payments#new"
   post "payments/mock_checkout", to: "payments#mock_checkout"
+
+  namespace :admin do
+    get "analytics", to: "analytics#index"
+  end
 end
