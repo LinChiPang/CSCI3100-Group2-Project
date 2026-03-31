@@ -47,7 +47,14 @@ RSpec.describe Item, type: :model do
     it 'requires the seller and item to share the same community' do
       seller = create(:user)
       other_community = create(:community)
-      invalid_item = build(:item, user: seller, community: other_community)
+      invalid_item = Item.new(
+        title: "Cross-community item",
+        description: "invalid",
+        price: 100,
+        status: :available,
+        user: seller,
+        community: other_community
+      )
 
       expect(invalid_item).not_to be_valid
       expect(invalid_item.errors.full_messages.join).to include("match seller")
