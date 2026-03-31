@@ -15,4 +15,3 @@ class CreateTransactions < ActiveRecord::Migration[8.1]
     add_index :transactions, :created_at
   end
 end
-
