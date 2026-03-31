@@ -1,0 +1,48 @@
+<h2>Admin Analytics Dashboard</h2>
+
+<p>This mock dashboard shows listing and transaction trends.</p>
+
+<p><strong>Total transactions:</strong> <%= @total_transactions %></p>
+<p><strong>Total listings:</strong> <%= @total_listings %></p>
+
+<canvas id="analytics-chart" width="700" height="320"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("turbo:load", () => {
+    const canvas = document.getElementById("analytics-chart")
+    if (!canvas || canvas.dataset.bound === "true") return
+    canvas.dataset.bound = "true"
+
+    const labels = <%= raw @labels.to_json %>
+    const transactions = <%= raw @transactions.to_json %>
+    const listings = <%= raw @listings.to_json %>
+
+    new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Transactions",
+            data: transactions,
+            borderColor: "#2563eb",
+            tension: 0.25
+          },
+          {
+            label: "Listings",
+            data: listings,
+            borderColor: "#16a34a",
+            tension: 0.25
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
+        }
+      }
+    })
+  })
+</script>
