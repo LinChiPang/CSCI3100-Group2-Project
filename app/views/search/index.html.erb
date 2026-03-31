@@ -1,0 +1,46 @@
+<h2>Fuzzy Search Suggestions</h2>
+
+<p>Type a keyword to get intelligent suggestions from marketplace items.</p>
+
+<label for="search-query">Search</label><br>
+<input id="search-query" type="text" placeholder="Try: lmp, chargre, keybord" autocomplete="off">
+
+<h3 style="margin-top: 18px;">Suggestions</h3>
+<ul id="search-suggestions">
+  <li>No suggestions yet.</li>
+</ul>
+
+<script>
+  document.addEventListener("turbo:load", () => {
+    const input = document.getElementById("search-query")
+    const list = document.getElementById("search-suggestions")
+    if (!input || !list || input.dataset.bound === "true") return
+    input.dataset.bound = "true"
+
+    const renderList = (items) => {
+      list.innerHTML = ""
+      if (items.length === 0) {
+        list.innerHTML = "<li>No suggestions yet.</li>"
+        return
+      }
+      items.forEach((item) => {
+        const li = document.createElement("li")
+        li.textContent = item
+        list.appendChild(li)
+      })
+    }
+
+    input.addEventListener("input", async () => {
+      const query = input.value.trim()
+      if (query.length === 0) {
+        renderList([])
+        return
+      }
+
+      const response = await fetch(`/search/suggestions?q=${encodeURIComponent(query)}`)
+      const data = await response.json()
+      renderList(data.suggestions || [])
+    })
+  })
+</script>
+
