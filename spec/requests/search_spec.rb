@@ -9,12 +9,13 @@ RSpec.describe "Search", type: :request do
   end
 
   it "returns fuzzy suggestions for a query" do
+    Transaction.create!(item_name: "Desk Lamp", amount_cents: 12_000, provider_ref: "tx_search_a")
     get "/search/suggestions", params: { q: "lmp" }
 
     expect(response).to have_http_status(:ok)
     parsed = JSON.parse(response.body)
     expect(parsed["suggestions"]).to be_an(Array)
-    expect(parsed["suggestions"]).not_to be_empty
+    expect(parsed["suggestions"]).to include("Desk Lamp")
   end
 
   it "returns empty suggestions for blank query" do
