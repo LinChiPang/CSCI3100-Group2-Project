@@ -40,12 +40,12 @@ class SearchController < ApplicationController
 
     prev_row = (0..b.length).to_a
     a.chars.each_with_index do |a_char, i|
-      current_row = [i + 1]
+      current_row = [ i + 1 ]
       b.chars.each_with_index do |b_char, j|
         insert_cost = current_row[j] + 1
         delete_cost = prev_row[j + 1] + 1
         replace_cost = prev_row[j] + (a_char == b_char ? 0 : 1)
-        current_row << [insert_cost, delete_cost, replace_cost].min
+        current_row << [ insert_cost, delete_cost, replace_cost ].min
       end
       prev_row = current_row
     end
