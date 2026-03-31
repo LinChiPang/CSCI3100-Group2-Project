@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_20_190340) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_130500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -32,6 +32,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_190340) do
     t.boolean "posting_enabled", default: true, null: false
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_community_rules_on_community_id", unique: true
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.integer "amount_cents", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", default: "HKD", null: false
+    t.string "item_name", null: false
+    t.string "provider", default: "stripe_mock", null: false
+    t.string "provider_ref", null: false
+    t.string "status", default: "succeeded", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_transactions_on_created_at"
+    t.index ["provider_ref"], name: "index_transactions_on_provider_ref", unique: true
   end
 
   add_foreign_key "community_rules", "communities"

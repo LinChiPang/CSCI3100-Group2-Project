@@ -1,0 +1,45 @@
+<h2>Mock Stripe Checkout</h2>
+
+<p>
+  This is a development-only mock checkout flow. It records transactions into PostgreSQL and simulates a Stripe success response.
+</p>
+
+<% if notice %>
+  <p><strong><%= notice %></strong></p>
+<% end %>
+
+<% if alert %>
+  <p><strong><%= alert %></strong></p>
+<% end %>
+
+<%= form_with url: "/payments/mock_checkout", method: :post, local: true do |f| %>
+  <div>
+    <%= f.label :item_name, "Item name" %><br>
+    <%= f.text_field :item_name, value: "Desk Lamp" %>
+  </div>
+  <div style="margin-top: 8px;">
+    <%= f.label :amount, "Amount (HKD)" %><br>
+    <%= f.number_field :amount, value: 120, min: 1 %>
+  </div>
+  <div style="margin-top: 12px;">
+    <%= f.submit "Pay with Stripe (mock)" %>
+  </div>
+<% end %>
+
+<h3 style="margin-top: 20px;">Recent transactions</h3>
+<ul>
+  <% if @recent_transactions.any? %>
+    <% @recent_transactions.each do |tx| %>
+      <li>
+        <%= tx.created_at.strftime("%Y-%m-%d %H:%M:%S") %> -
+        <%= tx.item_name %> -
+        HK$<%= tx.amount_cents / 100 %> -
+        <%= tx.status %> -
+        <%= tx.provider_ref %>
+      </li>
+    <% end %>
+  <% else %>
+    <li>No transactions yet.</li>
+  <% end %>
+</ul>
+
