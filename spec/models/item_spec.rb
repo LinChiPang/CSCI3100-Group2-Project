@@ -9,7 +9,7 @@ RSpec.describe Item, type: :model do
 
   describe 'status transitions' do
     let(:user) { create(:user) }
-    let(:community) { create(:community) }
+    let(:community) { user.community }
     let(:item) { create(:item, user: user, community: community, status: 'available') }
 
     it 'can be reserved' do
