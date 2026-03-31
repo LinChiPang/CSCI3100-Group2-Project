@@ -29,5 +29,28 @@ RSpec.describe Item, type: :model do
       item.reserve!
       expect { item.reserve! }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it 'cannot be reserved by a user from another community' do
+      outsider = create(:user)
+      expect { item.reserve!(actor: outsider) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(item.errors.full_messages.join).to include("another community")
+    end
+
+    it 'cannot be sold by a non-owner actor' do
+      actor = create(:user, community: community)
+      item.reserve!(actor: actor)
+      expect { item.sell!(actor: actor) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
+  describe 'community consistency' do
+    it 'requires the seller and item to share the same community' do
+      seller = create(:user)
+      other_community = create(:community)
+      invalid_item = build(:item, user: seller, community: other_community)
+
+      expect(invalid_item).not_to be_valid
+      expect(invalid_item.errors.full_messages.join).to include("match seller")
+    end
   end
 end

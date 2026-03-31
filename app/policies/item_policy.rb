@@ -1,50 +1,43 @@
 class ItemPolicy < ApplicationPolicy
-  # NOTE: Up to Pundit v2.3.1, the inheritance was declared as
-  # `Scope < Scope` rather than `Scope < ApplicationPolicy::Scope`.
-  # In most cases the behavior will be identical, but if updating existing
-  # code, beware of possible changes to the ancestors:
-  # https://gist.github.com/Burgestrand/4b4bc22f31c8a95c425fc0e30d7ef1f5
   def index?
-    true
+    user.present?
   end
 
   def show?
-    true
+    same_community?
   end
 
   def create?
-    user.present?  # any authenticated user can create
+    user.present?
   end
 
   def update?
-    user.present? && (record.user == user || user.admin?)
+    user.present? && same_community? && record.user_id == user.id
   end
 
   def destroy?
-    user.present? && (record.user == user || user.admin?)
+    update?
   end
 
   def reserve?
-    user.present? && record.user != user && record.available?
+    user.present? && same_community? && record.user_id != user.id && record.status_available?
   end
 
   def sell?
-    user.present? && record.user == user && record.reserved?
+    user.present? && same_community? && record.user_id == user.id && record.status_reserved?
   end
 
   class Scope < ApplicationPolicy::Scope
-    # NOTE: Be explicit about which records you allow access to!
-    # def resolve
-    #   scope.all
-    # end
     def resolve
-      if user.admin?
-        scope.all
-      else
-        # Users can see items in communities they belong to
-        # But for now, show all items (we'll refine later when Community is implemented)
-        scope.all
-      end
+      return scope.none if user.blank?
+
+      scope.where(community_id: user.community_id)
     end
+  end
+
+  private
+
+  def same_community?
+    record.community_id == user.community_id
   end
 end
