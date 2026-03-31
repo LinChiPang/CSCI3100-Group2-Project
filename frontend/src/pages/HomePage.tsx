@@ -4,8 +4,10 @@ import FilterPanel from "../components/FilterPanel";
 import ListingsGrid from "../components/ListingsGrid";
 import SearchBar from "../components/SearchBar";
 import SortSelect, { type SortKey } from "../components/SortSelect";
+import CommunityRuleBanner from "../components/CommunityRuleBanner";
 import { getCommunityRule, getListings } from "../services/api";
 import type { CommunityRule, FilterParams, Item } from "../types/marketplace";
+import { filterMinExceedsCommunityMax } from "../utils/communityRules";
 
 export default function HomePage() {
   const { community_slug } = useParams();
@@ -70,6 +72,17 @@ export default function HomePage() {
     void loadListings();
   }, [communitySlug, appliedFilters]);
 
+  const ruleWarnings = useMemo(() => {
+    const messages: string[] = [];
+    if (!communityRule) return messages;
+    if (filterMinExceedsCommunityMax(communityRule, appliedFilters.minPrice)) {
+      messages.push(
+        `Your min price filter (${appliedFilters.minPrice}) is above this community's limit (${communityRule.max_price}). Results may be empty.`,
+      );
+    }
+    return messages;
+  }, [communityRule, appliedFilters.minPrice]);
+
   const sortedItems = useMemo(() => {
     const copy = [...items];
     if (sortKey === "price_asc") copy.sort((a, b) => a.price_cents - b.price_cents);
@@ -106,10 +119,18 @@ export default function HomePage() {
         )}
       </section>
 
+      <CommunityRuleBanner rule={communityRule} />
+      {ruleWarnings.length > 0 && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {ruleWarnings.map((msg, index) => (
+            <p key={index}>{msg}</p>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="space-y-4 md:col-span-1">
           <SearchBar value={draftSearch} onChange={setDraftSearch} onSubmit={applySearchAndFilters} />
-          <SortSelect value={sortKey} onChange={setSortKey} />
           <FilterPanel
             value={draftFilters}
             communityRule={communityRule}
@@ -120,9 +141,11 @@ export default function HomePage() {
         </div>
 
         <div className="md:col-span-2">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-sm font-semibold text-gray-900">Listings ({sortedItems.length})</h3>
-            <p className="text-xs text-gray-600">Mock-first data (switchable via env)</p>
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              <SortSelect variant="inline" value={sortKey} onChange={setSortKey} />
+            </div>
           </div>
           <ListingsGrid items={sortedItems} communitySlug={communitySlug} />
         </div>

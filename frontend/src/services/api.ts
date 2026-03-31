@@ -1,3 +1,12 @@
+/**
+ * Frontend API surface for the marketplace SPA.
+ *
+ * Env:
+ * - VITE_USE_MOCKS: "false" to call Rails; anything else uses `mockApi`.
+ * - VITE_API_BASE_URL: origin of the Rails app when not using mocks (e.g. http://localhost:3000).
+ *
+ * Endpoint paths below are placeholders until backend exposes `/api/v1/...`; adjust here when the contract is final.
+ */
 import axios from "axios";
 import type {
   Community,
