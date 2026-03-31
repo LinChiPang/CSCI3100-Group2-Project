@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   post "payments/mock_checkout", to: "payments#mock_checkout"
   get "search", to: "search#index"
   get "search/suggestions", to: "search#suggestions"
+  get "notifications", to: "notifications#index"
+  post "notifications/broadcast", to: "notifications#broadcast"
 
   namespace :admin do
     get "analytics", to: "analytics#index"
