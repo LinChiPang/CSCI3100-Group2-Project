@@ -18,20 +18,38 @@ class SearchController < ApplicationController
     query = params[:q].to_s.strip
     return render json: { suggestions: [] } if query.blank?
 
-    normalized = query.downcase
-    ranked = ITEMS.sort_by do |item|
-      candidate = item.downcase
-      [
-        candidate.include?(normalized) ? 0 : 1,
-        levenshtein_distance(candidate, normalized),
-        candidate.length
-      ]
-    end
+    suggestions = pg_trgm_suggestions(query)
+    suggestions = in_memory_suggestions(query) if suggestions.empty?
 
-    render json: { suggestions: ranked.first(5) }
+    render json: { suggestions: suggestions.first(5) }
   end
 
   private
+
+  def pg_trgm_suggestions(query)
+    Transaction
+      .select(:item_name)
+      .distinct
+      .where("item_name % ?", query)
+      .order(Arel.sql("similarity(item_name, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
+      .limit(5)
+      .pluck(:item_name)
+  rescue ActiveRecord::StatementInvalid
+    []
+  end
+
+  def in_memory_suggestions(query)
+    normalized = query.downcase
+    ITEMS
+      .sort_by do |item|
+        candidate = item.downcase
+        [
+          candidate.include?(normalized) ? 0 : 1,
+          levenshtein_distance(candidate, normalized),
+          candidate.length
+        ]
+      end
+  end
 
   # Lightweight fuzzy ranking without extra gems.
   def levenshtein_distance(a, b)
