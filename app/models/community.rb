@@ -1,7 +1,7 @@
 class Community < ApplicationRecord
   has_one :community_rule, dependent: :destroy
   has_many :users, dependent: :restrict_with_exception
-  has_many :listings, dependent: :restrict_with_exception
+  has_many :items, dependent: :restrict_with_exception
 
   validates :name,
             presence: true,

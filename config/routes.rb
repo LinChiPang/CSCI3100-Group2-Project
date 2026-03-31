@@ -23,4 +23,20 @@ Rails.application.routes.draw do
   namespace :admin do
     get "analytics", to: "analytics#index"
   end
+
+  # API routes
+  devise_for :users, controllers: {
+    sessions: "sessions",
+    registrations: "registrations"
+  }, path_names: {
+    sign_in: "login",
+    sign_out: "logout"
+  }
+
+  resources :items do
+    member do
+      patch :reserve
+      patch :sell
+    end
+  end
 end
