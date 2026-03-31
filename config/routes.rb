@@ -12,4 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "welcome#index"
+
+  get "payments", to: "payments#new"
+  post "payments/mock_checkout", to: "payments#mock_checkout"
 end
