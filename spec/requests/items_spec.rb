@@ -82,10 +82,11 @@ RSpec.describe "Items", type: :request do
     context "with valid token" do
       it "creates an item" do
         post "/items",
-          params: { item: { title: "New Item", price: 50 } },
+          params: { item: { title: "New Item", price: 50, category: "books" } },
           headers: { "Authorization" => "Bearer #{token_for(user)}" }, as: :json
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)['title']).to eq("New Item")
+        expect(JSON.parse(response.body)['category']).to eq("books")
         # Ensure community is set to user's community
         expect(JSON.parse(response.body)['community']['id']).to eq(community.id)
       end
@@ -93,7 +94,7 @@ RSpec.describe "Items", type: :request do
 
     context "without token" do
       it "returns unauthorized" do
-        post "/items", params: { item: { title: "New Item", price: 50 } }
+        post "/items", params: { item: { title: "New Item", price: 50, category: "books" } }
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -115,6 +116,21 @@ RSpec.describe "Items", type: :request do
         errors = JSON.parse(response.body)['errors']
         expect(errors).to include("Title can't be blank")
         expect(errors).to include("Price must be greater than or equal to 0")
+      end
+    end
+
+    context "when a community rule blocks the category" do
+      before do
+        create(:community_rule, community: community, allowed_categories: %w[books])
+      end
+
+      it "returns unprocessable entity" do
+        post "/items",
+          params: { item: { title: "Lamp", price: 50, category: "electronics" } },
+          headers: { "Authorization" => "Bearer #{token_for(user)}" }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)["errors"]).to include("Category is not allowed in this community")
       end
     end
   end

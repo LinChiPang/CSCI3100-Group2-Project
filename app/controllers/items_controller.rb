@@ -90,13 +90,14 @@ class ItemsController < ApplicationController
   end
 
   def item_params
-    params.require(:item).permit(:title, :description, :price, :status)
+    params.require(:item).permit(:title, :description, :price, :status, :category)
   end
 
   def apply_filters(items)
     items = items.where(status: params[:status]) if params[:status].present?
     items = items.where("price >= ?", params[:min_price]) if params[:min_price].present?
     items = items.where("price <= ?", params[:max_price]) if params[:max_price].present?
+    items = items.where(category: params[:category].to_s.strip.downcase) if params[:category].present?
     if params[:q].present?
       items = items.where("title ILIKE ? OR description ILIKE ?", "%#{params[:q]}%", "%#{params[:q]}%")
     end

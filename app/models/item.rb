@@ -6,8 +6,18 @@ class Item < ApplicationRecord
 
   validates :title, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :category, presence: true
   validates :status, inclusion: { in: statuses.keys }
+
+  before_validation :normalize_category
+
+  scope :active_marketplace, -> { where(status: %i[available reserved]) }
+
   validate :seller_belongs_to_community
+  validate :category_allowed_by_community_rule
+  validate :price_within_community_limit
+  validate :posting_enabled_for_community, on: :create
+  validate :within_max_active_listings_limit, on: :create
 
   def reserve!(actor: nil)
     unless status_available?
@@ -49,10 +59,66 @@ class Item < ApplicationRecord
 
   private
 
+  def with_applicable_rule
+    rule = community&.community_rule
+    return if rule.blank?
+
+    yield rule
+  end
+
+  def normalize_category
+    self.category = category.to_s.strip.downcase
+  end
+
   def seller_belongs_to_community
     return if user.blank? || community.blank?
     return if user.community_id == community_id
 
     errors.add(:community, "must match seller's community")
+  end
+
+  def posting_enabled_for_community
+    with_applicable_rule do |rule|
+      return if rule.posting_enabled?
+
+      errors.add(:base, "posting is disabled for this community")
+    end
+  end
+
+  def price_within_community_limit
+    with_applicable_rule do |rule|
+      return if rule.max_price.blank?
+      return if price.blank?
+      return if price <= rule.max_price
+
+      errors.add(:price, "exceeds the community price cap")
+    end
+  end
+
+  def category_allowed_by_community_rule
+    with_applicable_rule do |rule|
+      return if category.blank?
+      return if rule.category_allowed?(category)
+
+      errors.add(:category, "is not allowed in this community")
+    end
+  end
+
+  def within_max_active_listings_limit
+    return if user.blank? || community.blank?
+
+    with_applicable_rule do |rule|
+      return if current_active_listing_count < rule.max_active_listings
+
+      errors.add(:base, "has reached the community active listing limit")
+    end
+  end
+
+  def current_active_listing_count
+    user.items
+        .where(community_id: community_id)
+        .active_marketplace
+        .where.not(id: id)
+        .count
   end
 end

@@ -3,6 +3,7 @@ FactoryBot.define do
     title { "Test Item" }
     description { "Test description" }
     price { 100.00 }
+    category { "books" }
     status { "available" }
     association :user
     community { user&.community || association(:community) }

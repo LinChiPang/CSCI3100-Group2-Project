@@ -23,7 +23,7 @@ community_rule_defaults = {
     posting_enabled: true,
     max_active_listings: 6,
     max_price: 4_000,
-    allowed_categories: %w[books kitchen sports]
+    allowed_categories: %w[books electronics kitchen sports]
   },
   "united-college" => {
     posting_enabled: true,
@@ -63,18 +63,67 @@ seller_shaw, buyer_shaw, seller_new_asia, buyer_united = users
 puts "Seeding items..."
 
 items_data = [
-  { title: "Algorithms Textbook", description: "CS fundamentals", price: 280, user: seller_shaw, community: seller_shaw.community, status: :available },
-  { title: "IKEA Desk Lamp", description: "Working condition", price: 120, user: seller_shaw, community: seller_shaw.community, status: :reserved },
-  { title: "Office Chair", description: "Mesh back, used 1 year", price: 450, user: seller_shaw, community: seller_shaw.community, status: :sold },
-  { title: "Rice Cooker", description: "1.8L, like new", price: 300, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Bluetooth Speaker", description: "Portable", price: 220, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Calculus Notes", description: "MATH1010 complete notes", price: 80, user: buyer_united, community: buyer_united.community, status: :available }
+  {
+    title: "Algorithms Textbook",
+    description: "CS fundamentals",
+    price: 280,
+    category: "books",
+    user: seller_shaw,
+    community: seller_shaw.community,
+    status: :available
+  },
+  {
+    title: "IKEA Desk Lamp",
+    description: "Working condition",
+    price: 120,
+    category: "electronics",
+    user: seller_shaw,
+    community: seller_shaw.community,
+    status: :reserved
+  },
+  {
+    title: "Office Chair",
+    description: "Mesh back, used 1 year",
+    price: 450,
+    category: "furniture",
+    user: seller_shaw,
+    community: seller_shaw.community,
+    status: :sold
+  },
+  {
+    title: "Rice Cooker",
+    description: "1.8L, like new",
+    price: 300,
+    category: "kitchen",
+    user: seller_new_asia,
+    community: seller_new_asia.community,
+    status: :available
+  },
+  {
+    title: "Bluetooth Speaker",
+    description: "Portable",
+    price: 220,
+    category: "electronics",
+    user: seller_new_asia,
+    community: seller_new_asia.community,
+    status: :available
+  },
+  {
+    title: "Calculus Notes",
+    description: "MATH1010 complete notes",
+    price: 80,
+    category: "books",
+    user: buyer_united,
+    community: buyer_united.community,
+    status: :available
+  }
 ]
 
 items_data.each do |attrs|
   item = Item.find_or_initialize_by(title: attrs[:title], user: attrs[:user], community: attrs[:community])
   item.description = attrs[:description]
   item.price = attrs[:price]
+  item.category = attrs[:category]
   item.status = attrs[:status]
   item.save!
 end

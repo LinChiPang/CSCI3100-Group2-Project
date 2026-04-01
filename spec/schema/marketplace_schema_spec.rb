@@ -33,4 +33,11 @@ RSpec.describe "Marketplace schema" do
     expect(columns).to have_key("allowed_categories")
     expect(columns["allowed_categories"].null).to be(false)
   end
+
+  it "creates items.category as a required column" do
+    columns = connection.columns(:items).index_by(&:name)
+
+    expect(columns).to have_key("category")
+    expect(columns["category"].null).to be(false)
+  end
 end
