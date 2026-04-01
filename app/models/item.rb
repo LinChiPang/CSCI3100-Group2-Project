@@ -2,58 +2,57 @@ class Item < ApplicationRecord
   belongs_to :user
   belongs_to :community
 
-  STATUSES = { available: 0, reserved: 1, sold: 2 }.freeze
-
-  after_initialize :set_default_status, if: :new_record?
+  enum :status, { available: 0, reserved: 1, sold: 2 }, prefix: true
 
   validates :title, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :status, presence: true, inclusion: { in: STATUSES.keys.map(&:to_s) }
+  validates :status, inclusion: { in: statuses.keys }
+  validate :seller_belongs_to_community
 
-  # Custom getter and setter for status
-  def status
-    STATUSES.key(super).to_s
-  end
-
-  def status=(value)
-    super(STATUSES[value.to_sym])
-  end
-
-  # Convenience methods
-  def available?
-    status == "available"
-  end
-
-  def reserved?
-    status == "reserved"
-  end
-
-  def reserve!
-    if available?
-      update!(status: "reserved")
-    else
+  def reserve!(actor: nil)
+    unless status_available?
       errors.add(:status, "cannot be reserved when not available")
-      raise ActiveRecord::RecordInvalid.new(self)
+      raise ActiveRecord::RecordInvalid, self
     end
+
+    if actor.present?
+      if actor.community_id != community_id
+        errors.add(:base, "cannot reserve item from another community")
+        raise ActiveRecord::RecordInvalid, self
+      end
+      if actor.id == user_id
+        errors.add(:base, "owner cannot reserve own item")
+        raise ActiveRecord::RecordInvalid, self
+      end
+    end
+
+    update!(status: :reserved)
   end
 
-  def sell!
-    if reserved?
-      update!(status: "sold")
-    else
+  def sell!(actor: nil)
+    unless status_reserved?
       errors.add(:status, "cannot be sold unless reserved")
-      raise ActiveRecord::RecordInvalid.new(self)
+      raise ActiveRecord::RecordInvalid, self
     end
+
+    if actor.present? && actor.id != user_id
+      errors.add(:base, "only owner can mark item as sold")
+      raise ActiveRecord::RecordInvalid, self
+    end
+
+    update!(status: :sold)
   end
 
-  # Scopes
-  scope :available, -> { where(status: STATUSES[:available]) }
-  scope :reserved,  -> { where(status: STATUSES[:reserved]) }
-  scope :sold,      -> { where(status: STATUSES[:sold]) }
+  scope :available, -> { where(status: :available) }
+  scope :reserved, -> { where(status: :reserved) }
+  scope :sold, -> { where(status: :sold) }
 
   private
 
-  def set_default_status
-    self.status = :available if status.nil?
+  def seller_belongs_to_community
+    return if user.blank? || community.blank?
+    return if user.community_id == community_id
+
+    errors.add(:community, "must match seller's community")
   end
 end
