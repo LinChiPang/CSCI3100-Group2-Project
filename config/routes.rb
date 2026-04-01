@@ -12,4 +12,31 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "welcome#index"
+
+  get "payments", to: "payments#new"
+  post "payments/mock_checkout", to: "payments#mock_checkout"
+  get "search", to: "search#index"
+  get "search/suggestions", to: "search#suggestions"
+  get "notifications", to: "notifications#index"
+  post "notifications/broadcast", to: "notifications#broadcast"
+
+  namespace :admin do
+    get "analytics", to: "analytics#index"
+  end
+
+  # API routes
+  devise_for :users, controllers: {
+    sessions: "sessions",
+    registrations: "registrations"
+  }, path_names: {
+    sign_in: "login",
+    sign_out: "logout"
+  }
+
+  resources :items do
+    member do
+      patch :reserve
+      patch :sell
+    end
+  end
 end

@@ -1,7 +1,19 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  include Devise::Controllers::Helpers
 
-  # Changes to the importmap will invalidate the etag for HTML responses
-  stale_when_importmap_changes
+  skip_before_action :verify_authenticity_token
+
+  private
+
+  def authenticate_with_token!
+    token = request.headers["Authorization"].to_s.gsub("Bearer ", "")
+    secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
+    begin
+      payload = JWT.decode(token, secret, true, algorithm: "HS256")
+      user_id = payload[0]["sub"]
+      @current_user = User.find(user_id)
+    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+      render json: { error: "Invalid token" }, status: :unauthorized
+    end
+  end
 end

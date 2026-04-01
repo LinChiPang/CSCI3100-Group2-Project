@@ -1,0 +1,33 @@
+<h2>Admin Analytics Dashboard</h2>
+
+<p>
+  This dashboard summarizes transaction activity from the mock Stripe payment flow.
+</p>
+
+<ul>
+  <li><strong>Total transactions:</strong> <%= @total_transactions %></li>
+  <li><strong>Total GMV:</strong> HK$<%= @total_gmv_cents / 100 %></li>
+</ul>
+
+<h3>Daily Transaction Counts</h3>
+<ul>
+  <% if @daily_labels.any? %>
+    <% @daily_labels.each_with_index do |label, idx| %>
+      <li><%= label %>: <%= @daily_counts[idx] %></li>
+    <% end %>
+  <% else %>
+    <li>No transactions yet.</li>
+  <% end %>
+</ul>
+
+<h3>Daily GMV (HKD)</h3>
+<ul>
+  <% if @daily_labels.any? %>
+    <% @daily_labels.each_with_index do |label, idx| %>
+      <li><%= label %>: HK$<%= @daily_gmv_hkd[idx] %></li>
+    <% end %>
+  <% else %>
+    <li>No transactions yet.</li>
+  <% end %>
+</ul>
+
