@@ -7,23 +7,24 @@ import type { Item } from "../types/marketplace";
 describe("ListingCard", () => {
   const mockItem: Item = {
     id: 42,
-    community_slug: "hall-1",
+    community_id: 1,
+    user_id: 5,
     title: "Physics Textbook",
     description: "Good condition",
-    price_cents: 6500,
+    price: 65,
     status: "available",
-    category: "books",
-    seller_name: "Charlie",
+    created_at: "2026-03-20T10:00:00Z",
+    updated_at: "2026-03-20T10:00:00Z",
   };
 
-  it("renders item title and seller", () => {
+  it("renders item title and seller ID", () => {
     render(
       <BrowserRouter>
         <ListingCard item={mockItem} communitySlug="hall-1" />
       </BrowserRouter>,
     );
     expect(screen.getByText("Physics Textbook")).toBeInTheDocument();
-    expect(screen.getByText(/Charlie/)).toBeInTheDocument();
+    expect(screen.getByText(/Seller ID:/)).toBeInTheDocument();
   });
 
   it("displays price in HKD", () => {
@@ -33,15 +34,6 @@ describe("ListingCard", () => {
       </BrowserRouter>,
     );
     expect(screen.getByText(/HK\$|65/)).toBeInTheDocument();
-  });
-
-  it("displays category as title case", () => {
-    render(
-      <BrowserRouter>
-        <ListingCard item={mockItem} communitySlug="hall-1" />
-      </BrowserRouter>,
-    );
-    expect(screen.getByText(/Books/)).toBeInTheDocument();
   });
 
   it("shows status badge with correct styling for available", () => {

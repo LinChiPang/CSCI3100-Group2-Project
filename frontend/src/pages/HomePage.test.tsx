@@ -19,23 +19,25 @@ const mockCommunityRule: CommunityRule = {
 const mockItems: Item[] = [
   {
     id: 1,
-    community_slug: "hall-1",
+    community_id: 1,
+    user_id: 1,
     title: "Math Textbook",
     description: "Calculus",
-    price_cents: 5000,
+    price: 50,
     status: "available",
-    category: "books",
-    seller_name: "Alice",
+    created_at: "2026-03-20T10:00:00Z",
+    updated_at: "2026-03-20T10:00:00Z",
   },
   {
     id: 2,
-    community_slug: "hall-1",
+    community_id: 1,
+    user_id: 2,
     title: "Laptop Stand",
     description: "Metal stand",
-    price_cents: 15000,
+    price: 150,
     status: "sold",
-    category: "electronics",
-    seller_name: "Bob",
+    created_at: "2026-03-20T10:05:00Z",
+    updated_at: "2026-03-20T10:05:00Z",
   },
 ];
 
@@ -56,10 +58,7 @@ describe("HomePage", () => {
 
   it("loads and displays community rule and listings", async () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: mockItems,
-      meta: { total: 2, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
     renderWithRouter(<HomePage />);
 
@@ -71,10 +70,7 @@ describe("HomePage", () => {
 
   it("displays empty state when no listings match filters", async () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: [],
-      meta: { total: 0, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue([]);
 
     renderWithRouter(<HomePage />);
 
@@ -85,10 +81,7 @@ describe("HomePage", () => {
 
   it("sorts items by price ascending", async () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: mockItems,
-      meta: { total: 2, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
     renderWithRouter(<HomePage />);
 
@@ -106,10 +99,7 @@ describe("HomePage", () => {
   it("applies filters when Apply button clicked", async () => {
     const user = userEvent.setup();
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: mockItems,
-      meta: { total: 2, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
     renderWithRouter(<HomePage />);
 
@@ -135,10 +125,7 @@ describe("HomePage", () => {
   it("resets filters when Reset button clicked", async () => {
     const user = userEvent.setup();
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: mockItems,
-      meta: { total: 2, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
     renderWithRouter(<HomePage />);
 
@@ -159,10 +146,7 @@ describe("HomePage", () => {
 
   it("displays community rule banner", async () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings).mockResolvedValue({
-      items: mockItems,
-      meta: { total: 2, filters_applied: {} },
-    });
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
     renderWithRouter(<HomePage />);
 

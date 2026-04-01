@@ -61,7 +61,7 @@ export default function HomePage() {
         setError(null);
 
         const listingsRes = await getListings(communitySlug, appliedFilters);
-        setItems(listingsRes.items);
+        setItems(listingsRes);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load listings");
       } finally {
@@ -85,8 +85,8 @@ export default function HomePage() {
 
   const sortedItems = useMemo(() => {
     const copy = [...items];
-    if (sortKey === "price_asc") copy.sort((a, b) => a.price_cents - b.price_cents);
-    if (sortKey === "price_desc") copy.sort((a, b) => b.price_cents - a.price_cents);
+    if (sortKey === "price_asc") copy.sort((a, b) => a.price - b.price);
+    if (sortKey === "price_desc") copy.sort((a, b) => b.price - a.price);
     if (sortKey === "status") {
       const rank: Record<Item["status"], number> = { available: 0, reserved: 1, sold: 2 };
       copy.sort((a, b) => rank[a.status] - rank[b.status]);

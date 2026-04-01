@@ -17,15 +17,20 @@ export type CommunityRule = {
 
 export type Item = {
   id: number;
-  community_slug: string;
+  community_id: number;
+  user_id: number;
   title: string;
-  description: string;
-  price_cents: number;
+  description: string | null;
+  price: number;
   status: ItemStatus;
-  category: string;
-  seller_name: string;
-  image_url?: string;
-  reserved_by?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type User = {
+  id: number;
+  email: string;
+  community_id: number;
 };
 
 export type FilterParams = {

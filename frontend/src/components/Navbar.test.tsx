@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import Navbar from "./Navbar";
+import { AuthProvider } from "../context/AuthContext";
 import type { Community } from "../types/marketplace";
 
 const mockCommunities: Community[] = [
@@ -13,7 +14,9 @@ describe("Navbar", () => {
   it("displays title", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     expect(screen.getByText("Second-hand Marketplace")).toBeInTheDocument();
@@ -22,7 +25,9 @@ describe("Navbar", () => {
   it("displays subtitle", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     expect(screen.getByText("CSCI3100 Group 2 Project")).toBeInTheDocument();
@@ -31,7 +36,9 @@ describe("Navbar", () => {
   it("displays all communities in dropdown", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     const select = screen.getByRole("combobox");
@@ -42,7 +49,9 @@ describe("Navbar", () => {
   it("displays community label", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     expect(screen.getByLabelText("Community")).toBeInTheDocument();
@@ -51,7 +60,9 @@ describe("Navbar", () => {
   it("shows selected community", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} currentSlug="hall-1" />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} currentSlug="hall-1" />
+        </AuthProvider>
       </BrowserRouter>,
     );
     const select = screen.getByRole("combobox");
@@ -61,7 +72,9 @@ describe("Navbar", () => {
   it("shows placeholder when no community selected", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     const select = screen.getByRole("combobox");
@@ -71,7 +84,9 @@ describe("Navbar", () => {
   it("renders home link", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} />
+        </AuthProvider>
       </BrowserRouter>,
     );
     const homeLink = screen.getByRole("link", { name: "Second-hand Marketplace" });
@@ -81,7 +96,9 @@ describe("Navbar", () => {
   it("renders community-specific link when slug provided", () => {
     render(
       <BrowserRouter>
-        <Navbar communities={mockCommunities} currentSlug="hall-1" />
+        <AuthProvider>
+          <Navbar communities={mockCommunities} currentSlug="hall-1" />
+        </AuthProvider>
       </BrowserRouter>,
     );
     const communityLink = screen.getByRole("link", { name: "Second-hand Marketplace" });

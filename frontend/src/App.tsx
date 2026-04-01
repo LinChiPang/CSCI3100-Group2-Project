@@ -3,7 +3,9 @@ import { Navigate, Route, Routes, useLocation, useParams } from "react-router-do
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import ItemDetailPage from "./pages/ItemDetailPage";
+import LoginPage from "./pages/LoginPage";
 import { getCommunities } from "./services/api";
+import { AuthProvider } from "./context/AuthContext";
 import type { Community } from "./types/marketplace";
 
 function CommunityLayout() {
@@ -72,11 +74,14 @@ function DefaultRedirect() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<DefaultRedirect />} />
-      <Route path="/c/:community_slug/*" element={<CommunityLayout />} />
-      <Route path="*" element={<DefaultRedirect />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<DefaultRedirect />} />
+        <Route path="/c/:community_slug/*" element={<CommunityLayout />} />
+        <Route path="*" element={<DefaultRedirect />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 

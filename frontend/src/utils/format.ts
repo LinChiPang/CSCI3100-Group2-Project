@@ -1,3 +1,11 @@
+export function formatDollars(price: number) {
+  return price.toLocaleString(undefined, {
+    style: "currency",
+    currency: "HKD",
+    maximumFractionDigits: 0,
+  });
+}
+
 export function formatDollarsFromCents(priceCents: number) {
   const dollars = priceCents / 100;
   return dollars.toLocaleString(undefined, {

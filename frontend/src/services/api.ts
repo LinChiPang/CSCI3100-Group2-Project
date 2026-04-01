@@ -4,8 +4,6 @@
  * Env:
  * - VITE_USE_MOCKS: "false" to call Rails; anything else uses `mockApi`.
  * - VITE_API_BASE_URL: origin of the Rails app when not using mocks (e.g. http://localhost:3000).
- *
- * Endpoint paths below are placeholders until backend exposes `/api/v1/...`; adjust here when the contract is final.
  */
 import axios from "axios";
 import type {
@@ -13,7 +11,7 @@ import type {
   CommunityRule,
   FilterParams,
   Item,
-  ListingsResponse,
+  User,
 } from "../types/marketplace";
 import * as mockApi from "./mockApi";
 
@@ -25,6 +23,15 @@ const client = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// Add JWT token to request headers if available
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 async function guardRealApi() {
   if (useMocks) return;
   if (!apiBaseUrl) {
@@ -32,59 +39,82 @@ async function guardRealApi() {
   }
 }
 
+// ===== Auth Endpoints =====
+export async function login(email: string, password: string): Promise<{ user: User; token: string }> {
+  if (useMocks) return mockApi.login(email, password);
+  await guardRealApi();
+
+  const res = await client.post("/users/sign_in", {
+    user: { email, password },
+  });
+
+  return {
+    user: res.data.user as User,
+    token: res.data.token as string,
+  };
+}
+
+export async function logout(): Promise<void> {
+  if (useMocks) {
+    mockApi.logout();
+    return;
+  }
+  await guardRealApi();
+  localStorage.removeItem("auth_token");
+  await client.post("/users/sign_out");
+}
+
+// ===== Community Endpoints =====
 export async function getCommunities(): Promise<Community[]> {
   if (useMocks) return mockApi.getCommunities();
   await guardRealApi();
-  const res = await client.get("/api/v1/communities");
+  const res = await client.get("/communities");
   return res.data as Community[];
 }
 
 export async function getCommunityRule(communitySlug: string): Promise<CommunityRule | null> {
   if (useMocks) return mockApi.getCommunityRule(communitySlug);
   await guardRealApi();
-  const res = await client.get(`/api/v1/communities/${encodeURIComponent(communitySlug)}/rule`);
+  const res = await client.get(`/communities/${encodeURIComponent(communitySlug)}/community_rule`);
   return res.data as CommunityRule;
 }
 
+// ===== Item Endpoints =====
 export async function getListings(
   communitySlug: string,
   filters: FilterParams,
-): Promise<ListingsResponse> {
+): Promise<Item[]> {
   if (useMocks) return mockApi.getListings(communitySlug, filters);
   await guardRealApi();
 
   const params: Record<string, unknown> = {};
   if (filters.search) params.q = filters.search;
-  if (filters.categories && filters.categories.length > 0) params.category = filters.categories[0];
   if (filters.minPrice !== undefined) params.min_price = filters.minPrice;
   if (filters.maxPrice !== undefined) params.max_price = filters.maxPrice;
   if (filters.statuses && filters.statuses.length > 0) params.status = filters.statuses[0];
 
-  const res = await client.get(
-    `/api/v1/communities/${encodeURIComponent(communitySlug)}/items`,
-    { params },
-  );
-  return res.data as ListingsResponse;
+  const res = await client.get("/items", { params });
+  return res.data as Item[];
 }
 
 export async function getItemDetail(itemId: number): Promise<Item> {
   if (useMocks) return mockApi.getItemDetail(itemId);
   await guardRealApi();
-  const res = await client.get(`/api/v1/items/${itemId}`);
+  const res = await client.get(`/items/${itemId}`);
   return res.data as Item;
 }
 
 export async function reserveItem(itemId: number): Promise<Item> {
   if (useMocks) return mockApi.reserveItem(itemId);
   await guardRealApi();
-  const res = await client.post(`/api/v1/items/${itemId}/reserve`);
+  const res = await client.patch(`/items/${itemId}/reserve`);
   return res.data as Item;
 }
 
-export async function buyItem(itemId: number): Promise<Item> {
-  if (useMocks) return mockApi.buyItem(itemId);
+export async function sellItem(itemId: number): Promise<Item> {
+  if (useMocks) return mockApi.sellItem(itemId);
   await guardRealApi();
-  const res = await client.post(`/api/v1/items/${itemId}/buy`);
+  const res = await client.patch(`/items/${itemId}/sell`);
   return res.data as Item;
 }
 
