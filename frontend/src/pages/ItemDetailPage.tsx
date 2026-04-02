@@ -92,12 +92,7 @@ export default function ItemDetailPage() {
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-5">
       <CommunityRuleBanner rule={communityRule} />
-      {overMaxPrice && communityRule != null && communityRule.max_price !== null && (
-        <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-          This listing price exceeds the community max ({communityRule.max_price}). Actions are disabled until the listing
-          complies.
-        </p>
-      )}
+
       <p className="text-sm text-gray-500">Community: {community_slug}</p>
       <h2 className="mt-1 text-xl font-semibold text-gray-900">{item.title}</h2>
       <p className="mt-2 text-gray-700">{item.description}</p>

@@ -164,7 +164,7 @@ describe("ItemDetailPage", () => {
     });
   });
 
-  it("displays error when price exceeds community max", async () => {
+  it("does not display price error banner when price exceeds community max", async () => {
     const expensiveItem: Item = {
       ...mockItem,
       price: 600, // Exceeds 500 HKD max
@@ -175,8 +175,9 @@ describe("ItemDetailPage", () => {
     renderWithRouter(<ItemDetailPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/exceeds the community max/i)).toBeInTheDocument();
+      expect(screen.getByText(expensiveItem.title)).toBeInTheDocument();
     });
+    expect(screen.queryByText(/exceeds the community max/i)).not.toBeInTheDocument();
   });
 
   it("disables actions when price exceeds max", async () => {

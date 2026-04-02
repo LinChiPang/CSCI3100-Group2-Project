@@ -38,16 +38,16 @@ export default function LandingPage() {
         </p>
 
         {/* Buttons */}
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-10 flex flex-col items-center gap-4">
           <Link
             to="/register"
-            className="rounded-lg bg-gray-900 px-8 py-3 text-sm font-semibold text-white hover:bg-black transition-colors"
+            className="w-48 text-center rounded-lg bg-gray-900 px-8 py-3 text-sm font-semibold text-white hover:bg-black transition-colors"
           >
             Register
           </Link>
           <Link
             to="/login"
-            className="rounded-lg border border-gray-300 bg-white px-8 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+            className="w-48 text-center rounded-lg border border-gray-300 bg-white px-8 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
           >
             Login
           </Link>

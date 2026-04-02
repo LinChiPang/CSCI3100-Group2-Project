@@ -144,6 +144,19 @@ export async function getListings(
   return (res.data as RawItem[]).map(normalizeItem);
 }
 
+export async function createListing(
+  title: string,
+  description: string,
+  price: number,
+): Promise<Item> {
+  if (useMocks) return mockApi.createListing(title, description, price);
+  await guardRealApi();
+  const res = await client.post("/items", {
+    item: { title, description, price },
+  });
+  return normalizeItem(res.data as RawItem);
+}
+
 export async function getItemDetail(itemId: number): Promise<Item> {
   if (useMocks) return mockApi.getItemDetail(itemId);
   await guardRealApi();

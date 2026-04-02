@@ -386,6 +386,30 @@ export async function getListings(communitySlug: string, filters: FilterParams):
   return filtered;
 }
 
+export async function createListing(
+  title: string,
+  description: string,
+  price: number,
+): Promise<Item> {
+  await sleep(300);
+  if (!mockCurrentUser) throw new Error("You must be logged in to post a listing.");
+  const now = new Date().toISOString();
+  const newItem: Item = {
+    id: Math.max(...items.map((i) => i.id)) + 1,
+    community_id: mockCurrentUser.community_id,
+    user_id: mockCurrentUser.id,
+    seller_name: mockCurrentUser.email.split("@")[0],
+    title,
+    description: description || null,
+    price,
+    status: "available",
+    created_at: now,
+    updated_at: now,
+  };
+  items.push(newItem);
+  return newItem;
+}
+
 export async function getItemDetail(itemId: number): Promise<Item> {
   await sleep(220);
   const it = items.find((x) => x.id === itemId);
