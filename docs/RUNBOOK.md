@@ -17,6 +17,9 @@ ruby bin\rails db:create
 ruby bin\rails db:migrate
 ```
 
+Database credentials for local development and test are now loaded from `.env`.
+See [`docs/DATABASE_CONFIGURATION.md`](./DATABASE_CONFIGURATION.md) for the required variables and setup steps.
+
 ### Start server
 
 ```powershell
@@ -43,4 +46,3 @@ ruby bin\rails db:test:prepare
 bundle exec rspec
 bundle exec cucumber
 ```
-

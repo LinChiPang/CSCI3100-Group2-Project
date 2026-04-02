@@ -61,6 +61,9 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
+  # Load environment variables from .env
+  gem "dotenv-rails", require: "dotenv/load"
+
   gem "rspec-rails"
   gem "cucumber-rails", require: false
   gem "database_cleaner-active_record"
