@@ -15,6 +15,34 @@ import type {
 } from "../types/marketplace";
 import * as mockApi from "./mockApi";
 
+// Shape returned by ItemSerializer (nested user + community)
+type RawItem = {
+  id: number;
+  title: string;
+  description: string | null;
+  price: string; // Rails decimal comes as string
+  status: "available" | "reserved" | "sold";
+  created_at: string;
+  updated_at: string;
+  user: { id: number; email: string };
+  community: { id: number; slug: string; name: string };
+};
+
+function normalizeItem(raw: RawItem): Item {
+  return {
+    id: raw.id,
+    community_id: raw.community.id,
+    user_id: raw.user.id,
+    seller_name: raw.user.email.split("@")[0],
+    title: raw.title,
+    description: raw.description,
+    price: parseFloat(raw.price),
+    status: raw.status,
+    created_at: raw.created_at,
+    updated_at: raw.updated_at,
+  };
+}
+
 const useMocks = import.meta.env.VITE_USE_MOCKS !== "false";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
@@ -40,11 +68,30 @@ async function guardRealApi() {
 }
 
 // ===== Auth Endpoints =====
+export async function register(
+  email: string,
+  password: string,
+  passwordConfirmation: string,
+  communityId: number,
+): Promise<{ user: User; token: string }> {
+  if (useMocks) return mockApi.register(email, password, passwordConfirmation, communityId);
+  await guardRealApi();
+
+  const res = await client.post("/users", {
+    user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId },
+  });
+
+  return {
+    user: res.data.user as User,
+    token: res.data.token as string,
+  };
+}
+
 export async function login(email: string, password: string): Promise<{ user: User; token: string }> {
   if (useMocks) return mockApi.login(email, password);
   await guardRealApi();
 
-  const res = await client.post("/users/sign_in", {
+  const res = await client.post("/users/login", {
     user: { email, password },
   });
 
@@ -61,7 +108,7 @@ export async function logout(): Promise<void> {
   }
   await guardRealApi();
   localStorage.removeItem("auth_token");
-  await client.post("/users/sign_out");
+  await client.post("/users/logout");
 }
 
 // ===== Community Endpoints =====
@@ -94,14 +141,14 @@ export async function getListings(
   if (filters.statuses && filters.statuses.length > 0) params.status = filters.statuses[0];
 
   const res = await client.get("/items", { params });
-  return res.data as Item[];
+  return (res.data as RawItem[]).map(normalizeItem);
 }
 
 export async function getItemDetail(itemId: number): Promise<Item> {
   if (useMocks) return mockApi.getItemDetail(itemId);
   await guardRealApi();
   const res = await client.get(`/items/${itemId}`);
-  return res.data as Item;
+  return normalizeItem(res.data as RawItem);
 }
 
 export async function reserveItem(itemId: number): Promise<Item> {

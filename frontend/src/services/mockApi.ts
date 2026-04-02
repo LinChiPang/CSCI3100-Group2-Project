@@ -39,6 +39,7 @@ let items: Item[] = [
     id: 101,
     community_id: 1,
     user_id: 1,
+    seller_name: "alice",
     title: "Calculus Textbook (Vol. 1)",
     description: "Good condition. Includes practice problems.",
     price: 180,
@@ -50,6 +51,7 @@ let items: Item[] = [
     id: 102,
     community_id: 1,
     user_id: 2,
+    seller_name: "bob",
     title: "Introduction to Algorithms - 3rd Ed",
     description: "Minor highlighting. No missing pages.",
     price: 280,
@@ -61,6 +63,7 @@ let items: Item[] = [
     id: 103,
     community_id: 1,
     user_id: 3,
+    seller_name: "carmen",
     title: "Math Formula Sheet (Printed)",
     description: "Handy cheat sheet for finals.",
     price: 50,
@@ -72,6 +75,7 @@ let items: Item[] = [
     id: 104,
     community_id: 1,
     user_id: 4,
+    seller_name: "david",
     title: "Wooden Desk Lamp",
     description: "Warm light, adjustable neck.",
     price: 75,
@@ -83,6 +87,7 @@ let items: Item[] = [
     id: 105,
     community_id: 1,
     user_id: 5,
+    seller_name: "eva",
     title: "Study Chair (Ergonomic)",
     description: "Comfortable for long hours.",
     price: 64,
@@ -94,6 +99,7 @@ let items: Item[] = [
     id: 106,
     community_id: 1,
     user_id: 6,
+    seller_name: "frank",
     title: "2-Drawer Storage Cabinet",
     description: "Sturdy cabinet with smooth drawers.",
     price: 120,
@@ -105,6 +111,7 @@ let items: Item[] = [
     id: 107,
     community_id: 1,
     user_id: 7,
+    seller_name: "grace",
     title: "Wireless Mouse (USB-C)",
     description: "Rechargeable. Works great.",
     price: 32,
@@ -116,6 +123,7 @@ let items: Item[] = [
     id: 108,
     community_id: 1,
     user_id: 8,
+    seller_name: "henry",
     title: "Mechanical Keyboard (Blue Switch)",
     description: "No dents. Clean keycaps.",
     price: 59,
@@ -127,6 +135,7 @@ let items: Item[] = [
     id: 109,
     community_id: 1,
     user_id: 9,
+    seller_name: "iris",
     title: "USB-C Hub (7-in-1)",
     description: "HDMI + SD card + USB ports.",
     price: 42,
@@ -138,6 +147,7 @@ let items: Item[] = [
     id: 110,
     community_id: 1,
     user_id: 10,
+    seller_name: "jack",
     title: "Physics Workbook",
     description: "Chapter summaries and problem sets.",
     price: 90,
@@ -149,6 +159,7 @@ let items: Item[] = [
     id: 201,
     community_id: 2,
     user_id: 11,
+    seller_name: "kelly",
     title: "Chemistry Lab Manual",
     description: "Lab procedures and worksheets.",
     price: 160,
@@ -160,6 +171,7 @@ let items: Item[] = [
     id: 202,
     community_id: 2,
     user_id: 12,
+    seller_name: "leo",
     title: "Linear Algebra Notes",
     description: "Clean notes for matrix & eigenvalues.",
     price: 65,
@@ -171,6 +183,7 @@ let items: Item[] = [
     id: 203,
     community_id: 2,
     user_id: 13,
+    seller_name: "mia",
     title: "Office Chair (Breathable)",
     description: "Used lightly. Great ventilation.",
     price: 74,
@@ -182,6 +195,7 @@ let items: Item[] = [
     id: 204,
     community_id: 2,
     user_id: 14,
+    seller_name: "nora",
     title: "Standing Desk Converter",
     description: "Make your desk standing-friendly.",
     price: 98,
@@ -193,6 +207,7 @@ let items: Item[] = [
     id: 205,
     community_id: 2,
     user_id: 15,
+    seller_name: "oscar",
     title: "Bluetooth Speaker",
     description: "Loud and clear sound. Includes cable.",
     price: 220,
@@ -204,6 +219,7 @@ let items: Item[] = [
     id: 206,
     community_id: 2,
     user_id: 16,
+    seller_name: "paula",
     title: "Power Bank 10000mAh",
     description: "Fast charge supported.",
     price: 68,
@@ -215,6 +231,7 @@ let items: Item[] = [
     id: 207,
     community_id: 2,
     user_id: 17,
+    seller_name: "quinn",
     title: "Laptop Stand (Aluminum)",
     description: "Adjustable angle. Fits most laptops.",
     price: 51,
@@ -226,6 +243,7 @@ let items: Item[] = [
     id: 208,
     community_id: 2,
     user_id: 18,
+    seller_name: "rita",
     title: "Discrete Mathematics Text",
     description: "Graphs, logic, and proofs.",
     price: 199,
@@ -237,6 +255,7 @@ let items: Item[] = [
     id: 209,
     community_id: 2,
     user_id: 19,
+    seller_name: "sam",
     title: "USB Flash Drive 64GB",
     description: "Reliable transfer speeds.",
     price: 24,
@@ -248,6 +267,7 @@ let items: Item[] = [
     id: 210,
     community_id: 2,
     user_id: 20,
+    seller_name: "tina",
     title: "Study Table (Small)",
     description: "Compact table for dorm rooms.",
     price: 43,
@@ -289,6 +309,36 @@ function applyFilters(communityId: number, filter: FilterParams): Item[] {
 }
 
 // ===== Auth =====
+export async function register(
+  email: string,
+  password: string,
+  passwordConfirmation: string,
+  communityId: number,
+): Promise<{ user: User; token: string }> {
+  await sleep(300);
+
+  if (!email.endsWith("@cuhk.edu.hk")) {
+    throw new Error("Email must be a CUHK email (@cuhk.edu.hk)");
+  }
+  if (password.length < 6) {
+    throw new Error("Password must be at least 6 characters");
+  }
+  if (password !== passwordConfirmation) {
+    throw new Error("Password confirmation doesn't match");
+  }
+
+  mockCurrentUser = {
+    id: Math.floor(Math.random() * 9000) + 1000,
+    email,
+    community_id: communityId,
+  };
+
+  return {
+    user: mockCurrentUser,
+    token: `mock_token_${Date.now()}`,
+  };
+}
+
 export async function login(email: string, password: string): Promise<{ user: User; token: string }> {
   await sleep(300);
   

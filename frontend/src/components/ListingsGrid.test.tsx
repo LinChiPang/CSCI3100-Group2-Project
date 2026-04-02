@@ -9,6 +9,7 @@ const mockItems: Item[] = [
     id: 1,
     community_id: 1,
     user_id: 1,
+    seller_name: "alice",
     title: "Calculus Textbook",
     description: "Used but in good condition",
     price: 50,
@@ -20,6 +21,7 @@ const mockItems: Item[] = [
     id: 2,
     community_id: 1,
     user_id: 2,
+    seller_name: "bob",
     title: "Laptop",
     description: "Gaming laptop",
     price: 800,
@@ -56,8 +58,8 @@ describe("ListingsGrid", () => {
       </BrowserRouter>,
     );
     expect(screen.getByText("Calculus Textbook")).toBeInTheDocument();
-    // The item should display title and seller ID  
+    // The item should display title and seller name
     const container = screen.getByText("Calculus Textbook").closest("div");
-    expect(container).toHaveTextContent("Seller ID");
+    expect(container).toHaveTextContent("Seller:");
   });
 });

@@ -3,7 +3,9 @@ import { Navigate, Route, Routes, useLocation, useParams } from "react-router-do
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import ItemDetailPage from "./pages/ItemDetailPage";
+import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import { getCommunities } from "./services/api";
 import { AuthProvider } from "./context/AuthContext";
 import type { Community } from "./types/marketplace";
@@ -76,8 +78,9 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<DefaultRedirect />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/c/:community_slug/*" element={<CommunityLayout />} />
         <Route path="*" element={<DefaultRedirect />} />
       </Routes>

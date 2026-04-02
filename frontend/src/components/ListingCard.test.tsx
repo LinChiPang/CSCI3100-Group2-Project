@@ -9,6 +9,7 @@ describe("ListingCard", () => {
     id: 42,
     community_id: 1,
     user_id: 5,
+    seller_name: "alice",
     title: "Physics Textbook",
     description: "Good condition",
     price: 65,
@@ -17,14 +18,14 @@ describe("ListingCard", () => {
     updated_at: "2026-03-20T10:00:00Z",
   };
 
-  it("renders item title and seller ID", () => {
+  it("renders item title and seller name", () => {
     render(
       <BrowserRouter>
         <ListingCard item={mockItem} communitySlug="hall-1" />
       </BrowserRouter>,
     );
     expect(screen.getByText("Physics Textbook")).toBeInTheDocument();
-    expect(screen.getByText(/Seller ID:/)).toBeInTheDocument();
+    expect(screen.getByText(/alice/)).toBeInTheDocument();
   });
 
   it("displays price in HKD", () => {

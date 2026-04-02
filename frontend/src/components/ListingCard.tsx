@@ -27,7 +27,7 @@ export default function ListingCard({ item, communitySlug }: ListingCardProps) {
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-gray-900">{item.title}</p>
           <p className="mt-1 text-xs text-gray-600">
-            Seller ID: {item.user_id}
+            Seller: {item.seller_name}
           </p>
         </div>
         <span className={`shrink-0 rounded-full border px-2 py-1 text-xs ${statusClass(item.status)}`}>
