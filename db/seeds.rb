@@ -1,16 +1,16 @@
 puts "Seeding communities..."
 
-# List of all 9 colleges with slugs
+# List of all 9 CUHK colleges with slugs
 colleges = [
-  { name: "Shaw College", slug: "shaw-college" },
-  { name: "New Asia College", slug: "new-asia-college" },
-  { name: "United College", slug: "united-college" },
-  { name: "Chung Chi College", slug: "chung-chi-college" },
-  { name: "Wu Yee Sun College", slug: "wu-yee-sun-college" },
-  { name: "Lee Woo Sing College", slug: "lee-woo-sing-college" },
-  { name: "Morningside College", slug: "morningside-college" },
-  { name: "S.H. Ho College", slug: "sh-ho-college" },
-  { name: "C.W. Chu College", slug: "cw-chu-college" }
+  { name: "Chung Chi College",    slug: "chung-chi-college" },
+  { name: "New Asia College",     slug: "new-asia-college" },
+  { name: "United College",       slug: "united-college" },
+  { name: "Shaw College",         slug: "shaw-college" },
+  { name: "Morningside College",  slug: "morningside-college" },
+  { name: "S.H. Ho College",      slug: "sh-ho-college" },
+  { name: "CW Chu College",       slug: "cw-chu-college" },
+  { name: "Wu Yee Sun College",   slug: "wu-yee-sun-college" },
+  { name: "Lee Woo Sing College", slug: "lee-woo-sing-college" }
 ]
 
 communities = colleges.map do |attrs|
@@ -22,30 +22,15 @@ end
 puts "Seeding community rules..."
 
 community_rule_defaults = {
-  "shaw-college" => {
-    posting_enabled: true,
-    max_active_listings: 8,
-    max_price: 5_000,
-    allowed_categories: %w[books electronics furniture]
-  },
-  "new-asia-college" => {
-    posting_enabled: true,
-    max_active_listings: 6,
-    max_price: 4_000,
-    allowed_categories: %w[books kitchen sports]
-  },
-  "united-college" => {
-    posting_enabled: true,
-    max_active_listings: 10,
-    max_price: 8_000,
-    allowed_categories: %w[books electronics furniture lifestyle]
-  },
-  "default" => {
-    posting_enabled: true,
-    max_active_listings: 5,
-    max_price: 3_000,
-    allowed_categories: %w[books electronics]
-  }
+  "chung-chi-college"    => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture] },
+  "new-asia-college"     => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books kitchen sports] },
+  "united-college"       => { posting_enabled: true, max_active_listings: 10, max_price: 8_000, allowed_categories: %w[books electronics furniture lifestyle] },
+  "shaw-college"         => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture] },
+  "morningside-college"  => { posting_enabled: true, max_active_listings: 5,  max_price: 6_000, allowed_categories: %w[books electronics lifestyle] },
+  "sh-ho-college"        => { posting_enabled: true, max_active_listings: 6,  max_price: 4_500, allowed_categories: %w[books furniture kitchen] },
+  "cw-chu-college"       => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books electronics sports] },
+  "wu-yee-sun-college"   => { posting_enabled: true, max_active_listings: 7,  max_price: 5_000, allowed_categories: %w[books furniture lifestyle] },
+  "lee-woo-sing-college" => { posting_enabled: true, max_active_listings: 7,  max_price: 5_500, allowed_categories: %w[books electronics furniture] }
 }
 
 communities.each do |community|
@@ -76,10 +61,10 @@ end
 puts "Seeding users..."
 
 users = [
-  { email: "seller.shaw@cuhk.edu.hk", community_slug: "shaw-college", username: "Shaw Seller" },
-  { email: "buyer.shaw@cuhk.edu.hk", community_slug: "shaw-college", username: "Shaw Buyer" },
-  { email: "seller.newasia@cuhk.edu.hk", community_slug: "new-asia-college", username: "New Asia Seller" },
-  { email: "buyer.united@cuhk.edu.hk", community_slug: "united-college", username: "United Buyer" }
+  { email: "seller.shaw@cuhk.edu.hk",       community_slug: "shaw-college",       username: "Shaw Seller" },
+  { email: "buyer.shaw@cuhk.edu.hk",        community_slug: "shaw-college",       username: "Shaw Buyer" },
+  { email: "seller.newasia@cuhk.edu.hk",    community_slug: "new-asia-college",   username: "New Asia Seller" },
+  { email: "buyer.united@cuhk.edu.hk",      community_slug: "united-college",     username: "United Buyer" }
 ].map do |attrs|
   community = Community.find_by!(slug: attrs[:community_slug])
   user = User.find_or_initialize_by(email: attrs[:email])

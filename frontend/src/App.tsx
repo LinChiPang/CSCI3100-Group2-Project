@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CreateListingPage from "./pages/CreateListingPage";
+import EditListingPage from "./pages/EditListingPage";
 import MyListingsPage from "./pages/MyListingsPage";
 import { getCommunities } from "./services/api";
 import { AuthProvider } from "./context/AuthContext";
@@ -25,6 +26,7 @@ function CommunityLayout() {
           <Routes>
             <Route index element={<HomePage />} />
             <Route path="items/:itemId" element={<ItemDetailPage />} />
+            <Route path="items/:itemId/edit" element={<EditListingPage />} />
             <Route path="new" element={<CreateListingPage />} />
             <Route path="my-listings" element={<MyListingsPage />} />
           </Routes>

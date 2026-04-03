@@ -67,18 +67,33 @@ async function guardRealApi() {
   }
 }
 
+// ===== Local reservation tracking (no reserved_by_user_id in DB) =====
+const RESERVED_KEY = "reserved_item_ids";
+
+function addReservedId(id: number) {
+  const existing = JSON.parse(localStorage.getItem(RESERVED_KEY) ?? "[]") as number[];
+  if (!existing.includes(id)) {
+    localStorage.setItem(RESERVED_KEY, JSON.stringify([...existing, id]));
+  }
+}
+
+export function getLocalReservedIds(): number[] {
+  return JSON.parse(localStorage.getItem(RESERVED_KEY) ?? "[]") as number[];
+}
+
 // ===== Auth Endpoints =====
 export async function register(
   email: string,
   password: string,
   passwordConfirmation: string,
   communityId: number,
+  username: string,
 ): Promise<{ user: User; token: string }> {
-  if (useMocks) return mockApi.register(email, password, passwordConfirmation, communityId);
+  if (useMocks) return mockApi.register(email, password, passwordConfirmation, communityId, username);
   await guardRealApi();
 
   const res = await client.post("/users", {
-    user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId },
+    user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId, username },
   });
 
   return {
@@ -108,7 +123,7 @@ export async function logout(): Promise<void> {
   }
   await guardRealApi();
   localStorage.removeItem("auth_token");
-  await client.post("/users/logout");
+  await client.delete("/users/logout");
 }
 
 // ===== Community Endpoints =====
@@ -165,16 +180,42 @@ export async function getItemDetail(itemId: number): Promise<Item> {
 }
 
 export async function reserveItem(itemId: number): Promise<Item> {
-  if (useMocks) return mockApi.reserveItem(itemId);
+  if (useMocks) {
+    const result = await mockApi.reserveItem(itemId);
+    addReservedId(itemId);
+    return result;
+  }
   await guardRealApi();
   const res = await client.patch(`/items/${itemId}/reserve`);
-  return res.data as Item;
+  const item = normalizeItem(res.data as RawItem);
+  addReservedId(itemId);
+  return item;
 }
 
 export async function sellItem(itemId: number): Promise<Item> {
   if (useMocks) return mockApi.sellItem(itemId);
   await guardRealApi();
   const res = await client.patch(`/items/${itemId}/sell`);
-  return res.data as Item;
+  return normalizeItem(res.data as RawItem);
+}
+
+export async function updateItem(
+  itemId: number,
+  title: string,
+  description: string,
+  price: number,
+): Promise<Item> {
+  if (useMocks) return mockApi.updateItem(itemId, title, description, price);
+  await guardRealApi();
+  const res = await client.patch(`/items/${itemId}`, {
+    item: { title, description, price },
+  });
+  return normalizeItem(res.data as RawItem);
+}
+
+export async function deleteItem(itemId: number): Promise<void> {
+  if (useMocks) return mockApi.deleteItem(itemId);
+  await guardRealApi();
+  await client.delete(`/items/${itemId}`);
 }
 

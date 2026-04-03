@@ -10,27 +10,57 @@ import type {
 const communities: Community[] = [
   {
     id: 1,
-    slug: "cuhk-shatin",
-    name: "CUHK Shatin",
-    community_rule: {
-      community_id: 1,
-      max_price: 500,
-      max_active_listings: 5,
-      posting_enabled: true,
-      allowed_categories: ["electronics", "furniture", "textbook"],
-    },
+    slug: "chung-chi-college",
+    name: "Chung Chi College",
+    community_rule: { community_id: 1, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
   },
   {
     id: 2,
-    slug: "cuhk-kowloon",
-    name: "CUHK Kowloon",
-    community_rule: {
-      community_id: 2,
-      max_price: 800,
-      max_active_listings: 8,
-      posting_enabled: true,
-      allowed_categories: ["electronics", "furniture", "textbook"],
-    },
+    slug: "new-asia-college",
+    name: "New Asia College",
+    community_rule: { community_id: 2, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "kitchen", "sports"] },
+  },
+  {
+    id: 3,
+    slug: "united-college",
+    name: "United College",
+    community_rule: { community_id: 3, max_price: 8000, max_active_listings: 10, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "lifestyle"] },
+  },
+  {
+    id: 4,
+    slug: "shaw-college",
+    name: "Shaw College",
+    community_rule: { community_id: 4, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
+  },
+  {
+    id: 5,
+    slug: "morningside-college",
+    name: "Morningside College",
+    community_rule: { community_id: 5, max_price: 6000, max_active_listings: 5, posting_enabled: true, allowed_categories: ["books", "electronics", "lifestyle"] },
+  },
+  {
+    id: 6,
+    slug: "sh-ho-college",
+    name: "S.H. Ho College",
+    community_rule: { community_id: 6, max_price: 4500, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "furniture", "kitchen"] },
+  },
+  {
+    id: 7,
+    slug: "cw-chu-college",
+    name: "CW Chu College",
+    community_rule: { community_id: 7, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "electronics", "sports"] },
+  },
+  {
+    id: 8,
+    slug: "wu-yee-sun-college",
+    name: "Wu Yee Sun College",
+    community_rule: { community_id: 8, max_price: 5000, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "furniture", "lifestyle"] },
+  },
+  {
+    id: 9,
+    slug: "lee-woo-sing-college",
+    name: "Lee Woo Sing College",
+    community_rule: { community_id: 9, max_price: 5500, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
   },
 ];
 
@@ -314,6 +344,7 @@ export async function register(
   password: string,
   passwordConfirmation: string,
   communityId: number,
+  username: string,
 ): Promise<{ user: User; token: string }> {
   await sleep(300);
 
@@ -339,6 +370,23 @@ export async function register(
   };
 }
 
+// Map email prefixes to community ids for mock login
+const mockUserCommunityMap: Record<string, number> = {
+  "seller.shaw": 4,
+  "buyer.shaw": 4,
+  "seller.newasia": 2,
+  "buyer.united": 3,
+  "chung-chi-college": 1,
+  "new-asia-college": 2,
+  "united-college": 3,
+  "shaw-college": 4,
+  "morningside-college": 5,
+  "sh-ho-college": 6,
+  "cw-chu-college": 7,
+  "wu-yee-sun-college": 8,
+  "lee-woo-sing-college": 9,
+};
+
 export async function login(email: string, password: string): Promise<{ user: User; token: string }> {
   await sleep(300);
   
@@ -347,10 +395,13 @@ export async function login(email: string, password: string): Promise<{ user: Us
     throw new Error("Invalid email or password");
   }
 
+  const prefix = email.split("@")[0];
+  const community_id = mockUserCommunityMap[prefix] ?? 1;
+
   mockCurrentUser = {
     id: 999,
     email,
-    community_id: 1, // Default to first community
+    community_id,
   };
 
   return {
@@ -435,6 +486,29 @@ export async function sellItem(itemId: number): Promise<Item> {
   it.status = "sold";
   it.updated_at = new Date().toISOString();
   return it;
+}
+
+export async function updateItem(
+  itemId: number,
+  title: string,
+  description: string,
+  price: number,
+): Promise<Item> {
+  await sleep(300);
+  const it = items.find((x) => x.id === itemId);
+  if (!it) throw new Error("Item not found");
+  it.title = title;
+  it.description = description || null;
+  it.price = price;
+  it.updated_at = new Date().toISOString();
+  return it;
+}
+
+export async function deleteItem(itemId: number): Promise<void> {
+  await sleep(250);
+  const idx = items.findIndex((x) => x.id === itemId);
+  if (idx === -1) throw new Error("Item not found");
+  items.splice(idx, 1);
 }
 
 

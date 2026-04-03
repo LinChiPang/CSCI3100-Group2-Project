@@ -34,7 +34,7 @@ export default function Sidebar({ communitySlug }: SidebarProps) {
           </NavLink>
           <NavLink to={`${base}/my-listings`} className={linkClass}>
             <ClipboardList size={18} />
-            My Listings
+            Manage
           </NavLink>
         </>
       ) : (

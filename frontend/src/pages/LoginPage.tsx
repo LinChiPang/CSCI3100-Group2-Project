@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getCommunities } from "../services/api";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -23,9 +24,11 @@ export default function LoginPage() {
     }
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        navigate("/");
+      const loggedInUser = await login(email, password);
+      if (loggedInUser) {
+        const communities = await getCommunities();
+        const community = communities.find((c) => c.id === loggedInUser.community_id);
+        navigate(community ? `/c/${community.slug}` : "/");
       } else {
         setError("Invalid email or password");
       }
@@ -39,6 +42,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+        <Link to="/" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 mb-6">
+          ← Back
+        </Link>
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Login
         </h1>
@@ -92,6 +98,13 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Don't have an account?{" "}
+          <Link to="/register" className="font-medium text-gray-900 hover:underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );

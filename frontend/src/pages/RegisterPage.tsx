@@ -6,6 +6,7 @@ import type { Community } from "../types/marketplace";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [communityId, setCommunityId] = useState<number | "">("");
@@ -37,6 +38,10 @@ export default function RegisterPage() {
       setError("Please use your CUHK email (@cuhk.edu.hk)");
       return;
     }
+    if (!username.trim()) {
+      setError("Username is required");
+      return;
+    }
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
@@ -52,14 +57,32 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const { user, token } = await register(email, password, passwordConfirmation, communityId);
+      const { user, token } = await register(email, password, passwordConfirmation, communityId, username);
       // Store token and user, then redirect to their community
       localStorage.setItem("auth_token", token);
       localStorage.setItem("user", JSON.stringify(user));
       // Re-login through AuthContext so the state is updated
       await login(email, password);
       navigate(`/c/${communities.find((c) => c.id === communityId)?.slug ?? ""}`);
-    } catch (err) {
+    } catch (err: unknown) {
+      // Axios 422 errors carry validation details in response.data
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "response" in err
+      ) {
+        const response = (err as { response: { data?: { errors?: string[] } } }).response;
+        const errors = response?.data?.errors;
+        if (Array.isArray(errors) && errors.length > 0) {
+          const isDuplicate = errors.some((e) => /email.*already been taken/i.test(e));
+          if (isDuplicate) {
+            setError("An account with this email already exists. Please log in instead.");
+          } else {
+            setError(errors.join(" "));
+          }
+          return;
+        }
+      }
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
       setLoading(false);
@@ -69,6 +92,9 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+        <Link to="/" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 mb-6">
+          ← Back
+        </Link>
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
@@ -100,6 +126,22 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.name@cuhk.edu.hk"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 text-sm"
+            />
+          </div>
+
+          {/* Username */}
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="How others will see you"
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 text-sm"
             />
           </div>
@@ -158,6 +200,9 @@ export default function RegisterPage() {
                 ))}
               </select>
             )}
+            <p className="mt-1.5 text-xs text-amber-600">
+              ⚠ You cannot change your community after registration.
+            </p>
           </div>
 
           {/* Submit */}
