@@ -219,3 +219,27 @@ export async function deleteItem(itemId: number): Promise<void> {
   await client.delete(`/items/${itemId}`);
 }
 
+// ===== Admin Endpoints =====
+export interface AnalyticsData {
+  total_transactions: number;
+  total_gmv_hkd: number;
+  daily_labels: string[];
+  daily_counts: number[];
+  daily_gmv_hkd: number[];
+  recent_transactions: {
+    id: number;
+    item_name: string;
+    amount_hkd: number;
+    provider_ref: string;
+    status: string;
+    created_at: string;
+  }[];
+}
+
+export async function getAnalytics(): Promise<AnalyticsData> {
+  if (useMocks) return mockApi.getAnalytics();
+  await guardRealApi();
+  const res = await client.get("/admin/analytics");
+  return res.data as AnalyticsData;
+}
+

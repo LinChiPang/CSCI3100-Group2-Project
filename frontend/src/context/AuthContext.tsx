@@ -5,6 +5,7 @@ export interface User {
   id: number;
   email: string;
   community_id: number;
+  role?: string;
 }
 
 interface AuthContextType {

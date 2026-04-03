@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import CreateListingPage from "./pages/CreateListingPage";
 import EditListingPage from "./pages/EditListingPage";
 import MyListingsPage from "./pages/MyListingsPage";
+import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import { getCommunities } from "./services/api";
 import { AuthProvider } from "./context/AuthContext";
 import type { Community } from "./types/marketplace";
@@ -69,6 +70,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
         <Route path="/c/:community_slug/*" element={<CommunityLayout />} />
         <Route path="*" element={<DefaultRedirect />} />
       </Routes>

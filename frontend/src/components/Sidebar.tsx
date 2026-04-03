@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ShoppingBag, PlusCircle, ClipboardList } from "lucide-react";
+import { ShoppingBag, PlusCircle, ClipboardList, BarChart2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 type SidebarProps = {
@@ -7,7 +7,7 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ communitySlug }: SidebarProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const base = `/c/${communitySlug}`;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -36,6 +36,12 @@ export default function Sidebar({ communitySlug }: SidebarProps) {
             <ClipboardList size={18} />
             Manage
           </NavLink>
+          {user?.role === "admin" && (
+            <NavLink to="/admin/analytics" state={{ from: base }} className={linkClass}>
+              <BarChart2 size={18} />
+              Analytics
+            </NavLink>
+          )}
         </>
       ) : (
         <p className="mt-4 px-3 text-xs text-gray-400">

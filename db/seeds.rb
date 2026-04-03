@@ -100,18 +100,56 @@ end
 
 puts "Seeding transactions..."
 
-[
-  { item_name: "IKEA Desk Lamp", amount_cents: 12_000, provider_ref: "seed_tx_001" },
-  { item_name: "Office Chair", amount_cents: 45_000, provider_ref: "seed_tx_002" },
-  { item_name: "Rice Cooker", amount_cents: 30_000, provider_ref: "seed_tx_003" }
-].each do |tx|
-  Transaction.find_or_create_by!(provider_ref: tx[:provider_ref]) do |transaction|
-    transaction.item_name = tx[:item_name]
-    transaction.amount_cents = tx[:amount_cents]
-    transaction.currency = "HKD"
-    transaction.status = "succeeded"
-    transaction.provider = "stripe_mock"
+transactions_data = [
+  # Mar 20 — 2 transactions
+  { item_name: "Calculus Textbook (Vol. 1)",     amount_cents: 18_000, provider_ref: "seed_tx_001", date: "2026-03-20 10:15:00" },
+  { item_name: "IKEA Desk Lamp",                 amount_cents: 12_000, provider_ref: "seed_tx_002", date: "2026-03-20 14:30:00" },
+  # Mar 21 — 3 transactions
+  { item_name: "Wireless Mouse (USB-C)",         amount_cents:  3_200, provider_ref: "seed_tx_003", date: "2026-03-21 09:05:00" },
+  { item_name: "USB-C Hub (7-in-1)",             amount_cents:  4_200, provider_ref: "seed_tx_004", date: "2026-03-21 11:20:00" },
+  { item_name: "Physics Workbook",               amount_cents:  9_000, provider_ref: "seed_tx_005", date: "2026-03-21 16:45:00" },
+  # Mar 23 — 4 transactions
+  { item_name: "Office Chair (Breathable)",      amount_cents: 45_000, provider_ref: "seed_tx_006", date: "2026-03-23 08:00:00" },
+  { item_name: "Rice Cooker",                    amount_cents: 30_000, provider_ref: "seed_tx_007", date: "2026-03-23 10:10:00" },
+  { item_name: "Mechanical Keyboard",            amount_cents:  5_900, provider_ref: "seed_tx_008", date: "2026-03-23 13:55:00" },
+  { item_name: "Laptop Stand (Aluminum)",        amount_cents:  5_100, provider_ref: "seed_tx_009", date: "2026-03-23 17:30:00" },
+  # Mar 25 — 2 transactions
+  { item_name: "Chemistry Lab Manual",           amount_cents: 16_000, provider_ref: "seed_tx_010", date: "2026-03-25 09:40:00" },
+  { item_name: "Power Bank 10000mAh",            amount_cents:  6_800, provider_ref: "seed_tx_011", date: "2026-03-25 14:15:00" },
+  # Mar 27 — 5 transactions
+  { item_name: "Linear Algebra Notes",           amount_cents:  6_500, provider_ref: "seed_tx_012", date: "2026-03-27 08:30:00" },
+  { item_name: "Standing Desk Converter",        amount_cents:  9_800, provider_ref: "seed_tx_013", date: "2026-03-27 10:00:00" },
+  { item_name: "Bluetooth Speaker",             amount_cents: 22_000, provider_ref: "seed_tx_014", date: "2026-03-27 12:20:00" },
+  { item_name: "Discrete Mathematics Text",      amount_cents: 19_900, provider_ref: "seed_tx_015", date: "2026-03-27 15:00:00" },
+  { item_name: "USB Flash Drive 64GB",           amount_cents:  2_400, provider_ref: "seed_tx_016", date: "2026-03-27 17:45:00" },
+  # Mar 29 — 3 transactions
+  { item_name: "Study Table (Small)",            amount_cents:  4_300, provider_ref: "seed_tx_017", date: "2026-03-29 09:00:00" },
+  { item_name: "2-Drawer Storage Cabinet",       amount_cents: 12_000, provider_ref: "seed_tx_018", date: "2026-03-29 11:30:00" },
+  { item_name: "Introduction to Algorithms",     amount_cents: 28_000, provider_ref: "seed_tx_019", date: "2026-03-29 14:00:00" },
+  # Apr 1 — 4 transactions
+  { item_name: "Study Chair (Ergonomic)",        amount_cents:  6_400, provider_ref: "seed_tx_020", date: "2026-04-01 08:50:00" },
+  { item_name: "Math Formula Sheet",             amount_cents:  5_000, provider_ref: "seed_tx_021", date: "2026-04-01 10:30:00" },
+  { item_name: "Wooden Desk Lamp",               amount_cents:  7_500, provider_ref: "seed_tx_022", date: "2026-04-01 13:15:00" },
+  { item_name: "Mechanical Keyboard (Brown)",    amount_cents:  5_900, provider_ref: "seed_tx_023", date: "2026-04-01 16:40:00" },
+  # Apr 2 — 2 transactions
+  { item_name: "Ergonomic Mouse Pad",            amount_cents:  2_800, provider_ref: "seed_tx_024", date: "2026-04-02 09:20:00" },
+  { item_name: "Monitor Light Bar",              amount_cents:  8_800, provider_ref: "seed_tx_025", date: "2026-04-02 15:00:00" },
+  # Apr 3 — 3 transactions
+  { item_name: "HDMI Cable 2m",                  amount_cents:  1_800, provider_ref: "seed_tx_026", date: "2026-04-03 08:10:00" },
+  { item_name: "Portable SSD 512GB",             amount_cents: 38_000, provider_ref: "seed_tx_027", date: "2026-04-03 10:45:00" },
+  { item_name: "Noise-Cancelling Earbuds",       amount_cents: 55_000, provider_ref: "seed_tx_028", date: "2026-04-03 14:30:00" },
+]
+
+transactions_data.each do |tx|
+  record = Transaction.find_or_create_by!(provider_ref: tx[:provider_ref]) do |t|
+    t.item_name    = tx[:item_name]
+    t.amount_cents = tx[:amount_cents]
+    t.currency     = "HKD"
+    t.status       = "succeeded"
+    t.provider     = "stripe_mock"
   end
+  # Backdate created_at so the daily grouping is meaningful
+  record.update_columns(created_at: tx[:date], updated_at: tx[:date])
 end
 
 puts "Seed complete."

@@ -397,11 +397,14 @@ export async function login(email: string, password: string): Promise<{ user: Us
 
   const prefix = email.split("@")[0];
   const community_id = mockUserCommunityMap[prefix] ?? 1;
+  // Admin emails are the college-slug ones (e.g. shaw-college@cuhk.edu.hk)
+  const role = prefix in mockUserCommunityMap && prefix.includes("-college") ? "admin" : "user";
 
   mockCurrentUser = {
     id: 999,
     email,
     community_id,
+    role,
   };
 
   return {
@@ -509,6 +512,34 @@ export async function deleteItem(itemId: number): Promise<void> {
   const idx = items.findIndex((x) => x.id === itemId);
   if (idx === -1) throw new Error("Item not found");
   items.splice(idx, 1);
+}
+
+// ===== Admin =====
+let mockTransactions = [
+  { id: 1, item_name: "Calculus Textbook", amount_hkd: 180, provider_ref: "mock_abc123", status: "succeeded", created_at: "2026-03-20 10:15" },
+  { id: 2, item_name: "Wireless Mouse", amount_hkd: 32, provider_ref: "mock_def456", status: "succeeded", created_at: "2026-03-20 14:22" },
+  { id: 3, item_name: "Laptop Stand", amount_hkd: 51, provider_ref: "mock_ghi789", status: "succeeded", created_at: "2026-03-21 09:05" },
+  { id: 4, item_name: "USB-C Hub", amount_hkd: 42, provider_ref: "mock_jkl012", status: "succeeded", created_at: "2026-03-21 11:30" },
+  { id: 5, item_name: "Physics Workbook", amount_hkd: 90, provider_ref: "mock_mno345", status: "succeeded", created_at: "2026-03-22 08:45" },
+];
+
+export async function getAnalytics() {
+  await sleep(300);
+  const grouped: Record<string, typeof mockTransactions> = {};
+  for (const tx of mockTransactions) {
+    const date = tx.created_at.split(" ")[0];
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(tx);
+  }
+  const dailyLabels = Object.keys(grouped).sort();
+  return {
+    total_transactions: mockTransactions.length,
+    total_gmv_hkd: mockTransactions.reduce((s, t) => s + t.amount_hkd, 0),
+    daily_labels: dailyLabels,
+    daily_counts: dailyLabels.map((d) => grouped[d].length),
+    daily_gmv_hkd: dailyLabels.map((d) => grouped[d].reduce((s, t) => s + t.amount_hkd, 0)),
+    recent_transactions: [...mockTransactions].reverse().slice(0, 10),
+  };
 }
 
 

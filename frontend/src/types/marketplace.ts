@@ -32,6 +32,7 @@ export type User = {
   id: number;
   email: string;
   community_id: number;
+  role?: string;
 };
 
 export type FilterParams = {
