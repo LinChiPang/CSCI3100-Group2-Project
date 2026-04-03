@@ -137,7 +137,7 @@ transactions_data = [
   # Apr 3 — 3 transactions
   { item_name: "HDMI Cable 2m",                  amount_cents:  1_800, provider_ref: "seed_tx_026", date: "2026-04-03 08:10:00" },
   { item_name: "Portable SSD 512GB",             amount_cents: 38_000, provider_ref: "seed_tx_027", date: "2026-04-03 10:45:00" },
-  { item_name: "Noise-Cancelling Earbuds",       amount_cents: 55_000, provider_ref: "seed_tx_028", date: "2026-04-03 14:30:00" },
+  { item_name: "Noise-Cancelling Earbuds",       amount_cents: 55_000, provider_ref: "seed_tx_028", date: "2026-04-03 14:30:00" }
 ]
 
 transactions_data.each do |tx|
