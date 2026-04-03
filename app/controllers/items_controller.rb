@@ -38,10 +38,12 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    return unless authorize_item!(:destroy)
-
-    @item.destroy
-    head :no_content
+    if @item.user == @current_user || (@current_user.admin? && @current_user.community == @item.community)
+      @item.destroy
+      head :no_content
+    else
+      render json: { error: "Not authorized" }, status: :forbidden
+    end
   end
 
   def reserve

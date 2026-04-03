@@ -39,4 +39,9 @@ Rails.application.routes.draw do
       patch :sell
     end
   end
+
+  # config/routes.rb
+  resources :communities, only: [ :index ] do
+    resource :community_rule, only: [ :show, :update ], controller: "community_rules"
+  end
 end
