@@ -18,7 +18,7 @@ export default function Sidebar({ communitySlug }: SidebarProps) {
     }`;
 
   return (
-    <aside className="hidden md:flex w-56 shrink-0 flex-col gap-1 border-r border-gray-200 bg-white px-3 py-6 sticky top-0 h-[calc(100vh-65px)] overflow-y-auto">
+    <aside className="flex w-56 shrink-0 flex-col gap-1 border-r border-gray-200 bg-white px-3 py-6 sticky top-0 h-[calc(100vh-65px)] overflow-y-auto">
       <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
         Navigation
       </p>
