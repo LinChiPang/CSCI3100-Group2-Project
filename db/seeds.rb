@@ -1,10 +1,19 @@
 puts "Seeding communities..."
 
-communities = [
+# List of all 9 colleges with slugs
+colleges = [
   { name: "Shaw College", slug: "shaw-college" },
   { name: "New Asia College", slug: "new-asia-college" },
-  { name: "United College", slug: "united-college" }
-].map do |attrs|
+  { name: "United College", slug: "united-college" },
+  { name: "Chung Chi College", slug: "chung-chi-college" },
+  { name: "Wu Yee Sun College", slug: "wu-yee-sun-college" },
+  { name: "Lee Woo Sing College", slug: "lee-woo-sing-college" },
+  { name: "Morningside College", slug: "morningside-college" },
+  { name: "S.H. Ho College", slug: "sh-ho-college" },
+  { name: "C.W. Chu College", slug: "cw-chu-college" }
+]
+
+communities = colleges.map do |attrs|
   Community.find_or_create_by!(slug: attrs[:slug]) do |community|
     community.name = attrs[:name]
   end
@@ -30,29 +39,54 @@ community_rule_defaults = {
     max_active_listings: 10,
     max_price: 8_000,
     allowed_categories: %w[books electronics furniture lifestyle]
+  },
+  "default" => {
+    posting_enabled: true,
+    max_active_listings: 5,
+    max_price: 3_000,
+    allowed_categories: %w[books electronics]
   }
 }
 
 communities.each do |community|
-  rule = community.community_rule || community.build_community_rule
-  defaults = community_rule_defaults.fetch(community.slug)
-  rule.assign_attributes(defaults)
-  rule.save!
+  defaults = community_rule_defaults[community.slug] || community_rule_defaults["default"]
+  # Find or create the community rule for this community
+  rule = CommunityRule.find_or_initialize_by(community: community)
+  rule.update!(defaults)
+end
+
+puts "Seeding admin users for each college..."
+
+admin_password = "password123" # you can change this
+
+colleges.each do |college|
+  admin_email = "#{college[:slug]}@cuhk.edu.hk"
+  admin_username = "#{college[:name]} Admin"
+  community = Community.find_by!(slug: college[:slug])
+  User.find_or_create_by!(email: admin_email) do |user|
+    user.username = admin_username
+    user.password = admin_password
+    user.password_confirmation = admin_password
+    user.community = community
+    user.role = "admin"
+    user.confirmed_at = Time.current
+  end
 end
 
 puts "Seeding users..."
 
 users = [
-  { email: "seller.shaw@cuhk.edu.hk", community_slug: "shaw-college" },
-  { email: "buyer.shaw@cuhk.edu.hk", community_slug: "shaw-college" },
-  { email: "seller.newasia@cuhk.edu.hk", community_slug: "new-asia-college" },
-  { email: "buyer.united@cuhk.edu.hk", community_slug: "united-college" }
+  { email: "seller.shaw@cuhk.edu.hk", community_slug: "shaw-college", username: "Shaw Seller" },
+  { email: "buyer.shaw@cuhk.edu.hk", community_slug: "shaw-college", username: "Shaw Buyer" },
+  { email: "seller.newasia@cuhk.edu.hk", community_slug: "new-asia-college", username: "New Asia Seller" },
+  { email: "buyer.united@cuhk.edu.hk", community_slug: "united-college", username: "United Buyer" }
 ].map do |attrs|
   community = Community.find_by!(slug: attrs[:community_slug])
   user = User.find_or_initialize_by(email: attrs[:email])
   user.password = "Password123!"
   user.password_confirmation = "Password123!"
   user.community = community
+  user.username = attrs[:username]
   user.confirmed_at ||= Time.current
   user.save!
   user
