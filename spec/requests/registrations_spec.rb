@@ -18,7 +18,7 @@ RSpec.describe "Registrations", type: :request do
           }, as: :json
         }.to change(User, :count).by(1)
         expect(response).to have_http_status(:created)
-        expect(JSON.parse(response.body)['message']).to eq("User created successfully. Please confirm your email.")
+        expect(JSON.parse(response.body)['token']).to be_present
       end
     end
 
