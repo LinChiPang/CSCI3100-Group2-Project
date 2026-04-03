@@ -229,5 +229,27 @@ RSpec.describe "Items", type: :request do
         headers: { "Authorization" => "Bearer #{token_for(other_user)}" }
       expect(response).to have_http_status(:forbidden)
     end
+
+    context "as admin of the same community" do
+      let(:admin) { create(:user, community: community, role: 'admin') }
+      it "deletes the item" do
+        delete "/items/#{item.id}", headers: { "Authorization" => "Bearer #{token_for(admin)}" }, as: :json
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    context "as admin of a different community" do
+      let(:community1) { create(:community) }
+      let(:community2) { create(:community) }
+      let(:admin1) { create(:user, community: community1, role: 'admin') }
+      let(:admin2) { create(:user, community: community2, role: 'admin') }
+      let(:item_in_community1) { create(:item, community: community1, user: admin1) }
+
+      it "cannot delete item from another community" do
+        delete "/items/#{item_in_community1.id}",
+               headers: { "Authorization" => "Bearer #{token_for(admin2)}" }, as: :json
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 end
