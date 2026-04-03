@@ -10,7 +10,7 @@ RSpec.describe "Admin analytics", type: :request do
   let(:auth_headers) { { "Authorization" => "Bearer #{token}" } }
 
   it "renders analytics dashboard" do
-    get "/admin/analytics", headers: auth_headers
+    get "/admin/analytics", headers: auth_headers, as: :json
 
     expect(response).to have_http_status(:ok)
     json = JSON.parse(response.body)
@@ -21,7 +21,7 @@ RSpec.describe "Admin analytics", type: :request do
     Transaction.create!(item_name: "Desk Lamp", amount_cents: 12_000, provider_ref: "tx_a")
     Transaction.create!(item_name: "Chair", amount_cents: 8_000, provider_ref: "tx_b")
 
-    get "/admin/analytics", headers: auth_headers
+    get "/admin/analytics", headers: auth_headers, as: :json
 
     json = JSON.parse(response.body)
     expect(json["total_transactions"]).to eq(2)
