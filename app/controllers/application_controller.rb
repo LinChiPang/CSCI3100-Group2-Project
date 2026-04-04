@@ -16,4 +16,12 @@ class ApplicationController < ActionController::Base
       render json: { error: "Invalid token" }, status: :unauthorized
     end
   end
+
+  def require_admin!
+    authenticate_with_token!
+    return if performed?
+    unless @current_user&.admin?
+      render json: { error: "Forbidden" }, status: :forbidden
+    end
+  end
 end

@@ -9,9 +9,9 @@ export function isCategoryAllowedByRule(rule: CommunityRule | null, category: st
   return rule.allowed_categories.includes(normalizeCategory(category));
 }
 
-export function itemPriceExceedsMax(rule: CommunityRule | null, priceCents: number) {
+export function itemPriceExceedsMax(rule: CommunityRule | null, price: number) {
   if (!rule || rule.max_price === null) return false;
-  return priceCents / 100 > Number(rule.max_price);
+  return price > Number(rule.max_price);
 }
 
 /** True when the user's min price filter is above the community's per-listing max (no items can match). */

@@ -1,0 +1,1 @@
+when sign up, user will need choose their community, then they are locked to view 

@@ -27,6 +27,10 @@ class Item < ApplicationRecord
     end
 
     update!(status: :reserved)
+    ActionCable.server.broadcast(
+      "notifications_user_#{user_id}",
+      { type: "item_reserved", message: "Your item \"#{title}\" has been reserved by a buyer.", sent_at: Time.current.strftime("%H:%M") }
+    )
   end
 
   def sell!(actor: nil)
@@ -41,6 +45,10 @@ class Item < ApplicationRecord
     end
 
     update!(status: :sold)
+    ActionCable.server.broadcast(
+      "notifications_user_#{user_id}",
+      { type: "item_sold", message: "Your item \"#{title}\" has been marked as sold!", sent_at: Time.current.strftime("%H:%M") }
+    )
   end
 
   scope :available, -> { where(status: :available) }

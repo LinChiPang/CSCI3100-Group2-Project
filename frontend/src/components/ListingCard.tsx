@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Item } from "../types/marketplace";
-import { formatDollarsFromCents, titleCase } from "../utils/format";
+import { formatDollars, titleCase } from "../utils/format";
 
 type ListingCardProps = {
   item: Item;
@@ -27,7 +27,7 @@ export default function ListingCard({ item, communitySlug }: ListingCardProps) {
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-gray-900">{item.title}</p>
           <p className="mt-1 text-xs text-gray-600">
-            {titleCase(item.category)} · {item.seller_name}
+            Seller: {item.seller_name}
           </p>
         </div>
         <span className={`shrink-0 rounded-full border px-2 py-1 text-xs ${statusClass(item.status)}`}>
@@ -36,7 +36,7 @@ export default function ListingCard({ item, communitySlug }: ListingCardProps) {
       </div>
 
       <div className="mt-3 flex items-center justify-between">
-        <p className="text-sm font-semibold text-gray-900">{formatDollarsFromCents(item.price_cents)}</p>
+        <p className="text-sm font-semibold text-gray-900">{formatDollars(item.price)}</p>
         <Link
           to={`/c/${communitySlug}/items/${item.id}`}
           className="rounded-md bg-gray-900 px-3 py-2 text-xs font-medium text-white hover:bg-black"

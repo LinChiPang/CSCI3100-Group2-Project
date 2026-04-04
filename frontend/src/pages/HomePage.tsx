@@ -61,7 +61,7 @@ export default function HomePage() {
         setError(null);
 
         const listingsRes = await getListings(communitySlug, appliedFilters);
-        setItems(listingsRes.items);
+        setItems(listingsRes);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load listings");
       } finally {
@@ -85,8 +85,8 @@ export default function HomePage() {
 
   const sortedItems = useMemo(() => {
     const copy = [...items];
-    if (sortKey === "price_asc") copy.sort((a, b) => a.price_cents - b.price_cents);
-    if (sortKey === "price_desc") copy.sort((a, b) => b.price_cents - a.price_cents);
+    if (sortKey === "price_asc") copy.sort((a, b) => a.price - b.price);
+    if (sortKey === "price_desc") copy.sort((a, b) => b.price - a.price);
     if (sortKey === "status") {
       const rank: Record<Item["status"], number> = { available: 0, reserved: 1, sold: 2 };
       copy.sort((a, b) => rank[a.status] - rank[b.status]);
@@ -128,8 +128,16 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="space-y-4 md:col-span-1">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="md:col-span-3">
+          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">Listings ({sortedItems.length})</h3>
+            <SortSelect variant="inline" value={sortKey} onChange={setSortKey} />
+          </div>
+          <ListingsGrid items={sortedItems} communitySlug={communitySlug} />
+        </div>
+
+        <div className="space-y-3 md:col-span-1">
           <SearchBar value={draftSearch} onChange={setDraftSearch} onSubmit={applySearchAndFilters} />
           <FilterPanel
             value={draftFilters}
@@ -138,16 +146,6 @@ export default function HomePage() {
             onApply={applySearchAndFilters}
             onReset={resetAll}
           />
-        </div>
-
-        <div className="md:col-span-2">
-          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Listings ({sortedItems.length})</h3>
-            <div className="flex flex-col items-start gap-2 sm:items-end">
-              <SortSelect variant="inline" value={sortKey} onChange={setSortKey} />
-            </div>
-          </div>
-          <ListingsGrid items={sortedItems} communitySlug={communitySlug} />
         </div>
       </div>
     </div>

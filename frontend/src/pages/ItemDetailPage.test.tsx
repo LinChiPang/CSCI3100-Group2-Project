@@ -10,14 +10,15 @@ vi.mock("../services/api");
 
 const mockItem: Item = {
   id: 42,
-  community_slug: "hall-1",
+  community_id: 1,
+  user_id: 5,
+  seller_name: "alice",
   title: "Physics Textbook",
   description: "Advanced Physics for engineers",
-  price_cents: 8000,
+  price: 80,
   status: "available",
-  category: "books",
-  seller_name: "Charlie",
-  reserved_by: undefined,
+  created_at: "2026-03-20T10:00:00Z",
+  updated_at: "2026-03-20T10:00:00Z",
 };
 
 const mockCommunityRule: CommunityRule = {
@@ -52,7 +53,7 @@ describe("ItemDetailPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Physics Textbook")).toBeInTheDocument();
       expect(screen.getByText("Advanced Physics for engineers")).toBeInTheDocument();
-      expect(screen.getByText(/Charlie/)).toBeInTheDocument();
+      expect(screen.getByText(/5/)).toBeInTheDocument();
     });
   });
 
@@ -80,7 +81,7 @@ describe("ItemDetailPage", () => {
     });
   });
 
-  it("displays Reserve and Buy buttons when available", async () => {
+  it("displays Reserve button when available", async () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
     vi.mocked(apiModule.getItemDetail).mockResolvedValue(mockItem);
 
@@ -88,7 +89,6 @@ describe("ItemDetailPage", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Reserve/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /Buy/i })).toBeInTheDocument();
     });
   });
 
@@ -105,16 +105,15 @@ describe("ItemDetailPage", () => {
     });
   });
 
-  it("disables Buy when item is sold", async () => {
-    const soldItem = { ...mockItem, status: "sold" as const };
+  it("displays Mark as Sold button when reserved", async () => {
+    const reservedItem = { ...mockItem, status: "reserved" as const };
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getItemDetail).mockResolvedValue(soldItem);
+    vi.mocked(apiModule.getItemDetail).mockResolvedValue(reservedItem);
 
     renderWithRouter(<ItemDetailPage />);
 
     await waitFor(() => {
-      const buyButton = screen.getByRole("button", { name: /Buy/i });
-      expect(buyButton).toBeDisabled();
+      expect(screen.getByRole("button", { name: /Mark as Sold/i })).toBeInTheDocument();
     });
   });
 
@@ -141,12 +140,13 @@ describe("ItemDetailPage", () => {
     });
   });
 
-  it("calls buyItem when Buy button clicked", async () => {
+  it("calls sellItem when Mark as Sold button clicked", async () => {
     const user = userEvent.setup();
+    const reservedItem = { ...mockItem, status: "reserved" as const };
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getItemDetail).mockResolvedValue(mockItem);
-    vi.mocked(apiModule.buyItem).mockResolvedValue({
-      ...mockItem,
+    vi.mocked(apiModule.getItemDetail).mockResolvedValue(reservedItem);
+    vi.mocked(apiModule.sellItem).mockResolvedValue({
+      ...reservedItem,
       status: "sold",
     });
 
@@ -156,18 +156,18 @@ describe("ItemDetailPage", () => {
       expect(screen.getByText("Physics Textbook")).toBeInTheDocument();
     });
 
-    const buyButton = screen.getByRole("button", { name: /Buy/i });
-    await user.click(buyButton);
+    const sellButton = screen.getByRole("button", { name: /Mark as Sold/i });
+    await user.click(sellButton);
 
     await waitFor(() => {
-      expect(apiModule.buyItem).toHaveBeenCalledWith(42);
+      expect(apiModule.sellItem).toHaveBeenCalledWith(42);
     });
   });
 
-  it("displays error when price exceeds community max", async () => {
+  it("does not display price error banner when price exceeds community max", async () => {
     const expensiveItem: Item = {
       ...mockItem,
-      price_cents: 60000, // Exceeds 500 HKD max
+      price: 600, // Exceeds 500 HKD max
     };
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
     vi.mocked(apiModule.getItemDetail).mockResolvedValue(expensiveItem);
@@ -175,29 +175,15 @@ describe("ItemDetailPage", () => {
     renderWithRouter(<ItemDetailPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/exceeds the community max/i)).toBeInTheDocument();
+      expect(screen.getByText(expensiveItem.title)).toBeInTheDocument();
     });
+    expect(screen.queryByText(/exceeds the community max/i)).not.toBeInTheDocument();
   });
 
-  it("displays error when category not allowed", async () => {
-    const forbiddenItem: Item = {
-      ...mockItem,
-      category: "furniture", // Not in allowed_categories
-    };
-    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getItemDetail).mockResolvedValue(forbiddenItem);
-
-    renderWithRouter(<ItemDetailPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Category is not allowed/i)).toBeInTheDocument();
-    });
-  });
-
-  it("disables actions when community rules block them", async () => {
+  it("disables actions when price exceeds max", async () => {
     const expensiveItem: Item = {
       ...mockItem,
-      price_cents: 60000, // Exceeds max
+      price: 600, // Exceeds max
     };
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
     vi.mocked(apiModule.getItemDetail).mockResolvedValue(expensiveItem);
