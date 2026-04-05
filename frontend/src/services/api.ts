@@ -261,3 +261,11 @@ export async function mockCheckout(itemName: string, amount: number): Promise<Ch
   return res.data as CheckoutResult;
 }
 
+export async function getSearchSuggestions(query: string): Promise<string[]> {
+  if (useMocks) return mockApi.getSearchSuggestions(query);
+  await guardRealApi();
+  if (!query.trim()) return [];
+  const res = await client.get("/search/suggestions", { params: { q: query } });
+  return (res.data as { suggestions: string[] }).suggestions;
+}
+
