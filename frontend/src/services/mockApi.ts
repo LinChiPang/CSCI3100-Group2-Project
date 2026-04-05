@@ -542,4 +542,18 @@ export async function getAnalytics() {
   };
 }
 
+export async function mockCheckout(itemName: string, amount: number) {
+  await sleep(600);
+  if (!itemName || amount <= 0) throw new Error("Invalid checkout input.");
+  return {
+    message: `Mock Stripe payment succeeded for ${itemName} (HK$${amount}).`,
+    transaction: {
+      id: Date.now(),
+      item_name: itemName,
+      amount_hkd: amount,
+      provider_ref: `mock_${Math.random().toString(36).slice(2, 10)}`,
+      status: "paid",
+    },
+  };
+}
 
