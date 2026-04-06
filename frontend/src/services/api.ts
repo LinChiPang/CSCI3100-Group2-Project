@@ -240,3 +240,29 @@ export async function getAnalytics(): Promise<AnalyticsData> {
   const res = await client.get("/admin/analytics");
   return res.data as AnalyticsData;
 }
+
+export interface CheckoutResult {
+  message: string;
+  transaction: {
+    id: number;
+    item_name: string;
+    amount_hkd: number;
+    provider_ref: string;
+    status: string;
+  };
+}
+
+export async function mockCheckout(itemName: string, amount: number): Promise<CheckoutResult> {
+  if (useMocks) return mockApi.mockCheckout(itemName, amount);
+  await guardRealApi();
+  const res = await client.post("/payments/mock_checkout", { item_name: itemName, amount });
+  return res.data as CheckoutResult;
+}
+
+export async function getSearchSuggestions(query: string): Promise<string[]> {
+  if (useMocks) return mockApi.getSearchSuggestions(query);
+  await guardRealApi();
+  if (!query.trim()) return [];
+  const res = await client.get("/search/suggestions", { params: { q: query } });
+  return (res.data as { suggestions: string[] }).suggestions;
+}

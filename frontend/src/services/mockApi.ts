@@ -541,4 +541,44 @@ export async function getAnalytics() {
     recent_transactions: [...mockTransactions].reverse().slice(0, 10),
   };
 }
+export async function mockCheckout(itemName: string, amount: number) {
+  await sleep(600);
+  if (!itemName || amount <= 0) throw new Error("Invalid checkout input.");
+  return {
+    message: `Mock Stripe payment succeeded for ${itemName} (HK$${amount}).`,
+    transaction: {
+      id: Date.now(),
+      item_name: itemName,
+      amount_hkd: amount,
+      provider_ref: `mock_${Math.random().toString(36).slice(2, 10)}`,
+      status: "paid",
+    },
+  };
+}
 
+const MOCK_SUGGESTION_POOL = [
+  "Calculus Textbook (Vol. 1)",
+  "Introduction to Algorithms - 3rd Ed",
+  "Math Formula Sheet (Printed)",
+  "Wooden Desk Lamp",
+  "Study Chair (Ergonomic)",
+  "Wireless Mouse (USB-C)",
+  "Mechanical Keyboard (Blue Switch)",
+  "USB-C Hub (7-in-1)",
+  "Physics Workbook",
+  "Chemistry Lab Manual",
+  "Linear Algebra Notes",
+  "Bluetooth Speaker",
+  "Power Bank 10000mAh",
+  "Laptop Stand (Aluminum)",
+  "Discrete Mathematics Text",
+  "USB Flash Drive 64GB",
+  "Study Table (Small)",
+];
+
+export async function getSearchSuggestions(query: string): Promise<string[]> {
+  await sleep(150);
+  if (!query.trim()) return [];
+  const q = query.toLowerCase();
+  return MOCK_SUGGESTION_POOL.filter((s) => s.toLowerCase().includes(q)).slice(0, 5);
+}
