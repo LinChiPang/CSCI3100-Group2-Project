@@ -3,7 +3,8 @@
  *
  * Env:
  * - VITE_USE_MOCKS: "false" to call Rails; anything else uses `mockApi`.
- * - VITE_API_BASE_URL: origin of the Rails app when not using mocks (e.g. http://localhost:3000).
+ * - VITE_API_BASE_URL: optional origin of the Rails app when not using mocks
+ *   (defaults to same-origin requests when omitted).
  */
 import axios from "axios";
 import type {
@@ -44,7 +45,7 @@ function normalizeItem(raw: RawItem): Item {
 }
 
 const useMocks = import.meta.env.VITE_USE_MOCKS !== "false";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+const apiBaseUrl = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "").trim();
 
 const client = axios.create({
   baseURL: apiBaseUrl,
@@ -62,9 +63,6 @@ client.interceptors.request.use((config) => {
 
 async function guardRealApi() {
   if (useMocks) return;
-  if (!apiBaseUrl) {
-    throw new Error("VITE_API_BASE_URL is not set. Either set it or keep VITE_USE_MOCKS=true.");
-  }
 }
 
 // ===== Local reservation tracking (no reserved_by_user_id in DB) =====
@@ -242,4 +240,3 @@ export async function getAnalytics(): Promise<AnalyticsData> {
   const res = await client.get("/admin/analytics");
   return res.data as AnalyticsData;
 }
-
