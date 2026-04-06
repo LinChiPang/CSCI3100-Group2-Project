@@ -22,12 +22,19 @@ export default function HomePage() {
 
   const communitySlug = useMemo(() => community_slug ?? "", [community_slug]);
 
-  const applySearchAndFilters = () => {
-    const trimmed = draftSearch.trim();
-    setAppliedFilters({
-      ...draftFilters,
+  const applySearch = (overrideSearch?: string) => {
+    const trimmed = (overrideSearch ?? draftSearch).trim();
+    setAppliedFilters((prev) => ({
+      ...prev,
       search: trimmed ? trimmed : undefined,
-    });
+    }));
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters((prev) => ({
+      ...draftFilters,
+      search: prev.search,
+    }));
   };
 
   const resetAll = () => {
@@ -138,12 +145,12 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-3 md:col-span-1">
-          <SearchBar value={draftSearch} onChange={setDraftSearch} onSubmit={applySearchAndFilters} />
+          <SearchBar value={draftSearch} onChange={setDraftSearch} onSubmit={applySearch} />
           <FilterPanel
             value={draftFilters}
             communityRule={communityRule}
             onChange={setDraftFilters}
-            onApply={applySearchAndFilters}
+            onApply={() => applyFilters()}
             onReset={resetAll}
           />
         </div>

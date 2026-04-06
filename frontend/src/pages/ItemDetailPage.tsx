@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CommunityRuleBanner from "../components/CommunityRuleBanner";
+import PaymentModal from "../components/PaymentModal";
 import StatusWorkflow from "../components/StatusWorkflow";
 import { deleteItem, sellItem, getCommunityRule, getItemDetail, reserveItem } from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -18,6 +19,7 @@ export default function ItemDetailPage() {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [communityRule, setCommunityRule] = useState<CommunityRule | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const numericItemId = useMemo(() => (itemId ? Number(itemId) : NaN), [itemId]);
 
@@ -67,6 +69,11 @@ export default function ItemDetailPage() {
 
   const handleReserve = async () => {
     if (!canReserve) return;
+    // Open payment modal first; actual reserve call happens after payment succeeds
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = async () => {
     try {
       setIsActionLoading(true);
       setActionError(null);
@@ -109,6 +116,14 @@ export default function ItemDetailPage() {
 
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-5">
+      {showPaymentModal && (
+        <PaymentModal
+          itemTitle={item.title}
+          price={item.price}
+          onSuccess={handlePaymentSuccess}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
       <CommunityRuleBanner rule={communityRule} />
 
       <p className="text-sm text-gray-500">Community: {community_slug}</p>
