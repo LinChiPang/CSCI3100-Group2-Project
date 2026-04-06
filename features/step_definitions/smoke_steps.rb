@@ -5,3 +5,7 @@ end
 Then("I should see {string}") do |text|
   expect(page).to have_content(text)
 end
+
+Then("I should see the frontend app shell") do
+  expect(page).to have_css("#app")
+end
