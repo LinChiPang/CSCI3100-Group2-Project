@@ -7,7 +7,7 @@ import { deleteItem, sellItem, getCommunityRule, getItemDetail, reserveItem } fr
 import { useAuth } from "../context/AuthContext";
 import type { CommunityRule, Item } from "../types/marketplace";
 import { itemPriceExceedsMax } from "../utils/communityRules";
-import { formatDollars, titleCase } from "../utils/format";
+import { formatDollars } from "../utils/format";
 
 export default function ItemDetailPage() {
   const { community_slug, itemId } = useParams();
@@ -190,4 +190,3 @@ export default function ItemDetailPage() {
     </section>
   );
 }
-

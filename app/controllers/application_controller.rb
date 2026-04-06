@@ -5,6 +5,18 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def render_frontend_spa!
+    frontend_index = Rails.root.join("public", "frontend", "index.html")
+
+    unless File.exist?(frontend_index)
+      render plain: "Frontend build is missing. Rebuild the frontend into public/frontend before starting Rails.",
+             status: :service_unavailable
+      return
+    end
+
+    render file: frontend_index, layout: false
+  end
+
   def authenticate_with_token!
     token = request.headers["Authorization"].to_s.gsub("Bearer ", "")
     secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"

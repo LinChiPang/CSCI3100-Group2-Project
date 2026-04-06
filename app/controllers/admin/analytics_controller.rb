@@ -1,8 +1,14 @@
 module Admin
   class AnalyticsController < ApplicationController
-    before_action :require_admin!
-
     def index
+      if request.format.html? && !request.xhr?
+        render_frontend_spa!
+        return
+      end
+
+      require_admin!
+      return if performed?
+
       transactions = Transaction.order(created_at: :asc)
       @total_transactions = transactions.count
       @total_gmv_cents = transactions.sum(:amount_cents)
