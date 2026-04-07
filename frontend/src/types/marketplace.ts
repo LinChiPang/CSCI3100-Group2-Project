@@ -19,6 +19,7 @@ export type Item = {
   id: number;
   community_id: number;
   user_id: number;
+  reserved_by_id: number | null;
   seller_name: string;
   title: string;
   description: string | null;

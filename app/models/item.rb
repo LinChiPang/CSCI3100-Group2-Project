@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :user
   belongs_to :community
+  belongs_to :reserved_by, class_name: "User", optional: true
 
   enum :status, { available: 0, reserved: 1, sold: 2 }, prefix: true
 
@@ -26,7 +27,7 @@ class Item < ApplicationRecord
       end
     end
 
-    update!(status: :reserved)
+    update!(status: :reserved, reserved_by: actor)
     ActionCable.server.broadcast(
       "notifications_user_#{user_id}",
       { type: "item_reserved", message: "Your item \"#{title}\" has been reserved by a buyer.", sent_at: Time.current.strftime("%H:%M") }
@@ -44,7 +45,7 @@ class Item < ApplicationRecord
       raise ActiveRecord::RecordInvalid, self
     end
 
-    update!(status: :sold)
+    update!(status: :sold, reserved_by: nil)
     ActionCable.server.broadcast(
       "notifications_user_#{user_id}",
       { type: "item_sold", message: "Your item \"#{title}\" has been marked as sold!", sent_at: Time.current.strftime("%H:%M") }

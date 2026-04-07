@@ -22,6 +22,7 @@ type RawItem = {
   description: string | null;
   price: string; // Rails decimal comes as string
   status: "available" | "reserved" | "sold";
+  reserved_by_id: number | null;
   created_at: string;
   updated_at: string;
   user: { id: number; email: string };
@@ -33,6 +34,7 @@ function normalizeItem(raw: RawItem): Item {
     id: raw.id,
     community_id: raw.community.id,
     user_id: raw.user.id,
+    reserved_by_id: raw.reserved_by_id ?? null,
     seller_name: raw.user.email.split("@")[0],
     title: raw.title,
     description: raw.description,
@@ -60,25 +62,29 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+// When the server returns 401, clear stale credentials and redirect to login
+client.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      (error as { response?: { status?: number } }).response?.status === 401
+    ) {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  },
+);
+
 async function guardRealApi() {
   if (useMocks) return;
   if (!apiBaseUrl) {
     throw new Error("VITE_API_BASE_URL is not set. Either set it or keep VITE_USE_MOCKS=true.");
   }
-}
-
-// ===== Local reservation tracking (no reserved_by_user_id in DB) =====
-const RESERVED_KEY = "reserved_item_ids";
-
-function addReservedId(id: number) {
-  const existing = JSON.parse(localStorage.getItem(RESERVED_KEY) ?? "[]") as number[];
-  if (!existing.includes(id)) {
-    localStorage.setItem(RESERVED_KEY, JSON.stringify([...existing, id]));
-  }
-}
-
-export function getLocalReservedIds(): number[] {
-  return JSON.parse(localStorage.getItem(RESERVED_KEY) ?? "[]") as number[];
 }
 
 // ===== Auth Endpoints =====
@@ -180,16 +186,10 @@ export async function getItemDetail(itemId: number): Promise<Item> {
 }
 
 export async function reserveItem(itemId: number): Promise<Item> {
-  if (useMocks) {
-    const result = await mockApi.reserveItem(itemId);
-    addReservedId(itemId);
-    return result;
-  }
+  if (useMocks) return mockApi.reserveItem(itemId);
   await guardRealApi();
   const res = await client.patch(`/items/${itemId}/reserve`);
-  const item = normalizeItem(res.data as RawItem);
-  addReservedId(itemId);
-  return item;
+  return normalizeItem(res.data as RawItem);
 }
 
 export async function sellItem(itemId: number): Promise<Item> {

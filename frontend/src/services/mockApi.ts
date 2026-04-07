@@ -64,7 +64,7 @@ const communities: Community[] = [
   },
 ];
 
-let items: Item[] = [
+const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
   {
     id: 101,
     community_id: 1,
@@ -306,6 +306,7 @@ let items: Item[] = [
     updated_at: "2026-03-21T10:45:00Z",
   },
 ];
+let items: Item[] = _rawItems.map((item) => ({ ...item, reserved_by_id: null as number | null }));
 
 let mockCurrentUser: User | null = null;
 
@@ -452,6 +453,7 @@ export async function createListing(
     id: Math.max(...items.map((i) => i.id)) + 1,
     community_id: mockCurrentUser.community_id,
     user_id: mockCurrentUser.id,
+    reserved_by_id: null,
     seller_name: mockCurrentUser.email.split("@")[0],
     title,
     description: description || null,
@@ -477,6 +479,7 @@ export async function reserveItem(itemId: number): Promise<Item> {
   if (!it) throw new Error("Item not found");
   if (it.status !== "available") throw new Error(`Cannot reserve item in status: ${it.status}`);
   it.status = "reserved";
+  it.reserved_by_id = mockCurrentUser?.id ?? null;
   it.updated_at = new Date().toISOString();
   return it;
 }
@@ -487,6 +490,7 @@ export async function sellItem(itemId: number): Promise<Item> {
   if (!it) throw new Error("Item not found");
   if (it.status !== "reserved") throw new Error(`Cannot sell item not in reserved status`);
   it.status = "sold";
+  it.reserved_by_id = null;
   it.updated_at = new Date().toISOString();
   return it;
 }

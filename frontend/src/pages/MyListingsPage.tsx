@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteItem, getListings, getLocalReservedIds } from "../services/api";
+import { deleteItem, getListings } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import type { Item } from "../types/marketplace";
 import { formatDollars, titleCase } from "../utils/format";
@@ -104,10 +104,9 @@ export default function MyListingsPage() {
       try {
         setIsLoading(true);
         const all = await getListings(communitySlug, {});
-        const reservedIds = new Set(getLocalReservedIds());
         setPosted(all.filter((item) => item.user_id === user!.id));
         setReserved(
-          all.filter((item) => reservedIds.has(item.id) && item.user_id !== user!.id && item.status === "reserved"),
+          all.filter((item) => item.reserved_by_id === user!.id && item.status === "reserved"),
         );
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load listings.");
