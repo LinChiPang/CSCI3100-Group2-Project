@@ -27,5 +27,18 @@ Given("there are {int} transactions") do |count|
 end
 
 When("I visit the analytics dashboard") do
+  community = Community.first || Community.create!(name: "Admin Community", slug: "admin-community")
+  admin = User.find_or_create_by!(email: "cucumber-admin@cuhk.edu.hk") do |u|
+    u.password             = "password123"
+    u.password_confirmation = "password123"
+    u.username             = "cucumberadmin"
+    u.role                 = "admin"
+    u.confirmed_at         = Time.now
+    u.community            = community
+  end
+  secret  = ENV["JWT_SECRET"] || "your_secret_key_here"
+  payload = { sub: admin.id, jti: admin.jti, exp: 1.day.from_now.to_i }
+  token   = JWT.encode(payload, secret, "HS256")
+  page.driver.header "Authorization", "Bearer #{token}"
   visit "/admin/analytics"
 end

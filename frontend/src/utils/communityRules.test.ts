@@ -12,8 +12,8 @@ const rule: CommunityRule = {
 
 describe("communityRules", () => {
   it("detects price above community max", () => {
-    expect(itemPriceExceedsMax(rule, 10001)).toBe(true);
-    expect(itemPriceExceedsMax(rule, 10000)).toBe(false);
+    expect(itemPriceExceedsMax(rule, 101)).toBe(true);
+    expect(itemPriceExceedsMax(rule, 100)).toBe(false);
   });
 
   it("allows category when list empty", () => {

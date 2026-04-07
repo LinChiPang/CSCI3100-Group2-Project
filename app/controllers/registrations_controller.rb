@@ -7,6 +7,7 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     build_resource(sign_up_params)
 
+    resource.skip_confirmation!
     resource.save
     yield resource if block_given?
 
@@ -44,7 +45,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def sign_up_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :community_id)
+    params.require(:user).permit(:email, :password, :password_confirmation, :community_id, :username)
   end
 
   def after_sign_up_path_for(resource)
