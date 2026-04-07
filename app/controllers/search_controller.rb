@@ -14,10 +14,12 @@ class SearchController < ApplicationController
   private
 
   def pg_trgm_suggestions(query)
-    item_titles = fuzzy_item_titles(query)
-    transaction_item_names = fuzzy_transaction_item_names(query)
+    ApplicationRecord.transaction(requires_new: true) do
+      item_titles = fuzzy_item_titles(query)
+      transaction_item_names = fuzzy_transaction_item_names(query)
 
-    (item_titles + transaction_item_names).uniq.first(5)
+      (item_titles + transaction_item_names).uniq.first(5)
+    end
   rescue ActiveRecord::StatementInvalid
     []
   end
