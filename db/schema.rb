@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_090838) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -40,11 +40,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_090838) do
     t.datetime "created_at", null: false
     t.text "description"
     t.decimal "price", precision: 10, scale: 2, null: false
+    t.bigint "reserved_by_id"
     t.integer "status", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["community_id"], name: "index_items_on_community_id"
+    t.index ["reserved_by_id"], name: "index_items_on_reserved_by_id"
     t.index ["status"], name: "index_items_on_status"
     t.index ["user_id"], name: "index_items_on_user_id"
   end
@@ -89,5 +91,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_090838) do
   add_foreign_key "community_rules", "communities"
   add_foreign_key "items", "communities"
   add_foreign_key "items", "users"
+  add_foreign_key "items", "users", column: "reserved_by_id"
   add_foreign_key "users", "communities"
 end

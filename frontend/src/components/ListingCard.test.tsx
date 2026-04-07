@@ -9,6 +9,7 @@ describe("ListingCard", () => {
     id: 42,
     community_id: 1,
     user_id: 5,
+    reserved_by_id: null,
     seller_name: "alice",
     title: "Physics Textbook",
     description: "Good condition",
