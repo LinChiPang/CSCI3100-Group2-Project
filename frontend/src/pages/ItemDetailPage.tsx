@@ -153,14 +153,16 @@ export default function ItemDetailPage() {
         >
           Reserve
         </button>
-        <button
-          type="button"
-          disabled={!canSell || isActionLoading}
-          onClick={handleSell}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 disabled:cursor-not-allowed disabled:text-gray-400"
-        >
-          Mark as Sold
-        </button>
+        {isOwner && (
+          <button
+            type="button"
+            disabled={!canSell || isActionLoading}
+            onClick={handleSell}
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 disabled:cursor-not-allowed disabled:text-gray-400"
+          >
+            Mark as Sold
+          </button>
+        )}
         {isOwner && (
           <>
             <Link

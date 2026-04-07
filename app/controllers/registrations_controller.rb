@@ -7,8 +7,8 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     build_resource(sign_up_params)
 
+    resource.skip_confirmation!
     resource.save
-    resource.confirm if resource.persisted? && !resource.confirmed?
     yield resource if block_given?
 
     if resource.persisted?
