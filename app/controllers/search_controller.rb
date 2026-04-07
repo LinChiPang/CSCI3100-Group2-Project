@@ -14,23 +14,34 @@ class SearchController < ApplicationController
   private
 
   def pg_trgm_suggestions(query)
-    item_titles = fuzzy_values(Item, :title, query)
-    transaction_item_names = fuzzy_values(Transaction, :item_name, query)
+    item_titles = fuzzy_item_titles(query)
+    transaction_item_names = fuzzy_transaction_item_names(query)
 
     (item_titles + transaction_item_names).uniq.first(5)
   rescue ActiveRecord::StatementInvalid
     []
   end
 
-  def fuzzy_values(model, column_name, query)
-    model
-      .where.not(column_name => [ nil, "" ])
-      .select(column_name)
+  def fuzzy_item_titles(query)
+    Item
+      .where.not(title: [ nil, "" ])
+      .select(:title)
       .distinct
-      .where("#{column_name} % ?", query)
-      .order(Arel.sql("similarity(#{column_name}, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
+      .where("title % ?", query)
+      .order(Arel.sql("similarity(title, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
       .limit(5)
-      .pluck(column_name)
+      .pluck(:title)
+  end
+
+  def fuzzy_transaction_item_names(query)
+    Transaction
+      .where.not(item_name: [ nil, "" ])
+      .select(:item_name)
+      .distinct
+      .where("item_name % ?", query)
+      .order(Arel.sql("similarity(item_name, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
+      .limit(5)
+      .pluck(:item_name)
   end
 
   def in_memory_suggestions(query)

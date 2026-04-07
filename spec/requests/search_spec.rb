@@ -11,10 +11,11 @@ RSpec.describe "Search", type: :request do
   it "returns fuzzy suggestions for a query" do
     community = Community.create!(name: "Search Community", slug: "search-community")
     user = User.create!(
-      email: "search-owner@example.com",
+      email: "search-owner@cuhk.edu.hk",
       password: "Password123!",
       password_confirmation: "Password123!",
-      community: community
+      community: community,
+      username: "search_owner"
     )
     Item.create!(title: "Desk Lamp", description: "Bright", price: 120, user: user, community: community)
 
