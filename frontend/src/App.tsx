@@ -18,6 +18,12 @@ import type { Community } from "./types/marketplace";
 function CommunityLayout() {
   const { community_slug } = useParams();
 
+  useEffect(() => {
+    if (community_slug) {
+      localStorage.setItem("last_community_slug", community_slug);
+    }
+  }, [community_slug]);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
@@ -55,7 +61,9 @@ function DefaultRedirect() {
 
   if (communities === null) return <p className="p-4 text-gray-700">Loading...</p>;
 
-  const fallbackSlug = communities[0]?.slug;
+  const lastCommunitySlug = localStorage.getItem("last_community_slug");
+  const hasLastCommunity = !!lastCommunitySlug && communities.some((c) => c.slug === lastCommunitySlug);
+  const fallbackSlug = hasLastCommunity ? lastCommunitySlug : communities[0]?.slug;
   if (!fallbackSlug) {
     return <p className="p-4 text-gray-700">No communities found.</p>;
   }
