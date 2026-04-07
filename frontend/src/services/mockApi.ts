@@ -345,7 +345,7 @@ export async function register(
   password: string,
   passwordConfirmation: string,
   communityId: number,
-  username: string,
+  _username: string,
 ): Promise<{ user: User; token: string }> {
   await sleep(300);
 
@@ -388,7 +388,7 @@ const mockUserCommunityMap: Record<string, number> = {
   "lee-woo-sing-college": 9,
 };
 
-export async function login(email: string, password: string): Promise<{ user: User; token: string }> {
+export async function login(email: string, _password: string): Promise<{ user: User; token: string }> {
   await sleep(300);
   
   // Mock: accept any CUHK email
@@ -545,7 +545,6 @@ export async function getAnalytics() {
     recent_transactions: [...mockTransactions].reverse().slice(0, 10),
   };
 }
-
 export async function mockCheckout(itemName: string, amount: number) {
   await sleep(600);
   if (!itemName || amount <= 0) throw new Error("Invalid checkout input.");
@@ -587,4 +586,3 @@ export async function getSearchSuggestions(query: string): Promise<string[]> {
   const q = query.toLowerCase();
   return MOCK_SUGGESTION_POOL.filter((s) => s.toLowerCase().includes(q)).slice(0, 5);
 }
-
