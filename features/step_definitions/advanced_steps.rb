@@ -9,6 +9,13 @@ When("I submit a mock payment for {string} with amount {int}") do |item_name, am
 end
 
 When("I visit the search page") do
+  Transaction.find_or_create_by!(provider_ref: "bdd_search_seed") do |tx|
+    tx.item_name = "Desk Lamp"
+    tx.amount_cents = 12000
+    tx.currency = "hkd"
+    tx.status = "succeeded"
+    tx.provider = "stripe_mock"
+  end
   visit "/search"
 end
 

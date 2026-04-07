@@ -1,17 +1,4 @@
 class SearchController < ApplicationController
-  ITEMS = [
-    "Desk Lamp",
-    "Office Chair",
-    "Rice Cooker",
-    "Keyboard",
-    "Monitor",
-    "Bicycle Helmet",
-    "Water Bottle",
-    "Textbook: Algorithms",
-    "USB-C Charger",
-    "Bluetooth Speaker"
-  ].freeze
-
   def index; end
 
   def suggestions
@@ -27,20 +14,47 @@ class SearchController < ApplicationController
   private
 
   def pg_trgm_suggestions(query)
+    ApplicationRecord.transaction(requires_new: true) do
+      item_titles = fuzzy_item_titles(query)
+      transaction_item_names = fuzzy_transaction_item_names(query)
+
+      (item_titles + transaction_item_names).uniq.first(5)
+    end
+  rescue ActiveRecord::StatementInvalid
+    []
+  end
+
+  def fuzzy_item_titles(query)
+    Item
+      .where.not(title: [ nil, "" ])
+      .select(:title)
+      .distinct
+      .where("title % ?", query)
+      .order(Arel.sql("similarity(title, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
+      .limit(5)
+      .pluck(:title)
+  end
+
+  def fuzzy_transaction_item_names(query)
     Transaction
+      .where.not(item_name: [ nil, "" ])
       .select(:item_name)
       .distinct
       .where("item_name % ?", query)
       .order(Arel.sql("similarity(item_name, #{ActiveRecord::Base.connection.quote(query)}) DESC"))
       .limit(5)
       .pluck(:item_name)
-  rescue ActiveRecord::StatementInvalid
-    []
   end
 
   def in_memory_suggestions(query)
+    source_candidates = (
+      Item.where.not(title: [ nil, "" ]).distinct.pluck(:title) +
+      Transaction.where.not(item_name: [ nil, "" ]).distinct.pluck(:item_name)
+    ).uniq
+    return [] if source_candidates.empty?
+
     normalized = query.downcase
-    ITEMS
+    source_candidates
       .sort_by do |item|
         candidate = item.downcase
         [
