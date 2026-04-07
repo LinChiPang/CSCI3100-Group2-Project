@@ -9,7 +9,15 @@ RSpec.describe "Search", type: :request do
   end
 
   it "returns fuzzy suggestions for a query" do
-    Transaction.create!(item_name: "Desk Lamp", amount_cents: 12_000, provider_ref: "tx_search_a")
+    community = Community.create!(name: "Search Community", slug: "search-community")
+    user = User.create!(
+      email: "search-owner@example.com",
+      password: "Password123!",
+      password_confirmation: "Password123!",
+      community: community
+    )
+    Item.create!(title: "Desk Lamp", description: "Bright", price: 120, user: user, community: community)
+
     get "/search/suggestions", params: { q: "lmp" }
 
     expect(response).to have_http_status(:ok)
