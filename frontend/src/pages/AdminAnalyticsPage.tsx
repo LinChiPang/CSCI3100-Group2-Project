@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAnalytics, type AnalyticsData } from "../services/api";
+import Navbar from "../components/Navbar";
 
 const CHART_W = 600;
 const CHART_H = 160;
@@ -23,7 +24,8 @@ function LineChart({
   }
 
   const fmt = formatValue ?? ((v: number) => String(v));
-  const max = Math.max(...values, 1);
+  const safeValues = values.map((v) => (typeof v === "number" && isFinite(v) ? v : 0));
+  const max = Math.max(...safeValues, 1);
   const innerW = CHART_W - PAD.left - PAD.right;
   const innerH = CHART_H - PAD.top - PAD.bottom;
 
@@ -31,7 +33,7 @@ function LineChart({
     PAD.left + (labels.length === 1 ? innerW / 2 : (i / (labels.length - 1)) * innerW);
   const toY = (v: number) => PAD.top + innerH - (v / max) * innerH;
 
-  const points = labels.map((_, i) => `${toX(i)},${toY(values[i])}`).join(" ");
+  const points = labels.map((_, i) => `${toX(i)},${toY(safeValues[i])}`).join(" ");
 
   // y-axis ticks (0, mid, max)
   const yTicks = [0, max / 2, max];
@@ -85,9 +87,9 @@ function LineChart({
 
         {/* Data points + tooltips */}
         {labels.map((label, i) => (
-          <g key={label}>
-            <circle cx={toX(i)} cy={toY(values[i])} r={4} fill={color} />
-            <title>{`${label}: ${fmt(values[i])}`}</title>
+          <g key={`${label}-${i}`}>
+            <circle cx={toX(i)} cy={toY(safeValues[i])} r={4} fill={color} />
+            <title>{`${label}: ${fmt(safeValues[i])}`}</title>
             {/* X-axis label */}
             <text
               x={toX(i)}
@@ -106,7 +108,7 @@ function LineChart({
 }
 
 export default function AdminAnalyticsPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -116,6 +118,7 @@ export default function AdminAnalyticsPage() {
   const backTo = (location.state as { from?: string } | null)?.from ?? "/";
 
   useEffect(() => {
+    if (loading) return; // wait until auth is restored from localStorage
     if (!user) {
       navigate("/login");
       return;
@@ -126,19 +129,47 @@ export default function AdminAnalyticsPage() {
     }
     getAnalytics()
       .then(setData)
-      .catch(() => setError("Failed to load analytics."));
-  }, [user, navigate]);
+      .catch((err: unknown) => {
+        const msg =
+          typeof err === "object" && err !== null && "response" in err
+            ? ((err as { response?: { data?: { error?: string } } }).response?.data?.error ?? "Failed to load analytics.")
+            : "Failed to load analytics.";
+        setError(msg);
+      });
+  }, [user, loading, navigate]);
+
+  // While auth is being restored, show nothing to avoid flash-redirect
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="p-8 text-gray-500">Loading…</div>
+      </div>
+    );
+  }
 
   if (error) {
-    return <div className="p-8 text-red-600">{error}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="p-8 text-red-600">{error}</div>
+      </div>
+    );
   }
 
   if (!data) {
-    return <div className="p-8 text-gray-500">Loading analytics...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="p-8 text-gray-500">Loading analytics…</div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       {/* Back button */}
       <Link
         to={backTo}
@@ -224,6 +255,7 @@ export default function AdminAnalyticsPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

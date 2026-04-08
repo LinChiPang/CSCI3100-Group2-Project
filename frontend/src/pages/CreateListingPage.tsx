@@ -7,7 +7,7 @@ import type { CommunityRule } from "../types/marketplace";
 export default function CreateListingPage() {
   const { community_slug } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -17,10 +17,11 @@ export default function CreateListingPage() {
   const [communityRule, setCommunityRule] = useState<CommunityRule | null>(null);
 
   useEffect(() => {
+    if (loading) return;
     if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
     if (!community_slug) return;

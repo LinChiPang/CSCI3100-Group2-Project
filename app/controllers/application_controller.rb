@@ -19,9 +19,11 @@ class ApplicationController < ActionController::Base
 
   def authenticate_with_token!
     token = request.headers["Authorization"].to_s.gsub("Bearer ", "")
-    secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
+    secret = ENV["JWT_SECRET"].presence ||
+             (Rails.application.credentials.jwt_secret rescue nil) ||
+             Rails.application.secret_key_base
     begin
-      payload = JWT.decode(token, secret, true, algorithm: "HS256")
+      payload = JWT.decode(token, secret, true, algorithms: ["HS256"])
       user_id = payload[0]["sub"]
       @current_user = User.find(user_id)
     rescue JWT::DecodeError, ActiveRecord::RecordNotFound

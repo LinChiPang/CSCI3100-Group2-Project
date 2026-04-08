@@ -2,8 +2,8 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
-export default defineConfig({
-  base: "/frontend/",
+export default defineConfig(({ command }) => ({
+  base: command === "serve" ? "/" : "/frontend/",
   plugins: [react(), tailwindcss()],
   build: {
     outDir: "../public/frontend",
@@ -14,4 +14,4 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.ts",
   },
-});
+}));

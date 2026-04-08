@@ -25,15 +25,18 @@ export default function LoginPage() {
 
     try {
       const loggedInUser = await login(email, password);
-      if (loggedInUser) {
-        const communities = await getCommunities();
-        const community = communities.find((c) => c.id === loggedInUser.community_id);
-        navigate(community ? `/c/${community.slug}` : "/");
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch (err) {
-      setError("Login failed. Please try again.");
+      const communities = await getCommunities();
+      const community = communities.find((c) => c.id === loggedInUser.community_id);
+      navigate(community ? `/c/${community.slug}` : "/");
+    } catch (err: unknown) {
+      // Show the backend error message when available, otherwise a generic one
+      const backendError =
+        typeof err === "object" &&
+        err !== null &&
+        "response" in err
+          ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
+          : undefined;
+      setError(backendError ?? "Invalid email or password");
     } finally {
       setLoading(false);
     }

@@ -315,12 +315,14 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = "your_secret_key_here"
+    jwt.secret = ENV["JWT_SECRET"].presence ||
+                 (Rails.application.credentials.jwt_secret rescue nil) ||
+                 Rails.application.secret_key_base
     jwt.dispatch_requests = [
-      [ "POST", %r{^/api/v1/users/login$} ]
+      [ "POST", %r{^/users/login$} ]
     ]
     jwt.revocation_requests = [
-      [ "DELETE", %r{^/api/v1/users/logout$} ]
+      [ "DELETE", %r{^/users/logout$} ]
     ]
     jwt.expiration_time = 1.day.to_i
   end
