@@ -86,7 +86,7 @@ function ManageCard({
 export default function MyListingsPage() {
   const { community_slug } = useParams();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const communitySlug = community_slug ?? "";
 
   const [posted, setPosted] = useState<Item[]>([]);
@@ -95,6 +95,7 @@ export default function MyListingsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loading) return;
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -115,7 +116,7 @@ export default function MyListingsPage() {
       }
     }
     void load();
-  }, [communitySlug, user, isAuthenticated, navigate]);
+  }, [communitySlug, user, isAuthenticated, loading, navigate]);
 
   const handleDeleted = (id: number) => {
     setPosted((prev) => prev.filter((item) => item.id !== id));

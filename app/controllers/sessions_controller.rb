@@ -8,7 +8,9 @@ class SessionsController < Devise::SessionsController
     self.resource = warden.authenticate(auth_options)
     if resource && resource.active_for_authentication?
       sign_in(resource_name, resource)
-      secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
+      secret = ENV["JWT_SECRET"].presence ||
+               (Rails.application.credentials.jwt_secret rescue nil) ||
+               Rails.application.secret_key_base
       payload = {
         sub: resource.id,
         jti: resource.jti,
@@ -16,7 +18,7 @@ class SessionsController < Devise::SessionsController
       }
       token = JWT.encode(payload, secret, "HS256")
       render json: {
-        user: UserSerializer.new(resource).serializable_hash,
+        user: UserSerializer.new(resource).as_json,
         token: token
       }, status: :ok
     else

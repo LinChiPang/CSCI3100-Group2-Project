@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setSession } = useAuth();
 
   useEffect(() => {
     async function loadCommunities() {
@@ -58,12 +58,10 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const { user, token } = await register(email, password, passwordConfirmation, communityId, username);
-      // Store token and user, then redirect to their community
-      localStorage.setItem("auth_token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      // Re-login through AuthContext so the state is updated
-      await login(email, password);
-      navigate(`/c/${communities.find((c) => c.id === communityId)?.slug ?? ""}`);
+      // Store token and update AuthContext state in one step (no second API call needed)
+      setSession(user, token);
+      const slug = communities.find((c) => c.id === user.community_id)?.slug ?? communities.find((c) => c.id === communityId)?.slug ?? "";
+      navigate(`/c/${slug}`);
     } catch (err: unknown) {
       // Axios 422 errors carry validation details in response.data
       if (

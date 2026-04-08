@@ -51,7 +51,7 @@ const apiBaseUrl = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ??
 
 const client = axios.create({
   baseURL: apiBaseUrl,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json", "Accept": "application/json" },
 });
 
 // Add JWT token to request headers if available
@@ -63,7 +63,7 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// When the server returns 401, clear stale credentials and redirect to login
+// When the server returns 401 on a non-auth endpoint, clear stale credentials and redirect to login
 client.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
@@ -71,11 +71,18 @@ client.interceptors.response.use(
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      (error as { response?: { status?: number } }).response?.status === 401
+      (error as { response?: { status?: number }; config?: { url?: string } }).response?.status === 401
     ) {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
+      const requestUrl = (error as { config?: { url?: string } }).config?.url ?? "";
+      // Don't redirect when the auth endpoints themselves return 401 (wrong credentials / already logged in)
+      const isAuthEndpoint = requestUrl.includes("/users/login") || requestUrl.includes("/users/logout") || requestUrl === "/users";
+      // Only redirect if the user was supposed to be authenticated (had a stored token)
+      const hadToken = !!localStorage.getItem("auth_token");
+      if (!isAuthEndpoint && hadToken) {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },

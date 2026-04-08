@@ -7,7 +7,7 @@ import type { CommunityRule } from "../types/marketplace";
 export default function EditListingPage() {
   const { community_slug, itemId } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,10 +20,11 @@ export default function EditListingPage() {
   const numericItemId = itemId ? Number(itemId) : NaN;
 
   useEffect(() => {
+    if (loading) return;
     if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
     if (!community_slug) return;
