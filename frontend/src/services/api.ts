@@ -75,7 +75,13 @@ client.interceptors.response.use(
     ) {
       const requestUrl = (error as { config?: { url?: string } }).config?.url ?? "";
       // Don't redirect when the auth endpoints themselves return 401 (wrong credentials / already logged in)
-      const isAuthEndpoint = requestUrl.includes("/users/login") || requestUrl.includes("/users/logout") || requestUrl === "/users";
+      const isAuthEndpoint =
+        requestUrl.includes("/users/login") ||
+        requestUrl.includes("/users/login.json") ||
+        requestUrl.includes("/users/logout") ||
+        requestUrl.includes("/users/logout.json") ||
+        requestUrl === "/users" ||
+        requestUrl === "/users.json";
       // Only redirect if the user was supposed to be authenticated (had a stored token)
       const hadToken = !!localStorage.getItem("auth_token");
       if (!isAuthEndpoint && hadToken) {
@@ -103,7 +109,7 @@ export async function register(
   if (useMocks) return mockApi.register(email, password, passwordConfirmation, communityId, username);
   await guardRealApi();
 
-  const res = await client.post("/users", {
+  const res = await client.post("/users.json", {
     user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId, username },
   });
 
@@ -117,7 +123,7 @@ export async function login(email: string, password: string): Promise<{ user: Us
   if (useMocks) return mockApi.login(email, password);
   await guardRealApi();
 
-  const res = await client.post("/users/login", {
+  const res = await client.post("/users/login.json", {
     user: { email, password },
   });
 
@@ -134,7 +140,7 @@ export async function logout(): Promise<void> {
   }
   await guardRealApi();
   localStorage.removeItem("auth_token");
-  await client.delete("/users/logout");
+  await client.delete("/users/logout.json");
 }
 
 // ===== Community Endpoints =====
