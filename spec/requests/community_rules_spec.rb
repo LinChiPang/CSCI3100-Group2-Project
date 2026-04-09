@@ -6,11 +6,6 @@ RSpec.describe "CommunityRules", type: :request do
   let(:admin) { create(:user, community: community, role: 'admin') }
   let(:user) { create(:user, community: community) }
 
-  def token_for(user)
-    payload = { sub: user.id, jti: user.jti, exp: 1.day.from_now.to_i }
-    JWT.encode(payload, ENV['JWT_SECRET'] || 'test_secret_key_for_jwt', 'HS256')
-  end
-
   describe "GET /communities/:slug/community_rule" do
     it "returns the community rule for the given slug" do
       community = create(:community, slug: "shaw-college")

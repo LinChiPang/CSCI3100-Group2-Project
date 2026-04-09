@@ -54,10 +54,19 @@ const client = axios.create({
   headers: { "Content-Type": "application/json", "Accept": "application/json" },
 });
 
+function authHeaderShouldBeSkipped(requestUrl: string): boolean {
+  const path = requestUrl.split("?")[0] ?? requestUrl;
+  return path.endsWith("/users/login") ||
+    path.endsWith("/users/login.json") ||
+    path.endsWith("/users") ||
+    path.endsWith("/users.json");
+}
+
 // Add JWT token to request headers if available
 client.interceptors.request.use((config) => {
   const token = localStorage.getItem("auth_token");
-  if (token) {
+  const requestUrl = config.url ?? "";
+  if (token && !authHeaderShouldBeSkipped(requestUrl)) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -139,8 +148,11 @@ export async function logout(): Promise<void> {
     return;
   }
   await guardRealApi();
-  localStorage.removeItem("auth_token");
-  await client.delete("/users/logout.json");
+  try {
+    await client.delete("/users/logout.json");
+  } finally {
+    localStorage.removeItem("auth_token");
+  }
 }
 
 // ===== Community Endpoints =====

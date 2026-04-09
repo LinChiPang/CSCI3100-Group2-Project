@@ -1,14 +1,11 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable
+         :recoverable, :rememberable, :validatable, :confirmable,
+         :jwt_authenticatable, jwt_revocation_strategy: self
 
   belongs_to :community
 
   include Devise::JWT::RevocationStrategies::JTIMatcher
-
-  def self.jwt_revocation_strategy
-    Devise::JWT::RevocationStrategies::JTIMatcher
-  end
 
   validates :community, presence: true
   validates :username, presence: true

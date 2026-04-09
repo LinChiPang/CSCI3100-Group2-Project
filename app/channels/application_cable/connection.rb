@@ -13,12 +13,20 @@ module ApplicationCable
               request.headers["Authorization"].to_s.gsub("Bearer ", "")
       return reject_unauthorized_connection if token.blank?
 
-      secret = ENV["JWT_SECRET"] || Rails.application.credentials.jwt_secret || "your_secret_key_here"
-      payload = JWT.decode(token, secret, true, algorithm: "HS256")
+      payload = JWT.decode(token, jwt_secret, true, algorithm: "HS256")
       user_id = payload[0]["sub"]
-      User.find(user_id)
+      user = User.find(user_id)
+      return reject_unauthorized_connection unless payload[0]["jti"] == user.jti
+
+      user
     rescue JWT::DecodeError, ActiveRecord::RecordNotFound
       reject_unauthorized_connection
+    end
+
+    def jwt_secret
+      ENV["JWT_SECRET"].presence ||
+        (Rails.application.credentials.jwt_secret rescue nil) ||
+        Rails.application.secret_key_base
     end
   end
 end

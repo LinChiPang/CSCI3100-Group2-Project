@@ -7,12 +7,6 @@ RSpec.describe "Items", type: :request do
   let(:other_community) { create(:community) }
   let(:item) { create(:item, user: user, community: community) }
 
-  def token_for(user)
-    payload = { sub: user.id, jti: user.jti, exp: 1.day.from_now.to_i }
-    secret = ENV["JWT_SECRET"] || 'test_secret_key_for_jwt'
-    JWT.encode(payload, secret, 'HS256')
-  end
-
   describe "GET /items" do
     it "returns a list of items (only from user's community)" do
       create(:item, community: community)   # should appear

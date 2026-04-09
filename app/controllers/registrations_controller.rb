@@ -14,19 +14,9 @@ class RegistrationsController < Devise::RegistrationsController
     if resource.persisted?
       if resource.active_for_authentication?
         sign_up(resource_name, resource)
-        # Generate token (same as before)
-        secret = ENV["JWT_SECRET"].presence ||
-                 (Rails.application.credentials.jwt_secret rescue nil) ||
-                 Rails.application.secret_key_base
-        payload = {
-          sub: resource.id,
-          jti: resource.jti,
-          exp: 1.day.from_now.to_i
-        }
-        token = JWT.encode(payload, secret, "HS256")
         render json: {
           user: UserSerializer.new(resource).as_json,
-          token: token
+          token: jwt_token_for(resource)
         }, status: :created
       else
         render json: { message: "User created successfully. Please confirm your email." }, status: :created

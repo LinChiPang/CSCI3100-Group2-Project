@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Devise::Controllers::Helpers
+  include JwtTokenIssuer
 
   skip_before_action :verify_authenticity_token
 
@@ -19,13 +20,14 @@ class ApplicationController < ActionController::Base
 
   def authenticate_with_token!
     token = request.headers["Authorization"].to_s.gsub("Bearer ", "")
-    secret = ENV["JWT_SECRET"].presence ||
-             (Rails.application.credentials.jwt_secret rescue nil) ||
-             Rails.application.secret_key_base
     begin
-      payload = JWT.decode(token, secret, true, algorithms: ["HS256"])
+      payload = JWT.decode(token, jwt_secret, true, algorithms: ["HS256"])
       user_id = payload[0]["sub"]
       @current_user = User.find(user_id)
+
+      unless payload[0]["jti"] == @current_user.jti
+        render json: { error: "Invalid token" }, status: :unauthorized
+      end
     rescue JWT::DecodeError, ActiveRecord::RecordNotFound
       render json: { error: "Invalid token" }, status: :unauthorized
     end
