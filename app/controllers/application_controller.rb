@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   def authenticate_with_token!
     token = request.headers["Authorization"].to_s.gsub("Bearer ", "")
     begin
-      payload = JWT.decode(token, jwt_secret, true, algorithms: ["HS256"])
+      payload = JWT.decode(token, jwt_secret, true, algorithms: [ "HS256" ])
       user_id = payload[0]["sub"]
       @current_user = User.find(user_id)
 
