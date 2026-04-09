@@ -50,6 +50,7 @@ class ItemsController < ApplicationController
     return unless authorize_item!(:reserve)
 
     @item.reserve!(actor: @current_user)
+    @item.reload
     render json: @item, status: :ok
   rescue ActiveRecord::RecordInvalid
     render json: { errors: @item.errors.full_messages }, status: :unprocessable_entity
@@ -59,6 +60,7 @@ class ItemsController < ApplicationController
     return unless authorize_item!(:sell)
 
     @item.sell!(actor: @current_user)
+    @item.reload
     render json: @item, status: :ok
   rescue ActiveRecord::RecordInvalid
     render json: { errors: @item.errors.full_messages }, status: :unprocessable_entity
