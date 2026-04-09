@@ -4,6 +4,7 @@ FactoryBot.define do
     description { "Test description" }
     price { 100.00 }
     status { "available" }
+    category { "others" }
     association :user
     community { user&.community || association(:community) }
 

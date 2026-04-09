@@ -17,7 +17,7 @@ RSpec.describe "Search", type: :request do
       community: community,
       username: "search_owner"
     )
-    Item.create!(title: "Desk Lamp", description: "Bright", price: 120, user: user, community: community)
+    Item.create!(title: "Desk Lamp", description: "Bright", price: 120, category: "others", user: user, community: community)
 
     get "/search/suggestions", params: { q: "lmp" }
 

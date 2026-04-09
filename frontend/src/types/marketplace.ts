@@ -25,6 +25,7 @@ export type Item = {
   description: string | null;
   price: number;
   status: ItemStatus;
+  category: string | null;
   created_at: string;
   updated_at: string;
 };
