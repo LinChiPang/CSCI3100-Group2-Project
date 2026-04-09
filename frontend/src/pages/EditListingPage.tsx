@@ -12,6 +12,7 @@ export default function EditListingPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +48,7 @@ export default function EditListingPage() {
         setTitle(item.title);
         setDescription(item.description ?? "");
         setPrice(String(item.price));
+        setCategory(item.category ?? "");
       } catch {
         setError("Failed to load item.");
       } finally {
@@ -79,7 +81,7 @@ export default function EditListingPage() {
 
     try {
       setIsSubmitting(true);
-      await updateItem(numericItemId, title.trim(), description.trim(), priceNum);
+      await updateItem(numericItemId, title.trim(), description.trim(), priceNum, category);
       navigate(`/c/${community_slug}/items/${itemId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update listing.");
@@ -123,6 +125,25 @@ export default function EditListingPage() {
             onChange={(e) => setDescription(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+        </div>
+        <div>
+          <label htmlFor="category" className="mb-1 block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="">Select a category…</option>
+            {(communityRule?.allowed_categories ?? []).map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label htmlFor="price" className="mb-1 block text-sm font-medium text-gray-700">

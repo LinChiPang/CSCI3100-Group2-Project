@@ -23,6 +23,7 @@ type RawItem = {
   description: string | null;
   price: string; // Rails decimal comes as string
   status: "available" | "reserved" | "sold";
+  category: string | null;
   reserved_by_id: number | null;
   created_at: string;
   updated_at: string;
@@ -41,6 +42,7 @@ function normalizeItem(raw: RawItem): Item {
     description: raw.description,
     price: parseFloat(raw.price),
     status: raw.status,
+    category: raw.category ?? null,
     created_at: raw.created_at,
     updated_at: raw.updated_at,
   };
@@ -183,6 +185,7 @@ export async function getListings(
   if (filters.minPrice !== undefined) params.min_price = filters.minPrice;
   if (filters.maxPrice !== undefined) params.max_price = filters.maxPrice;
   if (filters.statuses && filters.statuses.length > 0) params.status = filters.statuses[0];
+  if (filters.categories && filters.categories.length > 0) params.category = filters.categories[0];
 
   const res = await client.get("/items", { params });
   return (res.data as RawItem[]).map(normalizeItem);
@@ -192,11 +195,12 @@ export async function createListing(
   title: string,
   description: string,
   price: number,
+  category: string,
 ): Promise<Item> {
-  if (useMocks) return mockApi.createListing(title, description, price);
+  if (useMocks) return mockApi.createListing(title, description, price, category);
   await guardRealApi();
   const res = await client.post("/items", {
-    item: { title, description, price },
+    item: { title, description, price, category },
   });
   return normalizeItem(res.data as RawItem);
 }
@@ -227,11 +231,12 @@ export async function updateItem(
   title: string,
   description: string,
   price: number,
+  category: string,
 ): Promise<Item> {
-  if (useMocks) return mockApi.updateItem(itemId, title, description, price);
+  if (useMocks) return mockApi.updateItem(itemId, title, description, price, category);
   await guardRealApi();
   const res = await client.patch(`/items/${itemId}`, {
-    item: { title, description, price },
+    item: { title, description, price, category },
   });
   return normalizeItem(res.data as RawItem);
 }

@@ -12,6 +12,7 @@ export default function CreateListingPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [communityRule, setCommunityRule] = useState<CommunityRule | null>(null);
@@ -40,6 +41,10 @@ export default function CreateListingPage() {
       setError("Title is required.");
       return;
     }
+    if (!category) {
+      setError("Please select a category.");
+      return;
+    }
     const priceNum = parseFloat(price);
     if (isNaN(priceNum) || priceNum < 0) {
       setError("Please enter a valid price.");
@@ -52,7 +57,7 @@ export default function CreateListingPage() {
 
     try {
       setIsSubmitting(true);
-      const item = await createListing(title.trim(), description.trim(), priceNum);
+      const item = await createListing(title.trim(), description.trim(), priceNum, category);
       navigate(`/c/${community_slug}/items/${item.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create listing.");
@@ -101,6 +106,26 @@ export default function CreateListingPage() {
             rows={4}
             className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            required
+          >
+            <option value="">Select a category…</option>
+            {(communityRule?.allowed_categories ?? []).map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

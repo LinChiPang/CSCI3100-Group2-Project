@@ -29,6 +29,11 @@ export default function ListingCard({ item, communitySlug }: ListingCardProps) {
           <p className="mt-1 text-xs text-gray-600">
             Seller: {item.seller_name}
           </p>
+          {item.category && (
+            <span className="mt-1 inline-block rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-xs text-blue-700">
+              {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+            </span>
+          )}
         </div>
         <span className={`shrink-0 rounded-full border px-2 py-1 text-xs ${statusClass(item.status)}`}>
           {titleCase(item.status)}
