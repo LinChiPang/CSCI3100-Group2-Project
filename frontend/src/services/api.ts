@@ -65,7 +65,8 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// When the server returns 401, clear stale credentials and redirect to login
+// When the server returns 401 on an authenticated request, clear stale credentials and redirect to login.
+// Skip the redirect for auth endpoints (login/register) so credential errors surface as normal errors.
 client.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
@@ -75,9 +76,14 @@ client.interceptors.response.use(
       "response" in error &&
       (error as { response?: { status?: number } }).response?.status === 401
     ) {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
+      const url: string =
+        (error as { config?: { url?: string } }).config?.url ?? "";
+      const isAuthEndpoint = url.includes("/users/login") || url.includes("/users/sign_in") || url === "/users";
+      if (!isAuthEndpoint) {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },
@@ -98,9 +104,11 @@ export async function register(
   if (useMocks) return mockApi.register(email, password, passwordConfirmation, communityId, username);
   await guardRealApi();
 
-  const res = await client.post("/users", {
-    user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId, username },
-  });
+  const res = await client.post(
+    "/users",
+    { user: { email, password, password_confirmation: passwordConfirmation, community_id: communityId, username } },
+    { headers: { Authorization: undefined } },
+  );
 
   return {
     user: res.data.user as User,
