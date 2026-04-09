@@ -102,9 +102,7 @@ class ItemsController < ApplicationController
     if params[:q].present?
       items = items.where("title ILIKE ? OR description ILIKE ?", "%#{params[:q]}%", "%#{params[:q]}%")
     end
-    if params[:categories].present?
-      items = items.where(category: Array(params[:categories]))
-    end
+    items = items.where(category: Array(params[:categories])) if params[:categories].present?
     items
   end
 end

@@ -72,9 +72,8 @@ class Item < ApplicationRecord
 
     rule = community.community_rule
     return if rule.nil? || rule.allowed_categories.blank?
+    return if rule.allowed_categories.include?(category.to_s.strip.downcase)
 
-    unless rule.allowed_categories.include?(category.to_s.strip.downcase)
-      errors.add(:category, "is not allowed in this community")
-    end
+    errors.add(:category, "is not allowed in this community")
   end
 end

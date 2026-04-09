@@ -82,7 +82,7 @@ RSpec.describe "Items", type: :request do
     context "with valid token" do
       it "creates an item" do
         post "/items",
-          params: { item: { title: "New Item", price: 50 } },
+          params: { item: { title: "New Item", price: 50, category: "others" } },
           headers: { "Authorization" => "Bearer #{token_for(user)}" }, as: :json
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)['title']).to eq("New Item")
