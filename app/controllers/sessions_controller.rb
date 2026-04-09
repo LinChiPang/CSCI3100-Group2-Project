@@ -1,6 +1,7 @@
 class SessionsController < Devise::SessionsController
   # skip_before_action :verify_authenticity_token, only: [:create, :destroy]
   skip_before_action :verify_signed_out_user, only: :destroy
+  skip_before_action :require_no_authentication, only: :destroy
   # skip_before_action :require_no_authentication, only: [:create]
   respond_to :json
 
@@ -25,7 +26,8 @@ class SessionsController < Devise::SessionsController
   end
 
   def destroy
-    sign_out
+    # JWT is stateless — no server-side session to invalidate.
+    # The client discards the token; we simply respond with success.
     render json: { message: "Logged out successfully" }, status: :ok
   end
 end
