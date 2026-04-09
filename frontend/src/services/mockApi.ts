@@ -12,55 +12,55 @@ const communities: Community[] = [
     id: 1,
     slug: "chung-chi-college",
     name: "Chung Chi College",
-    community_rule: { community_id: 1, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
+    community_rule: { community_id: 1, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "others"] },
   },
   {
     id: 2,
     slug: "new-asia-college",
     name: "New Asia College",
-    community_rule: { community_id: 2, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "kitchen", "sports"] },
+    community_rule: { community_id: 2, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "kitchen", "others", "sports"] },
   },
   {
     id: 3,
     slug: "united-college",
     name: "United College",
-    community_rule: { community_id: 3, max_price: 8000, max_active_listings: 10, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "lifestyle"] },
+    community_rule: { community_id: 3, max_price: 8000, max_active_listings: 10, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "lifestyle", "others"] },
   },
   {
     id: 4,
     slug: "shaw-college",
     name: "Shaw College",
-    community_rule: { community_id: 4, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
+    community_rule: { community_id: 4, max_price: 5000, max_active_listings: 8, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "others"] },
   },
   {
     id: 5,
     slug: "morningside-college",
     name: "Morningside College",
-    community_rule: { community_id: 5, max_price: 6000, max_active_listings: 5, posting_enabled: true, allowed_categories: ["books", "electronics", "lifestyle"] },
+    community_rule: { community_id: 5, max_price: 6000, max_active_listings: 5, posting_enabled: true, allowed_categories: ["books", "electronics", "lifestyle", "others"] },
   },
   {
     id: 6,
     slug: "sh-ho-college",
     name: "S.H. Ho College",
-    community_rule: { community_id: 6, max_price: 4500, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "furniture", "kitchen"] },
+    community_rule: { community_id: 6, max_price: 4500, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "furniture", "kitchen", "others"] },
   },
   {
     id: 7,
     slug: "cw-chu-college",
     name: "CW Chu College",
-    community_rule: { community_id: 7, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "electronics", "sports"] },
+    community_rule: { community_id: 7, max_price: 4000, max_active_listings: 6, posting_enabled: true, allowed_categories: ["books", "electronics", "others", "sports"] },
   },
   {
     id: 8,
     slug: "wu-yee-sun-college",
     name: "Wu Yee Sun College",
-    community_rule: { community_id: 8, max_price: 5000, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "furniture", "lifestyle"] },
+    community_rule: { community_id: 8, max_price: 5000, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "furniture", "lifestyle", "others"] },
   },
   {
     id: 9,
     slug: "lee-woo-sing-college",
     name: "Lee Woo Sing College",
-    community_rule: { community_id: 9, max_price: 5500, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture"] },
+    community_rule: { community_id: 9, max_price: 5500, max_active_listings: 7, posting_enabled: true, allowed_categories: ["books", "electronics", "furniture", "others"] },
   },
 ];
 
@@ -74,6 +74,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Good condition. Includes practice problems.",
     price: 180,
     status: "available",
+    category: "books",
     created_at: "2026-03-20T10:00:00Z",
     updated_at: "2026-03-20T10:00:00Z",
   },
@@ -86,6 +87,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Minor highlighting. No missing pages.",
     price: 280,
     status: "available",
+    category: "books",
     created_at: "2026-03-20T10:05:00Z",
     updated_at: "2026-03-20T10:05:00Z",
   },
@@ -98,6 +100,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Handy cheat sheet for finals.",
     price: 50,
     status: "available",
+    category: "books",
     created_at: "2026-03-20T10:10:00Z",
     updated_at: "2026-03-20T10:10:00Z",
   },
@@ -110,6 +113,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Warm light, adjustable neck.",
     price: 75,
     status: "reserved",
+    category: "furniture",
     created_at: "2026-03-20T10:15:00Z",
     updated_at: "2026-03-20T10:15:00Z",
   },
@@ -122,6 +126,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Comfortable for long hours.",
     price: 64,
     status: "available",
+    category: "furniture",
     created_at: "2026-03-20T10:20:00Z",
     updated_at: "2026-03-20T10:20:00Z",
   },
@@ -134,6 +139,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Sturdy cabinet with smooth drawers.",
     price: 120,
     status: "sold",
+    category: "furniture",
     created_at: "2026-03-20T10:25:00Z",
     updated_at: "2026-03-20T10:25:00Z",
   },
@@ -146,6 +152,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Rechargeable. Works great.",
     price: 32,
     status: "available",
+    category: "electronics",
     created_at: "2026-03-20T10:30:00Z",
     updated_at: "2026-03-20T10:30:00Z",
   },
@@ -158,6 +165,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "No dents. Clean keycaps.",
     price: 59,
     status: "available",
+    category: "electronics",
     created_at: "2026-03-20T10:35:00Z",
     updated_at: "2026-03-20T10:35:00Z",
   },
@@ -170,6 +178,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "HDMI + SD card + USB ports.",
     price: 42,
     status: "reserved",
+    category: "electronics",
     created_at: "2026-03-20T10:40:00Z",
     updated_at: "2026-03-20T10:40:00Z",
   },
@@ -182,6 +191,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Chapter summaries and problem sets.",
     price: 90,
     status: "available",
+    category: "books",
     created_at: "2026-03-20T10:45:00Z",
     updated_at: "2026-03-20T10:45:00Z",
   },
@@ -194,6 +204,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Lab procedures and worksheets.",
     price: 160,
     status: "available",
+    category: "books",
     created_at: "2026-03-21T10:00:00Z",
     updated_at: "2026-03-21T10:00:00Z",
   },
@@ -206,6 +217,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Clean notes for matrix & eigenvalues.",
     price: 65,
     status: "available",
+    category: "books",
     created_at: "2026-03-21T10:05:00Z",
     updated_at: "2026-03-21T10:05:00Z",
   },
@@ -218,6 +230,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Used lightly. Great ventilation.",
     price: 74,
     status: "sold",
+    category: "others",
     created_at: "2026-03-21T10:10:00Z",
     updated_at: "2026-03-21T10:10:00Z",
   },
@@ -230,6 +243,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Make your desk standing-friendly.",
     price: 98,
     status: "available",
+    category: "others",
     created_at: "2026-03-21T10:15:00Z",
     updated_at: "2026-03-21T10:15:00Z",
   },
@@ -242,6 +256,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Loud and clear sound. Includes cable.",
     price: 220,
     status: "reserved",
+    category: "others",
     created_at: "2026-03-21T10:20:00Z",
     updated_at: "2026-03-21T10:20:00Z",
   },
@@ -254,6 +269,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Fast charge supported.",
     price: 68,
     status: "available",
+    category: "others",
     created_at: "2026-03-21T10:25:00Z",
     updated_at: "2026-03-21T10:25:00Z",
   },
@@ -266,6 +282,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Adjustable angle. Fits most laptops.",
     price: 51,
     status: "available",
+    category: "others",
     created_at: "2026-03-21T10:30:00Z",
     updated_at: "2026-03-21T10:30:00Z",
   },
@@ -278,6 +295,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Graphs, logic, and proofs.",
     price: 199,
     status: "available",
+    category: "books",
     created_at: "2026-03-21T10:35:00Z",
     updated_at: "2026-03-21T10:35:00Z",
   },
@@ -290,6 +308,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Reliable transfer speeds.",
     price: 24,
     status: "sold",
+    category: "others",
     created_at: "2026-03-21T10:40:00Z",
     updated_at: "2026-03-21T10:40:00Z",
   },
@@ -302,6 +321,7 @@ const _rawItems: Array<Omit<Item, "reserved_by_id">> = [
     description: "Compact table for dorm rooms.",
     price: 43,
     status: "available",
+    category: "others",
     created_at: "2026-03-21T10:45:00Z",
     updated_at: "2026-03-21T10:45:00Z",
   },
@@ -321,6 +341,7 @@ function normalize(s: string) {
 function applyFilters(communityId: number, filter: FilterParams): Item[] {
   const search = filter.search ? normalize(filter.search) : undefined;
   const statusSet = new Set<ItemStatus>(filter.statuses ?? []);
+  const categorySet = new Set<string>(filter.categories ?? []);
   const minPrice = filter.minPrice;
   const maxPrice = filter.maxPrice;
 
@@ -333,6 +354,7 @@ function applyFilters(communityId: number, filter: FilterParams): Item[] {
     }
 
     if (statusSet.size > 0 && !statusSet.has(it.status)) return false;
+    if (categorySet.size > 0 && !categorySet.has(it.category ?? "")) return false;
     if (minPrice !== undefined && it.price < minPrice) return false;
     if (maxPrice !== undefined && it.price > maxPrice) return false;
     return true;
@@ -445,6 +467,7 @@ export async function createListing(
   title: string,
   description: string,
   price: number,
+  category: string,
 ): Promise<Item> {
   await sleep(300);
   if (!mockCurrentUser) throw new Error("You must be logged in to post a listing.");
@@ -459,6 +482,7 @@ export async function createListing(
     description: description || null,
     price,
     status: "available",
+    category: category || null,
     created_at: now,
     updated_at: now,
   };
@@ -500,6 +524,7 @@ export async function updateItem(
   title: string,
   description: string,
   price: number,
+  category: string,
 ): Promise<Item> {
   await sleep(300);
   const it = items.find((x) => x.id === itemId);
@@ -507,6 +532,7 @@ export async function updateItem(
   it.title = title;
   it.description = description || null;
   it.price = price;
+  it.category = category || null;
   it.updated_at = new Date().toISOString();
   return it;
 }

@@ -22,15 +22,15 @@ end
 puts "Seeding community rules..."
 
 community_rule_defaults = {
-  "chung-chi-college"    => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture] },
-  "new-asia-college"     => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books kitchen sports] },
-  "united-college"       => { posting_enabled: true, max_active_listings: 10, max_price: 8_000, allowed_categories: %w[books electronics furniture lifestyle] },
-  "shaw-college"         => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture] },
-  "morningside-college"  => { posting_enabled: true, max_active_listings: 5,  max_price: 6_000, allowed_categories: %w[books electronics lifestyle] },
-  "sh-ho-college"        => { posting_enabled: true, max_active_listings: 6,  max_price: 4_500, allowed_categories: %w[books furniture kitchen] },
-  "cw-chu-college"       => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books electronics sports] },
-  "wu-yee-sun-college"   => { posting_enabled: true, max_active_listings: 7,  max_price: 5_000, allowed_categories: %w[books furniture lifestyle] },
-  "lee-woo-sing-college" => { posting_enabled: true, max_active_listings: 7,  max_price: 5_500, allowed_categories: %w[books electronics furniture] }
+  "chung-chi-college"    => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture others] },
+  "new-asia-college"     => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books kitchen others sports] },
+  "united-college"       => { posting_enabled: true, max_active_listings: 10, max_price: 8_000, allowed_categories: %w[books electronics furniture lifestyle others] },
+  "shaw-college"         => { posting_enabled: true, max_active_listings: 8,  max_price: 5_000, allowed_categories: %w[books electronics furniture others] },
+  "morningside-college"  => { posting_enabled: true, max_active_listings: 5,  max_price: 6_000, allowed_categories: %w[books electronics lifestyle others] },
+  "sh-ho-college"        => { posting_enabled: true, max_active_listings: 6,  max_price: 4_500, allowed_categories: %w[books furniture kitchen others] },
+  "cw-chu-college"       => { posting_enabled: true, max_active_listings: 6,  max_price: 4_000, allowed_categories: %w[books electronics others sports] },
+  "wu-yee-sun-college"   => { posting_enabled: true, max_active_listings: 7,  max_price: 5_000, allowed_categories: %w[books furniture lifestyle others] },
+  "lee-woo-sing-college" => { posting_enabled: true, max_active_listings: 7,  max_price: 5_500, allowed_categories: %w[books electronics furniture others] }
 }
 
 communities.each do |community|
@@ -82,12 +82,12 @@ seller_shaw, buyer_shaw, seller_new_asia, buyer_united = users
 puts "Seeding items..."
 
 items_data = [
-  { title: "Algorithms Textbook", description: "CS fundamentals", price: 280, user: seller_shaw, community: seller_shaw.community, status: :available },
-  { title: "IKEA Desk Lamp", description: "Working condition", price: 120, user: seller_shaw, community: seller_shaw.community, status: :reserved },
-  { title: "Office Chair", description: "Mesh back, used 1 year", price: 450, user: seller_shaw, community: seller_shaw.community, status: :sold },
-  { title: "Rice Cooker", description: "1.8L, like new", price: 300, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Bluetooth Speaker", description: "Portable", price: 220, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Calculus Notes", description: "MATH1010 complete notes", price: 80, user: buyer_united, community: buyer_united.community, status: :available }
+  { title: "Algorithms Textbook", description: "CS fundamentals", price: 280, user: seller_shaw, community: seller_shaw.community, status: :available, category: "books" },
+  { title: "IKEA Desk Lamp", description: "Working condition", price: 120, user: seller_shaw, community: seller_shaw.community, status: :reserved, category: "furniture" },
+  { title: "Office Chair", description: "Mesh back, used 1 year", price: 450, user: seller_shaw, community: seller_shaw.community, status: :sold, category: "furniture" },
+  { title: "Rice Cooker", description: "1.8L, like new", price: 300, user: seller_new_asia, community: seller_new_asia.community, status: :available, category: "kitchen" },
+  { title: "Bluetooth Speaker", description: "Portable", price: 220, user: seller_new_asia, community: seller_new_asia.community, status: :available, category: "others" },
+  { title: "Calculus Notes", description: "MATH1010 complete notes", price: 80, user: buyer_united, community: buyer_united.community, status: :available, category: "books" }
 ]
 
 items_data.each do |attrs|
@@ -95,6 +95,7 @@ items_data.each do |attrs|
   item.description = attrs[:description]
   item.price = attrs[:price]
   item.status = attrs[:status]
+  item.category = attrs[:category]
   item.save!
 end
 

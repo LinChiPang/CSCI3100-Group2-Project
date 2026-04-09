@@ -8,7 +8,9 @@ class Item < ApplicationRecord
   validates :title, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, inclusion: { in: statuses.keys }
+  validates :category, presence: true
   validate :seller_belongs_to_community
+  validate :category_allowed_by_community_rules
 
   def reserve!(actor: nil)
     unless status_available?
@@ -63,5 +65,16 @@ class Item < ApplicationRecord
     return if user.community_id == community_id
 
     errors.add(:community, "must match seller's community")
+  end
+
+  def category_allowed_by_community_rules
+    return if category.blank? || community.blank?
+
+    rule = community.community_rule
+    return if rule.nil? || rule.allowed_categories.blank?
+
+    unless rule.allowed_categories.include?(category.to_s.strip.downcase)
+      errors.add(:category, "is not allowed in this community")
+    end
   end
 end

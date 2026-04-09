@@ -35,6 +35,14 @@ export default function ListingCard({ item, communitySlug }: ListingCardProps) {
         </span>
       </div>
 
+      {item.category && (
+        <div className="mt-2">
+          <span className="inline-block rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-xs text-blue-700">
+            {titleCase(item.category)}
+          </span>
+        </div>
+      )}
+
       <div className="mt-3 flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">{formatDollars(item.price)}</p>
         <Link
