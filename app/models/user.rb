@@ -4,12 +4,6 @@ class User < ApplicationRecord
 
   belongs_to :community
 
-  include Devise::JWT::RevocationStrategies::JTIMatcher
-
-  def self.jwt_revocation_strategy
-    Devise::JWT::RevocationStrategies::JTIMatcher
-  end
-
   validates :community, presence: true
   validates :username, presence: true
 
