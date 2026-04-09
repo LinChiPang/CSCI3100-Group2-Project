@@ -3,12 +3,6 @@ require 'rails_helper'
 RSpec.describe "Sessions", type: :request do
   let(:user) { create(:user, password: "password123", confirmed_at: Time.now) }
 
-  def token_for(user)
-    payload = { sub: user.id, jti: user.jti, exp: 1.day.from_now.to_i }
-    secret = ENV['JWT_SECRET'] || 'test_secret_key_for_jwt'
-    JWT.encode(payload, secret, 'HS256')
-  end
-
   describe "POST /users/login" do
     context "with valid credentials" do
       it "returns a token" do
@@ -44,13 +38,44 @@ RSpec.describe "Sessions", type: :request do
         expect(JSON.parse(response.body)['error']).to eq("Invalid email or password")
       end
     end
+
+    context "with a stale authorization header" do
+      it "still returns a token for valid credentials" do
+        post "/users/login.json",
+          params: { user: { email: user.email, password: "password123" } },
+          headers: { "Authorization" => "Bearer invalid.token.here" },
+          as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)["token"]).to be_present
+      end
+    end
   end
 
   describe "DELETE /users/logout" do
     it "logs out successfully" do
-      delete "/users/logout", headers: { "Authorization" => "Bearer #{token_for(user)}" }, as: :json
+      post "/users/login", params: { user: { email: user.email, password: "password123" } }, as: :json
+      token = JSON.parse(response.body)["token"]
+
+      delete "/users/logout", headers: { "Authorization" => "Bearer #{token}" }, as: :json
+
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)['message']).to eq("Logged out successfully")
+    end
+
+    it "rejects the same token after JSON logout" do
+      post "/users/login", params: { user: { email: user.email, password: "password123" } }, as: :json
+      token = JSON.parse(response.body)["token"]
+      auth_headers = { "Authorization" => "Bearer #{token}" }
+
+      get "/items", headers: auth_headers, as: :json
+      expect(response).to have_http_status(:ok)
+
+      delete "/users/logout.json", headers: auth_headers, as: :json
+      expect(response).to have_http_status(:ok)
+
+      get "/items", headers: auth_headers, as: :json
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end

@@ -319,10 +319,10 @@ Devise.setup do |config|
                  (Rails.application.credentials.jwt_secret rescue nil) ||
                  Rails.application.secret_key_base
     jwt.dispatch_requests = [
-      [ "POST", %r{^/users/login$} ]
+      [ "POST", %r{^/users/login(?:\.json)?$} ]
     ]
     jwt.revocation_requests = [
-      [ "DELETE", %r{^/users/logout$} ]
+      [ "DELETE", %r{^/users/logout(?:\.json)?$} ]
     ]
     jwt.expiration_time = 1.day.to_i
   end

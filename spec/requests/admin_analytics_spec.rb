@@ -2,11 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Admin analytics", type: :request do
   let(:admin) { create(:user, role: "admin") }
-  let(:token) do
-    secret = ENV["JWT_SECRET"] || "your_secret_key_here"
-    payload = { sub: admin.id, jti: admin.jti, exp: 1.day.from_now.to_i }
-    JWT.encode(payload, secret, "HS256")
-  end
+  let(:token) { token_for(admin) }
   let(:auth_headers) { { "Authorization" => "Bearer #{token}" } }
 
   it "serves the SPA shell for HTML requests" do
