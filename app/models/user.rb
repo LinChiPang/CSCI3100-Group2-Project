@@ -2,6 +2,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable
 
+  before_create :set_jti
+
   belongs_to :community
 
   validates :community, presence: true
@@ -20,4 +22,10 @@ class User < ApplicationRecord
   validates :email, format: { with: /\A[\w+\-.]+@cuhk\.edu\.hk\z/i, message: "must be a CUHK email" }
 
   has_many :items, dependent: :destroy
+
+  private
+
+  def set_jti
+    self.jti ||= SecureRandom.uuid
+  end
 end
