@@ -41,6 +41,24 @@ RSpec.describe Item, type: :model do
       item.reserve!(actor: actor)
       expect { item.sell!(actor: actor) }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it "persists reservation when Action Cable broadcast fails" do
+      buyer = create(:user, community: community)
+      allow(ActionCable.server).to receive(:broadcast).and_raise(StandardError, "cable down")
+
+      expect { item.reserve!(actor: buyer) }.not_to raise_error
+      expect(item.reload).to be_status_reserved
+      expect(item.reserved_by_id).to eq(buyer.id)
+    end
+
+    it "persists sale when Action Cable broadcast fails" do
+      buyer = create(:user, community: community)
+      item.reserve!(actor: buyer)
+      allow(ActionCable.server).to receive(:broadcast).and_raise(StandardError, "cable down")
+
+      expect { item.sell! }.not_to raise_error
+      expect(item.reload).to be_status_sold
+    end
   end
 
   describe 'community consistency' do
