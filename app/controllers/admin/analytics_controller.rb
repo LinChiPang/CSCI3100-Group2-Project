@@ -1,16 +1,20 @@
+# app/controllers/admin/analytics_controller.rb
 module Admin
   class AnalyticsController < ApplicationController
+    # Only authenticate for JSON requests; browser HTML requests serve the SPA shell
+    before_action :authenticate_with_token!, if: -> { request.format.json? || request.xhr? }
+    before_action :require_admin!, if: -> { request.format.json? || request.xhr? }
+
     def index
-      # Browser navigations get the SPA shell; API calls (Accept: application/json) get JSON
       unless request.format.json? || request.xhr?
         render_frontend_spa!
         return
       end
 
-      require_admin!
-      return if performed?
+      # Scope to current admin's community
+      transactions = Transaction.where(community_id: @current_user.community_id)
+                                .order(created_at: :asc)
 
-      transactions = Transaction.order(created_at: :asc)
       total_transactions = transactions.count
       total_gmv_cents = transactions.sum(:amount_cents)
 
@@ -24,6 +28,7 @@ module Admin
 
       render json: {
         total_transactions: total_transactions,
+        total_gmv_cents: total_gmv_cents,
         total_gmv_hkd: total_gmv_cents / 100.0,
         daily_labels: daily_labels,
         daily_counts: daily_counts,
@@ -39,6 +44,24 @@ module Admin
           }
         end
       }
+    end
+
+    private
+
+    def require_admin!
+      unless @current_user&.admin?
+        render json: { error: "Not authorized" }, status: :forbidden
+      end
+    end
+
+    def render_frontend_spa!
+      # Try to render the actual frontend build if it exists
+      if File.exist?(Rails.root.join('public', 'index.html'))
+        render file: Rails.root.join('public', 'index.html'), layout: false
+      else
+        # Return a minimal HTML fallback for testing/development
+        render html: "<html><body><h1>Admin Analytics</h1></body></html>".html_safe, status: :ok
+      end
     end
   end
 end
