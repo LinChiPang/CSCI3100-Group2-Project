@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getCommunities, register } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import type { Community } from "../types/marketplace";
+import { isAllowedCuhkEmailDomain } from "../utils/emailDomain";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -34,8 +35,8 @@ export default function RegisterPage() {
     setError("");
 
     // Client-side validation
-    if (!email.endsWith("@cuhk.edu.hk")) {
-      setError("Please use your CUHK email (@cuhk.edu.hk)");
+    if (!isAllowedCuhkEmailDomain(email)) {
+      setError("Please use an approved CUHK email domain");
       return;
     }
     if (!username.trim()) {
@@ -80,6 +81,11 @@ export default function RegisterPage() {
           }
           return;
         }
+        const backendError = (response?.data as { error?: string } | undefined)?.error;
+        if (backendError) {
+          setError(backendError);
+          return;
+        }
       }
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
@@ -101,7 +107,7 @@ export default function RegisterPage() {
 
         {/* CUHK notice */}
         <div className="mb-5 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
-          Registration is restricted to CUHK students (@cuhk.edu.hk)
+          Registration is restricted to approved CUHK email domains
         </div>
 
         {/* Error */}

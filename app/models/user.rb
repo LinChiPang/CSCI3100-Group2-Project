@@ -19,8 +19,17 @@ class User < ApplicationRecord
   end
 
   validate :community_exists
-
-  validates :email, format: { with: /\A[\w+\-.]+@cuhk\.edu\.hk\z/i, message: "must be a CUHK email" }
+  validate :email_domain_must_be_allowed_cuhk_domain
 
   has_many :items, dependent: :destroy
+
+  private
+
+  def email_domain_must_be_allowed_cuhk_domain
+    return if email.blank?
+    return unless email.to_s.count("@") == 1
+    return if CuhkEmailDomain.allowed?(email)
+
+    errors.add(:email, "must use an approved CUHK email domain")
+  end
 end
