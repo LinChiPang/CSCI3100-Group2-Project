@@ -34,7 +34,7 @@ export default function LandingPage() {
         {/* Description */}
         <p className="mt-6 text-gray-500 text-base leading-relaxed">
           Buy and sell second-hand items within your CUHK community. 
-          Only students with a valid CUHK email can join.
+          Only students with an approved CUHK email domain can join.
         </p>
 
         {/* Buttons */}
@@ -55,7 +55,7 @@ export default function LandingPage() {
 
         {/* Footer note */}
         <p className="mt-10 text-xs text-gray-400">
-          Restricted to @cuhk.edu.hk email addresses
+          Restricted to approved CUHK email domains
         </p>
       </div>
     </div>

@@ -45,28 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string): Promise<User> => {
-    setLoading(true);
-    try {
-      const { user: newUser, token } = await apiLogin(email, password);
-      setUser(newUser);
-      localStorage.setItem("auth_token", token);
-      localStorage.setItem("user", JSON.stringify(newUser));
-      return newUser;
-    } finally {
-      setLoading(false);
-    }
+    const { user: newUser, token } = await apiLogin(email, password);
+    setUser(newUser);
+    localStorage.setItem("auth_token", token);
+    localStorage.setItem("user", JSON.stringify(newUser));
+    return newUser;
   };
 
   const logout = async () => {
+    setUser(null);
     try {
       await apiLogout();
-      setUser(null);
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user");
     } catch (err) {
       console.error("Logout error:", err);
-      // Clear local state anyway
-      setUser(null);
+    } finally {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user");
     }

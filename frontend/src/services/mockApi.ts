@@ -6,6 +6,7 @@ import type {
   ItemStatus,
   User,
 } from "../types/marketplace";
+import { isAllowedCuhkEmailDomain } from "../utils/emailDomain";
 
 const communities: Community[] = [
   {
@@ -371,8 +372,8 @@ export async function register(
 ): Promise<{ user: User; token: string }> {
   await sleep(300);
 
-  if (!email.endsWith("@cuhk.edu.hk")) {
-    throw new Error("Email must be a CUHK email (@cuhk.edu.hk)");
+  if (!isAllowedCuhkEmailDomain(email)) {
+    throw new Error("Email must use an approved CUHK email domain");
   }
   if (password.length < 6) {
     throw new Error("Password must be at least 6 characters");
@@ -413,8 +414,7 @@ const mockUserCommunityMap: Record<string, number> = {
 export async function login(email: string, _password: string): Promise<{ user: User; token: string }> {
   await sleep(300);
   
-  // Mock: accept any CUHK email
-  if (!email.endsWith("@cuhk.edu.hk")) {
+  if (!isAllowedCuhkEmailDomain(email)) {
     throw new Error("Invalid email or password");
   }
 

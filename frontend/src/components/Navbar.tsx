@@ -95,9 +95,9 @@ export default function Navbar() {
 
               <span className="text-sm text-gray-700">{user?.email}</span>
               <button
-                onClick={() => {
-                  logout();
-                  navigate("/");
+                onClick={async () => {
+                  await logout();
+                  navigate("/", { replace: true });
                 }}
                 className="flex items-center gap-1 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
               >
@@ -119,4 +119,3 @@ export default function Navbar() {
     </header>
   );
 }
-
