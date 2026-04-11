@@ -18,12 +18,34 @@ import type { Community } from "./types/marketplace";
 
 function CommunityLayout() {
   const { community_slug } = useParams();
+  const { user, loading } = useAuth();
+  const [communities, setCommunities] = useState<Community[] | null>(null);
 
   useEffect(() => {
     if (community_slug) {
       localStorage.setItem("last_community_slug", community_slug);
     }
   }, [community_slug]);
+
+  useEffect(() => {
+    async function loadCommunities() {
+      try {
+        const res = await getCommunities();
+        setCommunities(res);
+      } catch {
+        setCommunities([]);
+      }
+    }
+    void loadCommunities();
+  }, []);
+
+  // Redirect authenticated users away from communities they don't belong to
+  if (!loading && user && communities !== null) {
+    const userSlug = communities.find((c) => c.id === user.community_id)?.slug;
+    if (userSlug && community_slug !== userSlug) {
+      return <Navigate to={`/c/${userSlug}`} replace />;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
