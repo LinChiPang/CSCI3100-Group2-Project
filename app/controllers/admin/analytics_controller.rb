@@ -56,8 +56,8 @@ module Admin
 
     def render_frontend_spa!
       # Try to render the actual frontend build if it exists
-      if File.exist?(Rails.root.join('public', 'index.html'))
-        render file: Rails.root.join('public', 'index.html'), layout: false
+      if File.exist?(Rails.root.join("public", "index.html"))
+        render file: Rails.root.join("public", "index.html"), layout: false
       else
         # Return a minimal HTML fallback for testing/development
         render html: "<html><body><h1>Admin Analytics</h1></body></html>".html_safe, status: :ok

@@ -1,5 +1,5 @@
 class PaymentsController < ApplicationController
-  before_action :authenticate_with_token!, only: [:mock_checkout]   # require authentication
+  before_action :authenticate_with_token!, only: [ :mock_checkout ]   # require authentication
 
   def new
     @recent_transactions = Transaction.order(created_at: :desc).limit(5)
