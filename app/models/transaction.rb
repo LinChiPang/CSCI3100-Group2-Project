@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
   belongs_to :community
-
+  validates :community, presence: true
   validates :item_name, presence: true
   validates :amount_cents, numericality: { greater_than: 0 }
   validates :currency, presence: true
