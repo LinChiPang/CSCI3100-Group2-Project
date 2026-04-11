@@ -31,7 +31,10 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
   def ensure_not_authenticated
-    if user_signed_in?
+    # Only block when a JWT Authorization header is explicitly provided.
+    # Session cookies (common when testing via localhost) are not how this API authenticates,
+    # so we intentionally ignore them here.
+    if request.headers["Authorization"].present?
       render json: { error: "You are already signed in." }, status: :forbidden
     end
   end
