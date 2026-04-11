@@ -18,7 +18,8 @@ class PaymentsController < ApplicationController
     tx = Transaction.create!(
       item_name: item_name,
       amount_cents: amount * 100,
-      provider_ref: "mock_#{SecureRandom.hex(8)}"
+      provider_ref: "mock_#{SecureRandom.hex(8)}",
+      community_id: resolve_checkout_community_id
     )
 
     respond_to do |format|
@@ -36,5 +37,35 @@ class PaymentsController < ApplicationController
         }, status: :created
       end
     end
+  end
+
+  private
+
+  # Prefer the listing's community when item_id is provided and belongs to the buyer's community;
+  # otherwise attribute the mock payment to the authenticated user's community (SPA JSON calls).
+  def resolve_checkout_community_id
+    user = current_user_from_bearer_if_valid
+    return nil unless user
+
+    if params[:item_id].present?
+      item = Item.find_by(id: params[:item_id])
+      return item.community_id if item && item.community_id == user.community_id
+    end
+
+    user.community_id
+  end
+
+  def current_user_from_bearer_if_valid
+    token = request.headers["Authorization"].to_s.sub(/\ABearer /i, "")
+    return nil if token.blank?
+
+    payload = JWT.decode(token, jwt_secret, true, algorithms: [ "HS256" ])
+    user_id = payload[0]["sub"]
+    user = User.find(user_id)
+    return nil unless payload[0]["jti"] == user.jti
+
+    user
+  rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+    nil
   end
 end

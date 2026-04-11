@@ -249,6 +249,8 @@ export async function deleteItem(itemId: number): Promise<void> {
 
 // ===== Admin Endpoints =====
 export interface AnalyticsData {
+  community_slug: string;
+  community_name: string;
   total_transactions: number;
   total_gmv_hkd: number;
   daily_labels: string[];
@@ -282,10 +284,18 @@ export interface CheckoutResult {
   };
 }
 
-export async function mockCheckout(itemName: string, amount: number): Promise<CheckoutResult> {
-  if (useMocks) return mockApi.mockCheckout(itemName, amount);
+export async function mockCheckout(
+  itemName: string,
+  amount: number,
+  itemId?: number,
+): Promise<CheckoutResult> {
+  if (useMocks) return mockApi.mockCheckout(itemName, amount, itemId);
   await guardRealApi();
-  const res = await client.post("/payments/mock_checkout", { item_name: itemName, amount });
+  const res = await client.post("/payments/mock_checkout", {
+    item_name: itemName,
+    amount,
+    ...(itemId != null ? { item_id: itemId } : {}),
+  });
   return res.data as CheckoutResult;
 }
 

@@ -6,11 +6,13 @@ import { formatDollars } from "../utils/format";
 interface PaymentModalProps {
   itemTitle: string;
   price: number; // numeric HKD
+  /** When set, checkout is attributed to this listing's community (same as buyer's community). */
+  itemId?: number;
   onSuccess: () => void;
   onClose: () => void;
 }
 
-export default function PaymentModal({ itemTitle, price, onSuccess, onClose }: PaymentModalProps) {
+export default function PaymentModal({ itemTitle, price, itemId, onSuccess, onClose }: PaymentModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -19,7 +21,7 @@ export default function PaymentModal({ itemTitle, price, onSuccess, onClose }: P
     try {
       setLoading(true);
       setError(null);
-      await mockCheckout(itemTitle, price);
+      await mockCheckout(itemTitle, price, itemId);
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed.");

@@ -10,7 +10,9 @@ module Admin
       require_admin!
       return if performed?
 
-      transactions = Transaction.order(created_at: :asc)
+      transactions = Transaction
+        .where(community_id: @current_user.community_id)
+        .order(created_at: :asc)
       total_transactions = transactions.count
       total_gmv_cents = transactions.sum(:amount_cents)
 
@@ -23,6 +25,8 @@ module Admin
       recent = transactions.last(10).reverse
 
       render json: {
+        community_slug: @current_user.community.slug,
+        community_name: @current_user.community.name,
         total_transactions: total_transactions,
         total_gmv_hkd: total_gmv_cents / 100.0,
         daily_labels: daily_labels,

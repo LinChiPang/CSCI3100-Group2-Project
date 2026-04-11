@@ -120,6 +120,7 @@ export default function ItemDetailPage() {
         <PaymentModal
           itemTitle={item.title}
           price={item.price}
+          itemId={item.id}
           onSuccess={handlePaymentSuccess}
           onClose={() => setShowPaymentModal(false)}
         />

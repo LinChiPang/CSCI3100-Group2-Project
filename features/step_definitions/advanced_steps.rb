@@ -9,12 +9,14 @@ When("I submit a mock payment for {string} with amount {int}") do |item_name, am
 end
 
 When("I visit the search page") do
+  community = Community.first || Community.create!(name: "Search Seed Community", slug: "search-seed-community")
   Transaction.find_or_create_by!(provider_ref: "bdd_search_seed") do |tx|
     tx.item_name = "Desk Lamp"
     tx.amount_cents = 12000
     tx.currency = "hkd"
     tx.status = "succeeded"
     tx.provider = "stripe_mock"
+    tx.community_id = community.id
   end
   visit "/search"
 end
@@ -28,8 +30,14 @@ Then("I should see {string} in suggestions") do |text|
 end
 
 Given("there are {int} transactions") do |count|
+  community = Community.first || Community.create!(name: "BDD Transactions Community", slug: "bdd-tx-community")
   count.times do |i|
-    Transaction.create!(item_name: "Item #{i + 1}", amount_cents: 1000, provider_ref: "bdd_tx_#{i}")
+    Transaction.create!(
+      item_name: "Item #{i + 1}",
+      amount_cents: 1000,
+      provider_ref: "bdd_tx_#{i}",
+      community_id: community.id
+    )
   end
 end
 

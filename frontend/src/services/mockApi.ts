@@ -563,6 +563,8 @@ export async function getAnalytics() {
   }
   const dailyLabels = Object.keys(grouped).sort();
   return {
+    community_slug: "mock-community",
+    community_name: "Mock Community",
     total_transactions: mockTransactions.length,
     total_gmv_hkd: mockTransactions.reduce((s, t) => s + t.amount_hkd, 0),
     daily_labels: dailyLabels,
@@ -571,7 +573,7 @@ export async function getAnalytics() {
     recent_transactions: [...mockTransactions].reverse().slice(0, 10),
   };
 }
-export async function mockCheckout(itemName: string, amount: number) {
+export async function mockCheckout(itemName: string, amount: number, _itemId?: number) {
   await sleep(600);
   if (!itemName || amount <= 0) throw new Error("Invalid checkout input.");
   return {

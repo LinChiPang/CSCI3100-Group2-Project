@@ -140,16 +140,22 @@ transactions_data = [
   { item_name: "Noise-Cancelling Earbuds",       amount_cents: 55_000, provider_ref: "seed_tx_028", date: "2026-04-03 14:30:00" }
 ]
 
-transactions_data.each do |tx|
+college_slugs = colleges.map { |c| c[:slug] }
+
+transactions_data.each_with_index do |tx, index|
+  slug = college_slugs[index % college_slugs.length]
+  community = Community.find_by!(slug: slug)
+
   record = Transaction.find_or_create_by!(provider_ref: tx[:provider_ref]) do |t|
-    t.item_name    = tx[:item_name]
-    t.amount_cents = tx[:amount_cents]
-    t.currency     = "HKD"
-    t.status       = "succeeded"
-    t.provider     = "stripe_mock"
+    t.item_name     = tx[:item_name]
+    t.amount_cents  = tx[:amount_cents]
+    t.currency      = "HKD"
+    t.status        = "succeeded"
+    t.provider      = "stripe_mock"
+    t.community_id  = community.id
   end
-  # Backdate created_at so the daily grouping is meaningful
-  record.update_columns(created_at: tx[:date], updated_at: tx[:date])
+  # Backdate created_at so the daily grouping is meaningful; keep community scoped per college.
+  record.update_columns(created_at: tx[:date], updated_at: tx[:date], community_id: community.id)
 end
 
 puts "Seed complete."

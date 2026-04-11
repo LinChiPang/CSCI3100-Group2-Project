@@ -179,6 +179,10 @@ export default function AdminAnalyticsPage() {
       </Link>
 
       <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+      <p className="text-sm text-gray-600">
+        Showing data for <span className="font-medium text-gray-900">{data.community_name}</span>{" "}
+        <span className="text-gray-400">({data.community_slug})</span>
+      </p>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4">

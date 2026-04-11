@@ -19,18 +19,36 @@ RSpec.describe "Admin analytics", type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.media_type).to eq("application/json")
     json = JSON.parse(response.body)
-    expect(json).to include("total_transactions", "total_gmv_hkd", "daily_labels", "recent_transactions")
+    expect(json).to include(
+      "community_slug",
+      "community_name",
+      "total_transactions",
+      "total_gmv_hkd",
+      "daily_labels",
+      "recent_transactions"
+    )
   end
 
-  it "aggregates transaction counts and GMV" do
-    Transaction.create!(item_name: "Desk Lamp", amount_cents: 12_000, provider_ref: "tx_a")
-    Transaction.create!(item_name: "Chair", amount_cents: 8_000, provider_ref: "tx_b")
+  it "aggregates transaction counts and GMV for the admin's community only" do
+    other_community = create(:community)
+    Transaction.create!(
+      item_name: "Desk Lamp",
+      amount_cents: 12_000,
+      provider_ref: "tx_a",
+      community_id: admin.community_id
+    )
+    Transaction.create!(
+      item_name: "Chair",
+      amount_cents: 8_000,
+      provider_ref: "tx_b",
+      community_id: other_community.id
+    )
 
     get "/admin/analytics", headers: auth_headers, as: :json
 
     json = JSON.parse(response.body)
-    expect(json["total_transactions"]).to eq(2)
-    expect(json["total_gmv_hkd"]).to eq(200.0)
+    expect(json["total_transactions"]).to eq(1)
+    expect(json["total_gmv_hkd"]).to eq(120.0)
   end
 
   it "keeps explicit JSON-format requests on the backend path" do
