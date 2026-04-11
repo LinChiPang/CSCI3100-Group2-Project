@@ -100,6 +100,8 @@ end
 
 puts "Seeding transactions..."
 
+all_communities = Community.all.to_a
+
 transactions_data = [
   # Mar 20 — 2 transactions
   { item_name: "Calculus Textbook (Vol. 1)",     amount_cents: 18_000, provider_ref: "seed_tx_001", date: "2026-03-20 10:15:00" },
@@ -141,12 +143,14 @@ transactions_data = [
 ]
 
 transactions_data.each do |tx|
+  community = all_communities[idx % all_communities.size]
   record = Transaction.find_or_create_by!(provider_ref: tx[:provider_ref]) do |t|
     t.item_name    = tx[:item_name]
     t.amount_cents = tx[:amount_cents]
     t.currency     = "HKD"
     t.status       = "succeeded"
     t.provider     = "stripe_mock"
+    t.community    = community
   end
   # Backdate created_at so the daily grouping is meaningful
   record.update_columns(created_at: tx[:date], updated_at: tx[:date])
