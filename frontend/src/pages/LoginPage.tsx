@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCommunities } from "../services/api";
+import { isAllowedCuhkEmailDomain } from "../utils/emailDomain";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,9 +17,9 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    // Validate CUHK email
-    if (!email.endsWith("@cuhk.edu.hk")) {
-      setError("Please use your CUHK email (@cuhk.edu.hk)");
+    // Validate CUHK domain eligibility
+    if (!isAllowedCuhkEmailDomain(email)) {
+      setError("Please use an approved CUHK email domain");
       setLoading(false);
       return;
     }
@@ -53,7 +54,7 @@ export default function LoginPage() {
         </h1>
 
         <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
-          Use your CUHK email (username@cuhk.edu.hk) to login
+          Use an approved CUHK email domain to login
         </div>
 
         {error && (

@@ -20,6 +20,22 @@ RSpec.describe "Registrations", type: :request do
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)['token']).to be_present
       end
+
+      it "creates a new user with an approved CUHK subdomain" do
+        expect {
+          post "/users", params: {
+            user: {
+              email: "test@cse.cuhk.edu.hk",
+              password: "password123",
+              password_confirmation: "password123",
+              username: "testuser",
+              community_id: community.id
+            }
+          }, as: :json
+        }.to change(User, :count).by(1)
+        expect(response).to have_http_status(:created)
+        expect(JSON.parse(response.body)['token']).to be_present
+      end
     end
 
     context "with invalid email domain" do
@@ -35,7 +51,22 @@ RSpec.describe "Registrations", type: :request do
         }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         errors = JSON.parse(response.body)['errors']
-        expect(errors).to include(/must be a CUHK email/)
+        expect(errors).to include(/must use an approved CUHK email domain/)
+      end
+
+      it "rejects unapproved CUHK subdomains" do
+        post "/users", params: {
+          user: {
+            email: "test@mail.cse.cuhk.edu.hk",
+            password: "password123",
+            password_confirmation: "password123",
+            username: "testuser",
+            community_id: community.id
+          }
+        }, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        errors = JSON.parse(response.body)['errors']
+        expect(errors).to include(/must use an approved CUHK email domain/)
       end
     end
 

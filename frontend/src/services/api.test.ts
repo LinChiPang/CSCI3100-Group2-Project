@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AxiosResponse } from "axios";
 
 const axiosMock = vi.hoisted(() => {
@@ -55,6 +55,10 @@ async function loadApi() {
 }
 
 describe("api auth headers", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     axiosMock.requestHandlers.length = 0;
@@ -94,5 +98,24 @@ describe("api auth headers", () => {
     expect(response.config.url).toBe("/users/logout.json");
     expect(response.config.headers.Authorization).toBe("Bearer active-token");
     expect(localStorage.getItem("auth_token")).toBeNull();
+  });
+
+  it("awaits mock logout before resolving", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("VITE_USE_MOCKS", "true");
+    vi.resetModules();
+    const api = await import("./api");
+    let resolved = false;
+
+    const promise = api.logout().then(() => {
+      resolved = true;
+    });
+
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+
+    await vi.advanceTimersByTimeAsync(100);
+    await promise;
+    expect(resolved).toBe(true);
   });
 });

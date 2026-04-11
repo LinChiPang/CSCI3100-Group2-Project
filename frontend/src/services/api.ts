@@ -146,7 +146,7 @@ export async function login(email: string, password: string): Promise<{ user: Us
 
 export async function logout(): Promise<void> {
   if (useMocks) {
-    mockApi.logout();
+    await mockApi.logout();
     return;
   }
   await guardRealApi();
