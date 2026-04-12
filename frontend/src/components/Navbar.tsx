@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LogOut, LogIn, Bell } from "lucide-react";
+import { LogOut, LogIn, Bell, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNotifications } from "../hooks/useNotifications";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
-  const { notifications, unreadCount, markAllRead, clearAll } =
+  const { notifications, unreadCount, markAllRead, clearAll, latestToast, dismissToast } =
     useNotifications(user?.id ?? null);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,7 +29,21 @@ export default function Navbar() {
   }
 
   return (
-    <header className="border-b border-gray-200 bg-white h-[65px] flex items-center">
+    <>
+      {/* Toast notification — appears when a new notification arrives */}
+      {latestToast && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-start gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-lg w-80 animate-in slide-in-from-bottom-2">
+          <Bell size={16} className="mt-0.5 shrink-0 text-blue-500" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900">{latestToast.message}</p>
+            <p className="mt-0.5 text-xs text-gray-400">{latestToast.sent_at}</p>
+          </div>
+          <button onClick={dismissToast} className="shrink-0 text-gray-400 hover:text-gray-600" aria-label="Dismiss">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+      <header className="border-b border-gray-200 bg-white h-[65px] flex items-center">
       <div className="flex w-full items-center justify-between px-6">
         <div>
           <Link to="/" className="text-xl font-semibold text-gray-900">
@@ -117,5 +131,6 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+    </>
   );
 }

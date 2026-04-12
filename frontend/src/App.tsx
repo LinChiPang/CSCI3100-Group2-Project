@@ -12,6 +12,7 @@ import CreateListingPage from "./pages/CreateListingPage";
 import EditListingPage from "./pages/EditListingPage";
 import MyListingsPage from "./pages/MyListingsPage";
 import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
+import AdminCommunityRulesPage from "./pages/AdminCommunityRulesPage";
 import { getCommunities } from "./services/api";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import type { Community } from "./types/marketplace";
@@ -59,6 +60,7 @@ function CommunityLayout() {
             <Route path="items/:itemId/edit" element={<EditListingPage />} />
             <Route path="new" element={<CreateListingPage />} />
             <Route path="my-listings" element={<MyListingsPage />} />
+            <Route path="admin/rules" element={<AdminCommunityRulesPage />} />
           </Routes>
         </main>
       </div>

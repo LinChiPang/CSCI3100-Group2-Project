@@ -32,10 +32,16 @@ export default function CreateListingPage() {
   }, [community_slug]);
 
   const maxPrice = communityRule?.max_price ?? null;
+  const postingEnabled = communityRule === null || communityRule.posting_enabled;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!postingEnabled) {
+      setError("Posting is currently disabled by the community admin.");
+      return;
+    }
 
     if (!title.trim()) {
       setError("Title is required.");
@@ -65,6 +71,18 @@ export default function CreateListingPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (communityRule !== null && !postingEnabled) {
+    return (
+      <div className="mx-auto max-w-lg">
+        <h1 className="mb-6 text-2xl font-semibold text-gray-900">Post a Listing</h1>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+          <p className="text-sm font-medium text-red-700">Posting is currently disabled by the community admin.</p>
+          <p className="mt-1 text-xs text-red-500">New listings cannot be created at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-lg">

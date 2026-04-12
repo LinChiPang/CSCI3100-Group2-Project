@@ -453,6 +453,18 @@ export async function getCommunityRule(communitySlug: string): Promise<Community
   return community?.community_rule ?? null;
 }
 
+export async function updateCommunityRule(
+  communitySlug: string,
+  params: Partial<Pick<CommunityRule, "max_price" | "max_active_listings" | "posting_enabled" | "allowed_categories">>,
+): Promise<CommunityRule> {
+  await sleep(300);
+  const community = communities.find((c) => c.slug === communitySlug);
+  if (!community) throw new Error("Community not found");
+  if (!community.community_rule) throw new Error("Community has no rules");
+  community.community_rule = { ...community.community_rule, ...params };
+  return community.community_rule;
+}
+
 // ===== Items =====
 export async function getListings(communitySlug: string, filters: FilterParams): Promise<Item[]> {
   await sleep(250);

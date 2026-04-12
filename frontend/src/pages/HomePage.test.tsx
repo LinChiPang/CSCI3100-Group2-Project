@@ -7,6 +7,19 @@ import * as apiModule from "../services/api";
 import type { CommunityRule, Item } from "../types/marketplace";
 
 vi.mock("../services/api");
+vi.mock("../context/AuthContext", () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    login: vi.fn(),
+    setSession: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
+vi.mock("../hooks/useCommunityItemUpdates", () => ({
+  useCommunityItemUpdates: vi.fn(),
+}));
 
 const mockCommunityRule: CommunityRule = {
   community_id: 1,
