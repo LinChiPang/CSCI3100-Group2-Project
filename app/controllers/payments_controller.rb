@@ -61,5 +61,10 @@ class PaymentsController < ApplicationController
         }, status: :created
       end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    respond_to do |format|
+      format.html { redirect_to payments_path, alert: "Payment failed: #{e.message}" }
+      format.json { render json: { error: "Payment failed: #{e.message}" }, status: :unprocessable_entity }
+    end
   end
 end
