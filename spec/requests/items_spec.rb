@@ -25,6 +25,20 @@ RSpec.describe "Items", type: :request do
       expect(items.all? { |i| i['status'] == 'available' }).to be true
     end
 
+    it "filters by repeated statuses and categories" do
+      book = create(:item, community: community, title: "Available Book", status: 'available', category: 'books')
+      electronics = create(:item, community: community, title: "Reserved Electronics", status: 'reserved', category: 'electronics')
+      create(:item, community: community, title: "Sold Book", status: 'sold', category: 'books')
+      create(:item, community: community, title: "Reserved Furniture", status: 'reserved', category: 'furniture')
+
+      get "/items?status=available&status=reserved&category=books&category=electronics",
+        headers: { "Authorization" => "Bearer #{token_for(user)}" },
+        as: :json
+
+      items = JSON.parse(response.body)
+      expect(items.map { |i| i['id'] }).to contain_exactly(book.id, electronics.id)
+    end
+
     it "filters by price range" do
       create(:item, community: community, price: 50)
       create(:item, community: community, price: 200)

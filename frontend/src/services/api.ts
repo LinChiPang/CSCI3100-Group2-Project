@@ -180,12 +180,12 @@ export async function getListings(
   if (useMocks) return mockApi.getListings(communitySlug, filters);
   await guardRealApi();
 
-  const params: Record<string, unknown> = {};
-  if (filters.search) params.q = filters.search;
-  if (filters.minPrice !== undefined) params.min_price = filters.minPrice;
-  if (filters.maxPrice !== undefined) params.max_price = filters.maxPrice;
-  if (filters.statuses && filters.statuses.length > 0) params.status = filters.statuses[0];
-  if (filters.categories && filters.categories.length > 0) params.category = filters.categories[0];
+  const params = new URLSearchParams();
+  if (filters.search) params.set("q", filters.search);
+  if (filters.minPrice !== undefined) params.set("min_price", String(filters.minPrice));
+  if (filters.maxPrice !== undefined) params.set("max_price", String(filters.maxPrice));
+  filters.statuses?.forEach((status) => params.append("status", status));
+  filters.categories?.forEach((category) => params.append("category", category));
 
   const res = await client.get("/items", { params });
   return (res.data as RawItem[]).map(normalizeItem);
