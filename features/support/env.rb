@@ -1,4 +1,5 @@
 ENV["RAILS_ENV"] ||= "test"
+ENV['JWT_SECRET'] = 'test_secret_key_for_jwt'
 
 require_relative "../../config/environment"
 require "cucumber/rails"

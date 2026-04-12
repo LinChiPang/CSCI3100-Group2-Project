@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_11_195018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_100001) do
 
   create_table "transactions", force: :cascade do |t|
     t.integer "amount_cents", null: false
+    t.bigint "community_id", null: false
     t.datetime "created_at", null: false
     t.string "currency", default: "HKD", null: false
     t.string "item_name", null: false
@@ -62,6 +63,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_100001) do
     t.string "provider_ref", null: false
     t.string "status", default: "succeeded", null: false
     t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_transactions_on_community_id"
     t.index ["created_at"], name: "index_transactions_on_created_at"
     t.index ["item_name"], name: "index_transactions_on_item_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["provider_ref"], name: "index_transactions_on_provider_ref", unique: true
@@ -94,5 +96,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_100001) do
   add_foreign_key "items", "communities"
   add_foreign_key "items", "users"
   add_foreign_key "items", "users", column: "reserved_by_id"
+  add_foreign_key "transactions", "communities"
   add_foreign_key "users", "communities"
 end
