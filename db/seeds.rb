@@ -82,12 +82,12 @@ seller_shaw, buyer_shaw, seller_new_asia, buyer_united = users
 puts "Seeding items..."
 
 items_data = [
-  { title: "Algorithms Textbook", description: "CS fundamentals", price: 280, user: seller_shaw, community: seller_shaw.community, status: :available },
-  { title: "IKEA Desk Lamp", description: "Working condition", price: 120, user: seller_shaw, community: seller_shaw.community, status: :reserved },
-  { title: "Office Chair", description: "Mesh back, used 1 year", price: 450, user: seller_shaw, community: seller_shaw.community, status: :sold },
-  { title: "Rice Cooker", description: "1.8L, like new", price: 300, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Bluetooth Speaker", description: "Portable", price: 220, user: seller_new_asia, community: seller_new_asia.community, status: :available },
-  { title: "Calculus Notes", description: "MATH1010 complete notes", price: 80, user: buyer_united, community: buyer_united.community, status: :available }
+  { title: "Algorithms Textbook", description: "CS fundamentals", price: 280, user: seller_shaw, community: seller_shaw.community, status: :available, category: "books" },
+  { title: "IKEA Desk Lamp", description: "Working condition", price: 120, user: seller_shaw, community: seller_shaw.community, status: :reserved, category: "electronics" },
+  { title: "Office Chair", description: "Mesh back, used 1 year", price: 450, user: seller_shaw, community: seller_shaw.community, status: :sold, category: "furniture" },
+  { title: "Rice Cooker", description: "1.8L, like new", price: 300, user: seller_new_asia, community: seller_new_asia.community, status: :available, category: "kitchen" },
+  { title: "Basketball", description: "Nice", price: 220, user: seller_new_asia, community: seller_new_asia.community, status: :available, category: "sports" },
+  { title: "Calculus Notes", description: "MATH1010 complete notes", price: 80, user: buyer_united, community: buyer_united.community, status: :available, category: "books" }
 ]
 
 items_data.each do |attrs|
@@ -95,6 +95,7 @@ items_data.each do |attrs|
   item.description = attrs[:description]
   item.price = attrs[:price]
   item.status = attrs[:status]
+  item.category = attrs[:category]
   item.save!
 end
 
@@ -142,7 +143,7 @@ transactions_data = [
   { item_name: "Noise-Cancelling Earbuds",       amount_cents: 55_000, provider_ref: "seed_tx_028", date: "2026-04-03 14:30:00" }
 ]
 
-transactions_data.each do |tx, idx|
+transactions_data.each_with_index do |tx, idx|
   community = all_communities[idx % all_communities.size]
   record = Transaction.find_or_create_by!(provider_ref: tx[:provider_ref]) do |t|
     t.item_name    = tx[:item_name]
