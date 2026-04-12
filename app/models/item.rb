@@ -34,6 +34,10 @@ class Item < ApplicationRecord
       "notifications_user_#{user_id}",
       { type: "item_reserved", message: "Your item \"#{title}\" has been reserved by a buyer.", sent_at: Time.current.strftime("%H:%M") }
     )
+    broadcast_notification_safe(
+      "community_items_#{community_id}",
+      { type: "item_status_changed", item_id: id, status: "reserved", reserved_by_id: reserved_by_id }
+    )
   end
 
   def sell!(actor: nil)
@@ -51,6 +55,10 @@ class Item < ApplicationRecord
     broadcast_notification_safe(
       "notifications_user_#{user_id}",
       { type: "item_sold", message: "Your item \"#{title}\" has been marked as sold!", sent_at: Time.current.strftime("%H:%M") }
+    )
+    broadcast_notification_safe(
+      "community_items_#{community_id}",
+      { type: "item_status_changed", item_id: id, status: "sold", reserved_by_id: nil }
     )
   end
 
