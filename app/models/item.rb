@@ -30,7 +30,7 @@ class Item < ApplicationRecord
     end
 
     update!(status: :reserved, reserved_by: actor)
-    ActionCable.server.broadcast(
+    broadcast_notification_safe(
       "notifications_user_#{user_id}",
       { type: "item_reserved", message: "Your item \"#{title}\" has been reserved by a buyer.", sent_at: Time.current.strftime("%H:%M") }
     )
@@ -48,7 +48,7 @@ class Item < ApplicationRecord
     end
 
     update!(status: :sold, reserved_by: nil)
-    ActionCable.server.broadcast(
+    broadcast_notification_safe(
       "notifications_user_#{user_id}",
       { type: "item_sold", message: "Your item \"#{title}\" has been marked as sold!", sent_at: Time.current.strftime("%H:%M") }
     )
@@ -59,6 +59,16 @@ class Item < ApplicationRecord
   scope :sold, -> { where(status: :sold) }
 
   private
+
+  # Real-time notifications must never fail the HTTP request: the DB update is already
+  # committed when this runs. On Heroku, Solid Cable / DB cable config issues often
+  # raise here while the reservation/sale itself succeeded (user sees 500 + stale UI
+  # until refresh).
+  def broadcast_notification_safe(stream, payload)
+    ActionCable.server.broadcast(stream, payload)
+  rescue StandardError => e
+    Rails.logger.warn("ActionCable broadcast skipped (#{stream}): #{e.class}: #{e.message}")
+  end
 
   def seller_belongs_to_community
     return if user.blank? || community.blank?
