@@ -172,6 +172,19 @@ export async function getCommunityRule(communitySlug: string): Promise<Community
   return res.data as CommunityRule;
 }
 
+export async function updateCommunityRule(
+  communitySlug: string,
+  params: Partial<Pick<CommunityRule, "max_price" | "max_active_listings" | "posting_enabled" | "allowed_categories">>,
+): Promise<CommunityRule> {
+  if (useMocks) return mockApi.updateCommunityRule(communitySlug, params);
+  await guardRealApi();
+  const res = await client.patch(
+    `/communities/${encodeURIComponent(communitySlug)}/community_rule`,
+    { community_rule: params },
+  );
+  return res.data as CommunityRule;
+}
+
 // ===== Item Endpoints =====
 export async function getListings(
   communitySlug: string,

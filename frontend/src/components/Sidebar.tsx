@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ShoppingBag, PlusCircle, ClipboardList, BarChart2 } from "lucide-react";
+import { ShoppingBag, PlusCircle, ClipboardList, BarChart2, Settings } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 type SidebarProps = {
@@ -29,18 +29,24 @@ export default function Sidebar({ communitySlug }: SidebarProps) {
       {isAuthenticated ? (
         <>
           <NavLink to={`${base}/new`} className={linkClass}>
-            <PlusCircle size={18} />
-            Post a Listing
-          </NavLink>
+              <PlusCircle size={18} />
+              Post a Listing
+            </NavLink>
           <NavLink to={`${base}/my-listings`} className={linkClass}>
             <ClipboardList size={18} />
             Manage
           </NavLink>
           {user?.role === "admin" && (
-            <NavLink to="/admin/analytics" state={{ from: base }} className={linkClass}>
-              <BarChart2 size={18} />
-              Analytics
-            </NavLink>
+            <>
+              <NavLink to="/admin/analytics" state={{ from: base }} className={linkClass}>
+                <BarChart2 size={18} />
+                Analytics
+              </NavLink>
+              <NavLink to={`${base}/admin/rules`} className={linkClass}>
+                <Settings size={18} />
+                Community Rules
+              </NavLink>
+            </>
           )}
         </>
       ) : (

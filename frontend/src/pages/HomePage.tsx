@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import FilterPanel from "../components/FilterPanel";
 import ListingsGrid from "../components/ListingsGrid";
@@ -8,9 +8,12 @@ import CommunityRuleBanner from "../components/CommunityRuleBanner";
 import { getCommunityRule, getListings } from "../services/api";
 import type { CommunityRule, FilterParams, Item } from "../types/marketplace";
 import { filterMinExceedsCommunityMax } from "../utils/communityRules";
+import { useAuth } from "../context/AuthContext";
+import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 
 export default function HomePage() {
   const { community_slug } = useParams();
+  const { user } = useAuth();
   const [items, setItems] = useState<Item[]>([]);
   const [draftFilters, setDraftFilters] = useState<FilterParams>({});
   const [appliedFilters, setAppliedFilters] = useState<FilterParams>({});
@@ -42,6 +45,21 @@ export default function HomePage() {
     setDraftFilters({});
     setAppliedFilters({});
   };
+
+  // Real-time item status updates from other users' actions
+  const handleItemStatusChanged = useCallback(
+    (change: { item_id: number; status: string; reserved_by_id: number | null }) => {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === change.item_id
+            ? { ...item, status: change.status as Item["status"], reserved_by_id: change.reserved_by_id }
+            : item
+        )
+      );
+    },
+    []
+  );
+  useCommunityItemUpdates(user?.id ?? null, handleItemStatusChanged);
 
   useEffect(() => {
     if (!communitySlug) return;
