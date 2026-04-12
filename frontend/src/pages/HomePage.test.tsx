@@ -1,12 +1,25 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import HomePage from "./HomePage";
 import * as apiModule from "../services/api";
 import type { CommunityRule, Item } from "../types/marketplace";
 
 vi.mock("../services/api");
+vi.mock("../context/AuthContext", () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    login: vi.fn(),
+    setSession: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
+vi.mock("../hooks/useCommunityItemUpdates", () => ({
+  useCommunityItemUpdates: vi.fn(),
+}));
 
 const mockCommunityRule: CommunityRule = {
   community_id: 1,
@@ -27,6 +40,7 @@ const mockItems: Item[] = [
     description: "Calculus",
     price: 50,
     status: "available",
+    category: "books",
     created_at: "2026-03-20T10:00:00Z",
     updated_at: "2026-03-20T10:00:00Z",
   },
@@ -40,16 +54,22 @@ const mockItems: Item[] = [
     description: "Metal stand",
     price: 150,
     status: "sold",
+    category: "electronics",
     created_at: "2026-03-20T10:05:00Z",
     updated_at: "2026-03-20T10:05:00Z",
   },
 ];
 
+function LocationProbe() {
+  const location = useLocation();
+  return <div data-testid="location">{location.pathname}{location.search}</div>;
+}
+
 function renderWithRouter(element: React.ReactElement, initialPath = "/c/hall-1") {
   return render(
     <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
-        <Route path="/c/:community_slug" element={element} />
+        <Route path="/c/:community_slug" element={<>{element}<LocationProbe /></>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -100,6 +120,52 @@ describe("HomePage", () => {
     expect(sortSelect).toHaveValue("price_asc");
   });
 
+  it("loads filters from URL query parameters", async () => {
+    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
+
+    renderWithRouter(
+      <HomePage />,
+      "/c/hall-1?q=book&status=available&category=books&min_price=100&max_price=500",
+    );
+
+    await waitFor(() => {
+      expect(apiModule.getListings).toHaveBeenCalledWith("hall-1", {
+        search: "book",
+        statuses: ["available"],
+        categories: ["books"],
+        minPrice: 100,
+        maxPrice: 500,
+      });
+    });
+
+    expect(screen.getByLabelText("Search")).toHaveValue("book");
+    expect(screen.getByRole("checkbox", { name: /Available/i })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: /Books/i })).toBeChecked();
+    expect(screen.getByLabelText(/Min/i)).toHaveValue(100);
+    expect(screen.getByLabelText(/Max/i)).toHaveValue(500);
+  });
+
+  it("updates the URL when search is submitted", async () => {
+    const user = userEvent.setup();
+    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
+    vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
+
+    renderWithRouter(<HomePage />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Math Textbook")).toBeInTheDocument();
+    });
+
+    await user.type(screen.getByLabelText("Search"), "lamp");
+    await user.click(screen.getByRole("button", { name: /^search$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("location")).toHaveTextContent("/c/hall-1?q=lamp");
+      expect(apiModule.getListings).toHaveBeenCalledWith("hall-1", { search: "lamp" });
+    });
+  });
+
   it("applies filters when Apply button clicked", async () => {
     const user = userEvent.setup();
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
@@ -114,14 +180,24 @@ describe("HomePage", () => {
     const minPriceInput = screen.getByLabelText(/Min/i);
     await user.clear(minPriceInput);
     await user.type(minPriceInput, "100");
+    await user.click(screen.getByRole("checkbox", { name: /Available/i }));
+    await user.click(screen.getByRole("checkbox", { name: /Books/i }));
 
     const applyButton = screen.getByRole("button", { name: /apply filters/i });
     await user.click(applyButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("location")).toHaveTextContent(
+        "/c/hall-1?status=available&category=books&min_price=100",
+      );
+    });
 
     // Verify API was called with filters
     await waitFor(() => {
       expect(apiModule.getListings).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         minPrice: 100,
+        statuses: ["available"],
+        categories: ["books"],
       }));
     });
   });
@@ -131,21 +207,26 @@ describe("HomePage", () => {
     vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
     vi.mocked(apiModule.getListings).mockResolvedValue(mockItems);
 
-    renderWithRouter(<HomePage />);
+    renderWithRouter(<HomePage />, "/c/hall-1?q=book&status=available&category=books&min_price=100");
 
     await waitFor(() => {
       expect(screen.getByText("Math Textbook")).toBeInTheDocument();
     });
 
     const minPriceInput = screen.getByLabelText(/Min/i);
-    await user.clear(minPriceInput);
-    await user.type(minPriceInput, "100");
 
     const resetButton = screen.getByRole("button", { name: /Reset/i });
     await user.click(resetButton);
 
+    await waitFor(() => {
+      expect(screen.getByTestId("location")).toHaveTextContent("/c/hall-1");
+      expect(apiModule.getListings).toHaveBeenCalledWith("hall-1", {});
+    });
+
     // Verify input is cleared
     expect(minPriceInput).toHaveValue(null);
+    expect(screen.getByLabelText("Search")).toHaveValue("");
+    expect(screen.getByRole("checkbox", { name: /Available/i })).not.toBeChecked();
   });
 
   it("displays community rule banner", async () => {

@@ -1,22 +1,67 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import FilterPanel from "../components/FilterPanel";
 import ListingsGrid from "../components/ListingsGrid";
 import SearchBar from "../components/SearchBar";
 import SortSelect, { type SortKey } from "../components/SortSelect";
 import CommunityRuleBanner from "../components/CommunityRuleBanner";
 import { getCommunityRule, getListings } from "../services/api";
-import type { CommunityRule, FilterParams, Item } from "../types/marketplace";
+import type { CommunityRule, FilterParams, Item, ItemStatus } from "../types/marketplace";
 import { filterMinExceedsCommunityMax } from "../utils/communityRules";
 import { useAuth } from "../context/AuthContext";
 import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 
+const listingQueryKeys = ["q", "status", "category", "min_price", "max_price"];
+const validStatuses: ItemStatus[] = ["available", "reserved", "sold"];
+
+function parseOptionalNumber(value: string | null) {
+  if (value === null || value.trim() === "") return undefined;
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function parseFiltersFromSearchParams(searchParams: URLSearchParams): FilterParams {
+  const q = searchParams.get("q")?.trim();
+  const statuses = searchParams
+    .getAll("status")
+    .filter((status): status is ItemStatus => validStatuses.includes(status as ItemStatus));
+  const categories = searchParams.getAll("category").map((category) => category.trim()).filter(Boolean);
+  const minPrice = parseOptionalNumber(searchParams.get("min_price"));
+  const maxPrice = parseOptionalNumber(searchParams.get("max_price"));
+
+  return {
+    ...(q ? { search: q } : {}),
+    ...(statuses.length > 0 ? { statuses } : {}),
+    ...(categories.length > 0 ? { categories } : {}),
+    ...(minPrice !== undefined ? { minPrice } : {}),
+    ...(maxPrice !== undefined ? { maxPrice } : {}),
+  };
+}
+
+function writeListingFiltersToSearchParams(baseParams: URLSearchParams, filters: FilterParams) {
+  const nextParams = new URLSearchParams(baseParams);
+  listingQueryKeys.forEach((key) => nextParams.delete(key));
+
+  const search = filters.search?.trim();
+  if (search) nextParams.set("q", search);
+  filters.statuses?.forEach((status) => nextParams.append("status", status));
+  filters.categories?.forEach((category) => {
+    const trimmed = category.trim();
+    if (trimmed) nextParams.append("category", trimmed);
+  });
+  if (filters.minPrice !== undefined) nextParams.set("min_price", String(filters.minPrice));
+  if (filters.maxPrice !== undefined) nextParams.set("max_price", String(filters.maxPrice));
+
+  return nextParams;
+}
+
 export default function HomePage() {
   const { community_slug } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const [items, setItems] = useState<Item[]>([]);
   const [draftFilters, setDraftFilters] = useState<FilterParams>({});
-  const [appliedFilters, setAppliedFilters] = useState<FilterParams>({});
   const [sortKey, setSortKey] = useState<SortKey>("newest");
   const [draftSearch, setDraftSearch] = useState("");
   const [communityRule, setCommunityRule] = useState<CommunityRule | null>(null);
@@ -24,26 +69,43 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   const communitySlug = useMemo(() => community_slug ?? "", [community_slug]);
+  const queryString = searchParams.toString();
+  const appliedFilters = useMemo(
+    () => parseFiltersFromSearchParams(new URLSearchParams(queryString)),
+    [queryString],
+  );
+
+  useEffect(() => {
+    setDraftSearch(appliedFilters.search ?? "");
+    setDraftFilters({
+      categories: appliedFilters.categories,
+      minPrice: appliedFilters.minPrice,
+      maxPrice: appliedFilters.maxPrice,
+      statuses: appliedFilters.statuses,
+    });
+  }, [appliedFilters]);
 
   const applySearch = (overrideSearch?: string) => {
     const trimmed = (overrideSearch ?? draftSearch).trim();
-    setAppliedFilters((prev) => ({
-      ...prev,
+    setSearchParams(writeListingFiltersToSearchParams(searchParams, {
+      ...appliedFilters,
       search: trimmed ? trimmed : undefined,
     }));
   };
 
   const applyFilters = () => {
-    setAppliedFilters((prev) => ({
+    setSearchParams(writeListingFiltersToSearchParams(searchParams, {
       ...draftFilters,
-      search: prev.search,
+      search: appliedFilters.search,
     }));
   };
 
   const resetAll = () => {
     setDraftSearch("");
     setDraftFilters({});
-    setAppliedFilters({});
+    const nextParams = new URLSearchParams(searchParams);
+    listingQueryKeys.forEach((key) => nextParams.delete(key));
+    setSearchParams(nextParams);
   };
 
   // Real-time item status updates from other users' actions
@@ -176,4 +238,3 @@ export default function HomePage() {
     </div>
   );
 }
-

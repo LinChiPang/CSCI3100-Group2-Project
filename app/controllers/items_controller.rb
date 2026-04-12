@@ -96,13 +96,23 @@ class ItemsController < ApplicationController
   end
 
   def apply_filters(items)
-    items = items.where(status: params[:status]) if params[:status].present?
-    items = items.where(category: params[:category]) if params[:category].present?
+    statuses = filter_values_for(:status)
+    categories = filter_values_for(:category)
+
+    items = items.where(status: statuses) if statuses.present?
+    items = items.where(category: categories) if categories.present?
     items = items.where("price >= ?", params[:min_price]) if params[:min_price].present?
     items = items.where("price <= ?", params[:max_price]) if params[:max_price].present?
     if params[:q].present?
       items = items.where("title ILIKE ? OR description ILIKE ?", "%#{params[:q]}%", "%#{params[:q]}%")
     end
     items
+  end
+
+  def filter_values_for(key)
+    raw_value = Rack::Utils.parse_query(request.query_string)[key.to_s]
+    value = raw_value.is_a?(Array) ? raw_value : params[key]
+
+    Array(value).reject(&:blank?)
   end
 end
