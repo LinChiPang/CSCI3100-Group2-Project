@@ -59,6 +59,35 @@ RSpec.describe Item, type: :model do
       expect { item.sell! }.not_to raise_error
       expect(item.reload).to be_status_sold
     end
+
+    it "notifies the seller and reserving buyer when a reserved item is sold" do
+      buyer = create(:user, community: community)
+      item.reserve!(actor: buyer)
+      allow(ActionCable.server).to receive(:broadcast)
+
+      item.sell!(actor: user)
+
+      expect(ActionCable.server).to have_received(:broadcast).with(
+        "notifications_user_#{user.id}",
+        hash_including(type: "item_sold", message: "Your item \"#{item.title}\" has been marked as sold!")
+      )
+      expect(ActionCable.server).to have_received(:broadcast).with(
+        "notifications_user_#{buyer.id}",
+        hash_including(type: "reserved_item_sold", message: "The item \"#{item.title}\" you reserved has been marked as sold.")
+      )
+    end
+
+    it "does not broadcast a buyer sale notification when no buyer reserved the item" do
+      item.reserve!
+      allow(ActionCable.server).to receive(:broadcast)
+
+      item.sell!(actor: user)
+
+      expect(ActionCable.server).not_to have_received(:broadcast).with(
+        "notifications_user_",
+        hash_including(type: "reserved_item_sold")
+      )
+    end
   end
 
   describe 'community consistency' do
