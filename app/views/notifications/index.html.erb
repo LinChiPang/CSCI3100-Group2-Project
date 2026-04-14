@@ -1,14 +1,12 @@
 <h2>Real-time Notifications</h2>
 
 <p>
-  Sign in through the SPA first, then open this page in two browser tabs. Send in one tab and both tabs for your signed-in user should receive instantly.
+  Open this page in two browser tabs. Send in one tab and both tabs should receive instantly.
 </p>
 
 <% if notice %>
   <p><strong><%= notice %></strong></p>
 <% end %>
-
-<p id="notifications-error" style="color: #b91c1c;"></p>
 
 <%= form_with url: "/notifications/broadcast", method: :post, local: true, id: "notifications-form" do |f| %>
   <div>
@@ -24,3 +22,4 @@
 <ul id="notifications-list">
   <li>No notifications yet.</li>
 </ul>
+
