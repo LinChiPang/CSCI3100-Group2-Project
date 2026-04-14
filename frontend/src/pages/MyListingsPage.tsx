@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { deleteItem, getListings } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import type { Item } from "../types/marketplace";
 import { formatDollars, titleCase } from "../utils/format";
-import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 
 function statusClass(status: Item["status"]) {
   switch (status) {
@@ -89,30 +88,11 @@ export default function MyListingsPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading } = useAuth();
   const communitySlug = community_slug ?? "";
-  const userId = user?.id ?? null;
 
   const [posted, setPosted] = useState<Item[]>([]);
   const [reserved, setReserved] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const loadListings = useCallback(async () => {
-    if (!isAuthenticated || userId === null) return;
-
-    try {
-      setIsLoading(true);
-      setError(null);
-      const all = await getListings(communitySlug, {});
-      setPosted(all.filter((item) => item.user_id === userId));
-      setReserved(
-        all.filter((item) => item.reserved_by_id === userId && item.status === "reserved"),
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load listings.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [communitySlug, isAuthenticated, userId]);
 
   useEffect(() => {
     if (loading) return;
@@ -121,14 +101,22 @@ export default function MyListingsPage() {
       return;
     }
 
-    void loadListings();
-  }, [isAuthenticated, loadListings, loading, navigate]);
-
-  const handleItemStatusChanged = useCallback(() => {
-    if (!loading && isAuthenticated && userId !== null) void loadListings();
-  }, [isAuthenticated, loadListings, loading, userId]);
-
-  useCommunityItemUpdates(userId, handleItemStatusChanged);
+    async function load() {
+      try {
+        setIsLoading(true);
+        const all = await getListings(communitySlug, {});
+        setPosted(all.filter((item) => item.user_id === user!.id));
+        setReserved(
+          all.filter((item) => item.reserved_by_id === user!.id && item.status === "reserved"),
+        );
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load listings.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    void load();
+  }, [communitySlug, user, isAuthenticated, loading, navigate]);
 
   const handleDeleted = (id: number) => {
     setPosted((prev) => prev.filter((item) => item.id !== id));

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { Consumer, Subscription } from "@rails/actioncable";
-import { createAuthenticatedCableConsumer } from "../utils/actionCable";
+import { createConsumer, Consumer, Subscription } from "@rails/actioncable";
 
 export interface Notification {
   id: string;
@@ -23,7 +22,10 @@ export function useNotifications(userId: number | null) {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
 
-    const cable = createAuthenticatedCableConsumer(token);
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const cableUrl = (import.meta.env.VITE_CABLE_URL as string | undefined) ??
+      `${protocol}//${window.location.host}/cable`;
+    const cable = createConsumer(`${cableUrl}?token=${encodeURIComponent(token)}`);
     consumerRef.current = cable;
 
     subscriptionRef.current = cable.subscriptions.create(

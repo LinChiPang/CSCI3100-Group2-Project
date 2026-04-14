@@ -14,10 +14,6 @@ vi.mock("./hooks/useNotifications", () => ({
   }),
 }));
 
-vi.mock("./hooks/useCommunityItemUpdates", () => ({
-  useCommunityItemUpdates: vi.fn(),
-}));
-
 vi.mock("./services/api", () => ({
   getCommunities: vi.fn(),
   getCommunityRule: vi.fn(),

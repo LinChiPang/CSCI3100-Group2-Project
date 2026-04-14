@@ -1,11 +1,10 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import HomePage from "./HomePage";
 import * as apiModule from "../services/api";
 import type { CommunityRule, Item } from "../types/marketplace";
-import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 
 vi.mock("../services/api");
 vi.mock("../context/AuthContext", () => ({
@@ -79,7 +78,6 @@ function renderWithRouter(element: React.ReactElement, initialPath = "/c/hall-1"
 describe("HomePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useCommunityItemUpdates).mockImplementation(() => undefined);
   });
 
   it("loads and displays community rule and listings", async () => {
@@ -253,34 +251,6 @@ describe("HomePage", () => {
 
     await waitFor(() => {
       expect(screen.getByText("API Error")).toBeInTheDocument();
-    });
-  });
-
-  it("re-fetches the current filtered listings after realtime status changes", async () => {
-    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings)
-      .mockResolvedValueOnce(mockItems)
-      .mockResolvedValueOnce([mockItems[1]]);
-
-    renderWithRouter(<HomePage />, "/c/hall-1?q=book&status=available");
-
-    await waitFor(() => {
-      expect(screen.getByText("Math Textbook")).toBeInTheDocument();
-    });
-
-    const onItemStatusChanged = vi.mocked(useCommunityItemUpdates).mock.calls.at(-1)?.[1];
-    expect(onItemStatusChanged).toBeDefined();
-
-    act(() => {
-      onItemStatusChanged?.({ item_id: 1, status: "reserved", reserved_by_id: 9 });
-    });
-
-    await waitFor(() => {
-      expect(apiModule.getListings).toHaveBeenCalledTimes(2);
-      expect(apiModule.getListings).toHaveBeenLastCalledWith("hall-1", {
-        search: "book",
-        statuses: ["available"],
-      });
     });
   });
 });

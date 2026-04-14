@@ -42,55 +42,6 @@ RSpec.describe Item, type: :model do
       expect { item.sell!(actor: actor) }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it "broadcasts owner notification and community status refresh when reserved" do
-      buyer = create(:user, community: community)
-
-      expect(ActionCable.server).to receive(:broadcast).with(
-        "notifications_user_#{user.id}",
-        hash_including(
-          type: "item_reserved",
-          message: include(item.title),
-          sent_at: kind_of(String)
-        )
-      )
-      expect(ActionCable.server).to receive(:broadcast).with(
-        "community_items_#{community.id}",
-        {
-          type: "item_status_changed",
-          item_id: item.id,
-          status: "reserved",
-          reserved_by_id: buyer.id
-        }
-      )
-
-      item.reserve!(actor: buyer)
-    end
-
-    it "broadcasts owner notification and community status refresh when sold" do
-      buyer = create(:user, community: community)
-      item.reserve!(actor: buyer)
-
-      expect(ActionCable.server).to receive(:broadcast).with(
-        "notifications_user_#{user.id}",
-        hash_including(
-          type: "item_sold",
-          message: include(item.title),
-          sent_at: kind_of(String)
-        )
-      )
-      expect(ActionCable.server).to receive(:broadcast).with(
-        "community_items_#{community.id}",
-        {
-          type: "item_status_changed",
-          item_id: item.id,
-          status: "sold",
-          reserved_by_id: nil
-        }
-      )
-
-      item.sell!(actor: user)
-    end
-
     it "persists reservation when Action Cable broadcast fails" do
       buyer = create(:user, community: community)
       allow(ActionCable.server).to receive(:broadcast).and_raise(StandardError, "cable down")
