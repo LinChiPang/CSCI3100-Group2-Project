@@ -24,16 +24,23 @@ document.addEventListener("turbo:load", () => {
     event.preventDefault()
 
     const token = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
+    const authToken = window.localStorage.getItem("auth_token")
     const formData = new FormData(form)
+    const error = document.getElementById("notifications-error")
+    if (error) error.textContent = ""
 
-    await fetch(form.action, {
+    const response = await fetch(form.action, {
       method: "POST",
       headers: {
         "X-CSRF-Token": token || "",
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         Accept: "application/json"
       },
       body: formData
     })
+
+    if (!response.ok && error) {
+      error.textContent = "Sign in through the SPA first, then reload this page to use the authenticated demo."
+    }
   })
 })
-
