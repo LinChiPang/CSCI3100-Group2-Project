@@ -87,5 +87,4 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.action_cable.allowed_request_origins = ['https://calm-woodland-37162-a0850eb97b8f.herokuapp.com']
 end
