@@ -157,4 +157,4 @@ A 5-minute video demonstrating:
 | Real-time Notifications | Jason | Eric | ActionCable WebSocket support |
 | Mock Payment | Jason | Eric | Stripe-style mock payment flow |
 | Analytics Dashboard | Jason | Louis, Eric | Admin transaction and listing statistics |
-| Deployment | Patrick | TODO | Deploy App on Heroku |
+| Deployment | Patrick |  | Deploy and configure App on Heroku |
