@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  mount ActionCable.server => '/cable'
+
   get "payments", to: "payments#new"
   post "payments/mock_checkout", to: "payments#mock_checkout"
   get "search", to: "search#index"
