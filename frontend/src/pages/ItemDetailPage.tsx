@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CommunityRuleBanner from "../components/CommunityRuleBanner";
 import PaymentModal from "../components/PaymentModal";
 import StatusWorkflow from "../components/StatusWorkflow";
 import { deleteItem, sellItem, getCommunityRule, getItemDetail, reserveItem } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 import type { CommunityRule, Item } from "../types/marketplace";
 import { itemPriceExceedsMax } from "../utils/communityRules";
 import { formatDollars } from "../utils/format";
@@ -23,20 +22,6 @@ export default function ItemDetailPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const numericItemId = useMemo(() => (itemId ? Number(itemId) : NaN), [itemId]);
-
-  const handleItemStatusChanged = useCallback(
-    (change: { item_id: number; status: Item["status"]; reserved_by_id: number | null }) => {
-      if (change.item_id !== numericItemId) return;
-
-      setItem((current) =>
-        current && current.id === change.item_id
-          ? { ...current, status: change.status, reserved_by_id: change.reserved_by_id }
-          : current
-      );
-    },
-    [numericItemId],
-  );
-  useCommunityItemUpdates(user?.id ?? null, handleItemStatusChanged);
 
   useEffect(() => {
     if (!community_slug) return;

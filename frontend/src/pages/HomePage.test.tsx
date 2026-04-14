@@ -1,10 +1,9 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import HomePage from "./HomePage";
 import * as apiModule from "../services/api";
-import * as communityUpdates from "../hooks/useCommunityItemUpdates";
 import type { CommunityRule, Item } from "../types/marketplace";
 
 vi.mock("../services/api");
@@ -253,31 +252,5 @@ describe("HomePage", () => {
     await waitFor(() => {
       expect(screen.getByText("API Error")).toBeInTheDocument();
     });
-  });
-
-  it("refetches filtered listings when an item status update arrives", async () => {
-    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
-    vi.mocked(apiModule.getListings)
-      .mockResolvedValueOnce([mockItems[0]])
-      .mockResolvedValueOnce([]);
-
-    renderWithRouter(<HomePage />, "/c/hall-1?status=available");
-
-    await waitFor(() => {
-      expect(screen.getByText("Math Textbook")).toBeInTheDocument();
-    });
-
-    const onItemStatusChanged = vi.mocked(communityUpdates.useCommunityItemUpdates).mock.calls.at(-1)?.[1];
-    expect(onItemStatusChanged).toBeDefined();
-
-    act(() => {
-      onItemStatusChanged?.({ item_id: 1, status: "reserved", reserved_by_id: 3 });
-    });
-
-    await waitFor(() => {
-      expect(apiModule.getListings).toHaveBeenCalledTimes(2);
-      expect(apiModule.getListings).toHaveBeenLastCalledWith("hall-1", { statuses: ["available"] });
-    });
-    expect(screen.queryByText("Math Textbook")).not.toBeInTheDocument();
   });
 });

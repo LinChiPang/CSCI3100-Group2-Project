@@ -51,19 +51,11 @@ class Item < ApplicationRecord
       raise ActiveRecord::RecordInvalid, self
     end
 
-    reserved_buyer_id = reserved_by_id
-
     update!(status: :sold, reserved_by: nil)
     broadcast_notification_safe(
       "notifications_user_#{user_id}",
       { type: "item_sold", message: "Your item \"#{title}\" has been marked as sold!", sent_at: Time.current.strftime("%H:%M") }
     )
-    if reserved_buyer_id.present?
-      broadcast_notification_safe(
-        "notifications_user_#{reserved_buyer_id}",
-        { type: "reserved_item_sold", message: "The item \"#{title}\" you reserved has been marked as sold.", sent_at: Time.current.strftime("%H:%M") }
-      )
-    end
     broadcast_notification_safe(
       "community_items_#{community_id}",
       { type: "item_status_changed", item_id: id, status: "sold", reserved_by_id: nil }
