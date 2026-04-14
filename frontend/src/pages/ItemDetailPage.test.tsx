@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
@@ -6,8 +6,12 @@ import ItemDetailPage from "./ItemDetailPage";
 import { AuthProvider } from "../context/AuthContext";
 import * as apiModule from "../services/api";
 import type { CommunityRule, Item } from "../types/marketplace";
+import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
 
 vi.mock("../services/api");
+vi.mock("../hooks/useCommunityItemUpdates", () => ({
+  useCommunityItemUpdates: vi.fn(),
+}));
 
 const mockItem: Item = {
   id: 42,
@@ -64,6 +68,7 @@ describe("ItemDetailPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    vi.mocked(useCommunityItemUpdates).mockImplementation(() => undefined);
   });
 
   it("loads and displays item details", async () => {
@@ -254,6 +259,28 @@ describe("ItemDetailPage", () => {
 
     await waitFor(() => {
       expect(screen.getByText("API Error")).toBeInTheDocument();
+    });
+  });
+
+  it("updates the item detail status after a matching realtime status change", async () => {
+    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
+    vi.mocked(apiModule.getItemDetail).mockResolvedValue(mockItem);
+
+    renderWithRouter(<ItemDetailPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Reserve/i })).toBeEnabled();
+    });
+
+    const onItemStatusChanged = vi.mocked(useCommunityItemUpdates).mock.calls.at(-1)?.[1];
+    expect(onItemStatusChanged).toBeDefined();
+
+    act(() => {
+      onItemStatusChanged?.({ item_id: 42, status: "reserved", reserved_by_id: 9 });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Reserve/i })).toBeDisabled();
     });
   });
 });

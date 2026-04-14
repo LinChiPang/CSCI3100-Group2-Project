@@ -1,10 +1,17 @@
 import { useEffect, useRef } from "react";
-import { createConsumer } from "@rails/actioncable";
+import { createAuthenticatedCableConsumer } from "../utils/actionCable";
+import type { ItemStatus } from "../types/marketplace";
 
-interface ItemStatusChange {
+export interface ItemStatusChange {
   item_id: number;
-  status: string;
+  status: ItemStatus;
   reserved_by_id: number | null;
+}
+
+const validItemStatuses = new Set<ItemStatus>(["available", "reserved", "sold"]);
+
+function isItemStatus(status: unknown): status is ItemStatus {
+  return typeof status === "string" && validItemStatuses.has(status as ItemStatus);
 }
 
 export function useCommunityItemUpdates(
@@ -20,16 +27,13 @@ export function useCommunityItemUpdates(
     const token = localStorage.getItem("auth_token");
     if (!token) return;
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const cableUrl = (import.meta.env.VITE_CABLE_URL as string | undefined) ??
-      `${protocol}//${window.location.host}/cable`;
-    const cable = createConsumer(`${cableUrl}?token=${encodeURIComponent(token)}`);
+    const cable = createAuthenticatedCableConsumer(token);
 
     cable.subscriptions.create(
       { channel: "CommunityItemsChannel" },
       {
         received(data: { type?: string; item_id?: number; status?: string; reserved_by_id?: number | null }) {
-          if (data.type === "item_status_changed" && data.item_id != null && data.status != null) {
+          if (data.type === "item_status_changed" && typeof data.item_id === "number" && isItemStatus(data.status)) {
             callbackRef.current({
               item_id: data.item_id,
               status: data.status,

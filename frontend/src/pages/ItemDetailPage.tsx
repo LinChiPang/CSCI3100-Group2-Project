@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CommunityRuleBanner from "../components/CommunityRuleBanner";
 import PaymentModal from "../components/PaymentModal";
@@ -8,6 +8,8 @@ import { useAuth } from "../context/AuthContext";
 import type { CommunityRule, Item } from "../types/marketplace";
 import { itemPriceExceedsMax } from "../utils/communityRules";
 import { formatDollars } from "../utils/format";
+import { useCommunityItemUpdates } from "../hooks/useCommunityItemUpdates";
+import type { ItemStatusChange } from "../hooks/useCommunityItemUpdates";
 
 export default function ItemDetailPage() {
   const { community_slug, itemId } = useParams();
@@ -55,6 +57,16 @@ export default function ItemDetailPage() {
 
     void loadItem();
   }, [itemId, numericItemId]);
+
+  const handleItemStatusChanged = useCallback((change: ItemStatusChange) => {
+    setItem((currentItem) => (
+      currentItem?.id === change.item_id
+        ? { ...currentItem, status: change.status, reserved_by_id: change.reserved_by_id }
+        : currentItem
+    ));
+  }, []);
+
+  useCommunityItemUpdates(user?.id ?? null, handleItemStatusChanged);
 
   if (isLoading) return <p className="text-gray-700">Loading item detail...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
