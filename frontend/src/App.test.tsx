@@ -11,7 +11,13 @@ vi.mock("./hooks/useNotifications", () => ({
     unreadCount: 0,
     markAllRead: vi.fn(),
     clearAll: vi.fn(),
+    latestToast: null,
+    dismissToast: vi.fn(),
   }),
+}));
+
+vi.mock("./hooks/useCommunityItemUpdates", () => ({
+  useCommunityItemUpdates: vi.fn(),
 }));
 
 vi.mock("./services/api", () => ({

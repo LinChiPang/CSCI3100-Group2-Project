@@ -1,13 +1,17 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import ItemDetailPage from "./ItemDetailPage";
 import { AuthProvider } from "../context/AuthContext";
 import * as apiModule from "../services/api";
+import * as communityUpdates from "../hooks/useCommunityItemUpdates";
 import type { CommunityRule, Item } from "../types/marketplace";
 
 vi.mock("../services/api");
+vi.mock("../hooks/useCommunityItemUpdates", () => ({
+  useCommunityItemUpdates: vi.fn(),
+}));
 
 const mockItem: Item = {
   id: 42,
@@ -201,6 +205,30 @@ describe("ItemDetailPage", () => {
     await waitFor(() => {
       expect(apiModule.sellItem).toHaveBeenCalledWith(42);
     });
+  });
+
+  it("updates the open item when a matching community status event arrives", async () => {
+    vi.mocked(apiModule.getCommunityRule).mockResolvedValue(mockCommunityRule);
+    vi.mocked(apiModule.getItemDetail).mockResolvedValue(mockItem);
+
+    renderWithRouter(<ItemDetailPage />, {
+      storedUser: { id: 5, email: "alice@cuhk.edu.hk", community_id: 1 },
+    });
+
+    await waitFor(() => {
+      expect(communityUpdates.useCommunityItemUpdates).toHaveBeenLastCalledWith(5, expect.any(Function));
+      expect(screen.getByText("Physics Textbook")).toBeInTheDocument();
+    });
+
+    const onItemStatusChanged = vi.mocked(communityUpdates.useCommunityItemUpdates).mock.calls.at(-1)?.[1];
+    expect(onItemStatusChanged).toBeDefined();
+
+    act(() => {
+      onItemStatusChanged?.({ item_id: 42, status: "reserved", reserved_by_id: 9 });
+    });
+
+    expect(screen.getByRole("button", { name: /Reserve/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Mark as Sold/i })).toBeEnabled();
   });
 
   it("does not display price error banner when price exceeds community max", async () => {
