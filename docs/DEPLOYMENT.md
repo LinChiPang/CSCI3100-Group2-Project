@@ -11,7 +11,7 @@ This is the recommended path for a class project with minimal ops overhead.
 
 - Create a new Web Service from this GitHub repository.
 - Build command:
-  - `bundle install && npm ci --prefix frontend && VITE_USE_MOCKS=false npm --prefix frontend run build && bundle exec rails assets:precompile && bundle exec rails db:migrate`
+  - `bundle install && bundle exec rails assets:precompile`
 - Start command:
   - `bundle exec rails server -p $PORT -e production`
 

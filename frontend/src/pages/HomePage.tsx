@@ -108,6 +108,21 @@ export default function HomePage() {
     setSearchParams(nextParams);
   };
 
+  // Real-time item status updates from other users' actions
+  const handleItemStatusChanged = useCallback(
+    (change: { item_id: number; status: string; reserved_by_id: number | null }) => {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === change.item_id
+            ? { ...item, status: change.status as Item["status"], reserved_by_id: change.reserved_by_id }
+            : item
+        )
+      );
+    },
+    []
+  );
+  useCommunityItemUpdates(user?.id ?? null, handleItemStatusChanged);
+
   useEffect(() => {
     if (!communitySlug) return;
 
@@ -124,31 +139,25 @@ export default function HomePage() {
     void loadRule();
   }, [communitySlug]);
 
-  const loadListings = useCallback(async () => {
+  useEffect(() => {
     if (!communitySlug) return;
 
-    try {
-      setIsLoading(true);
-      setError(null);
+    async function loadListings() {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      const listingsRes = await getListings(communitySlug, appliedFilters);
-      setItems(listingsRes);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load listings");
-    } finally {
-      setIsLoading(false);
+        const listingsRes = await getListings(communitySlug, appliedFilters);
+        setItems(listingsRes);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load listings");
+      } finally {
+        setIsLoading(false);
+      }
     }
+
+    void loadListings();
   }, [communitySlug, appliedFilters]);
-
-  useEffect(() => {
-    void loadListings();
-  }, [loadListings]);
-
-  // Real-time item status updates can change whether a listing matches filters.
-  const handleItemStatusChanged = useCallback(() => {
-    void loadListings();
-  }, [loadListings]);
-  useCommunityItemUpdates(user?.id ?? null, handleItemStatusChanged);
 
   const ruleWarnings = useMemo(() => {
     const messages: string[] = [];
