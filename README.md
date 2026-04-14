@@ -153,8 +153,8 @@ A 5-minute video demonstrating:
 | Marketplace Listings | Louis | Eric | CRUD, search/filtering, and item status workflow |
 | Community Rules | Patrick | Louis, Eric | Per-community listing rules and permissions |
 | Frontend | Eric | Patrick | Frontend design, React |
-| Fuzzy Search | TODO | Eric | Search suggestions and auto-complete |
-| Real-time Notifications | TODO | Eric | ActionCable WebSocket support |
-| Mock Payment | TODO | Eric | Stripe-style mock payment flow |
-| Analytics Dashboard | TODO | Louis, Eric | Admin transaction and listing statistics |
+| Fuzzy Search | Jason | Eric | Search suggestions and auto-complete |
+| Real-time Notifications | Jason | Eric | ActionCable WebSocket support |
+| Mock Payment | Jason | Eric | Stripe-style mock payment flow |
+| Analytics Dashboard | Jason | Louis, Eric | Admin transaction and listing statistics |
 | Deployment | Patrick | TODO | Deploy App on Heroku |
