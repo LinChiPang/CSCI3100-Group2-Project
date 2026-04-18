@@ -3,7 +3,7 @@ source "https://rubygems.org"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.2", ">= 8.1.2.1"
 # Update to the required versions
-gem "json", "~> 2.19.2"
+gem "json", "~> 2.19.4"
 gem "loofah", "~> 2.25.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
